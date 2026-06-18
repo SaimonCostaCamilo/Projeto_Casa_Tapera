@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Faturamento - Casa Tapera</title>
+    <link rel="stylesheet" href="../estilos/PainelDeControle.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="../estilos/FaturamentoRelatorio.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <style>
+        .container-gerenciamento {
+            width: 95%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+    </style>
+</head>
+<body>
+    <header class="cabecalho-painel">
+        <a href="PainelDeControle.html"><img src="../imagens/Logo_Tapera.jpeg" alt="Logotipo Casa Tapera" class="imagem-logo"></a>
+        <h1>Faturamento</h1>
+        <a href="PainelDeControle.html" class="icone-voltar" title="Voltar ao Painel">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+    </header>
+
+    <main class="painel-principal">
+        <div class="container-gerenciamento">
+            <h2>Relatório de Faturamento</h2>
+            <div class="filtros-container">
+                <button class="btn-filtro active" data-period="diario">Diário</button>
+                <button class="btn-filtro" data-period="semanal">Semanal</button>
+                <button class="btn-filtro" data-period="mensal">Mensal</button>
+                <button class="btn-filtro" data-period="anual">Anual</button>
+            </div>
+            <div class="cards-resumo-container">
+                <div class="card-resumo">
+                    <h3 class="card-titulo">Faturamento Total do Período</h3>
+                    <p id="valor-total-faturamento" class="card-valor">R$ 0,00</p>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="faturamentoChart"></canvas>
+            </div>
+            <h3 style="margin-top: 30px; color: #ea1d2c; font-family: 'Bebas Neue', sans-serif; font-size: 1.5em;">Performance de Vendas iFood</h3>
+            <div class="chart-container">
+                <canvas id="ifoodChart"></canvas>
+            </div>
+        </div>
+    </main>
+
+    <footer class="rodape-copyright">
+        <div class="rodape-info">
+           <p>&copy; 2026 CASA TAPERA. TODOS OS DIREITOS RESERVADOS | DESENVOLVIDO POR EQUIPE <a href="https://www.instagram.com/s.aib0t/" target="_blank" rel="noopener noreferrer" class="link-desenvolvedor"><span class="nome-desenvolvedor">S.AIB0T</span></a></p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('faturamentoChart').getContext('2d');
+            const ctxIfood = document.getElementById('ifoodChart').getContext('2d');
+            const valorTotalEl = document.getElementById('valor-total-faturamento');
+
+            const corLaranja = '#f06400';
+            const corAmarela = '#ffc600';
+            const corBranca = '#cecaca';
+
+            // Função auxiliar para obter a semana do mês a partir de uma data
+            function getWeekOfMonth(date) {
+                const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+                const dayOfMonth = date.getDate();
+                return Math.ceil((dayOfMonth + startOfMonth.getDay()) / 7);
+            }
+
+            // Função para processar os dados de faturamento a partir do localStorage
+            function processarDadosFaturamento() {
+                const dadosDeExemplo = {
+                    diario: {
+                        labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 120, 180, 250, 150, 0, 0, 0, 300, 450, 500, 400, 200, 100, 0],
+                        label: 'Faturamento de Hoje (Exemplo)'
+                    },
+                    semanal: {
+                        labels: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+                        data: [1250, 800, 950, 1100, 1500, 2100, 2300],
+                        label: 'Faturamento da Semana (Exemplo)'
+                    },
+                    mensal: {
+                        labels: ["Semana 1", "Semana 2", "Semana 3", "Semana 4"],
+                        data: [2500, 3100, 2800, 4200],
+                        label: 'Faturamento por Semana (Exemplo)'
+                    },
+                    anual: {
+                        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                        data: [8500, 7800, 9200, 8800, 10500, 11000, 9800, 12000, 11500, 13000, 12800, 15000],
+                        label: 'Faturamento Anual (Exemplo)'
+                    }
+                };
+
+                const todosPedidos = JSON.parse(localStorage.getItem('pedidosTapera')) || [];
+                // Se não houver pedidos, retorna os dados de exemplo
+                if (todosPedidos.length === 0) {
+                    return dadosDeExemplo;
+                }
+
+                const agora = new Date();
+                const hoje = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
+                const inicioSemana = new Date(hoje);
+                inicioSemana.setDate(hoje.getDate() - hoje.getDay());
+
+                const dadosProcessados = {
+                    mensal: { labels: [], data: [], label: `Faturamento por Semana (${agora.toLocaleString('pt-BR', { month: 'long' })})` },
+                    semanal: { labels: [], data: [], label: 'Faturamento da Semana Atual (R$)' },
+                    diario: { labels: [], data: [], label: 'Faturamento de Hoje (R$)' },
+                    anual: { labels: [], data: [], label: `Faturamento Anual (${agora.getFullYear()})` }
+                };
+
+                // Agrupa faturamento por mês, semana e dia
+                const faturamentoPorMes = {}; // Para a visão anual
+                const faturamentoPorSemanaDoMes = {}; // Para a visão mensal
+                const faturamentoSemanal = {};
+                const faturamentoDiario = {};
+
+                todosPedidos.forEach(pedido => {
+                    const dataPedido = new Date(parseInt(pedido.id.split('-')[1]));
+                    let totalPedido = 0;
+                    for (const itemName in pedido.items) {
+                        totalPedido += pedido.items[itemName].price * pedido.items[itemName].quantity;
+                    }
+
+                    // Processamento para a visão ANUAL (agrupado por mês do ano corrente)
+                    if (dataPedido.getFullYear() === agora.getFullYear()) {
+                        const mesIndex = dataPedido.getMonth(); // 0-11
+                        faturamentoPorMes[mesIndex] = (faturamentoPorMes[mesIndex] || 0) + totalPedido;
+                    }
+
+                    // Processamento para a visão MENSAL (agrupado por semana do mês corrente)
+                    if (dataPedido.getMonth() === agora.getMonth() && dataPedido.getFullYear() === agora.getFullYear()) {
+                        const semanaDoMes = getWeekOfMonth(dataPedido);
+                        faturamentoPorSemanaDoMes[semanaDoMes] = (faturamentoPorSemanaDoMes[semanaDoMes] || 0) + totalPedido;
+                    }
+
+                    // Processamento Semanal (apenas para a semana atual)
+                    if (dataPedido >= inicioSemana) {
+                        // CORREÇÃO: Usa getDay() que retorna um número (0=Dom, 1=Seg, etc.) para ser mais confiável.
+                        const diaIndex = dataPedido.getDay();
+                        faturamentoSemanal[diaIndex] = (faturamentoSemanal[diaIndex] || 0) + totalPedido;
+                    }
+
+                    // Processamento Diário (apenas para hoje)
+                    if (dataPedido.toDateString() === hoje.toDateString()) {
+                        const hora = dataPedido.getHours();
+                        faturamentoDiario[hora] = (faturamentoDiario[hora] || 0) + totalPedido;
+                    }
+                });
+
+                // Preenche os dados para a visão MENSAL (por semanas)
+                const semanasDoMesLabels = ["Semana 1", "Semana 2", "Semana 3", "Semana 4"];
+                dadosProcessados.mensal.labels = semanasDoMesLabels;
+                dadosProcessados.mensal.data = semanasDoMesLabels.map((_, index) => faturamentoPorSemanaDoMes[index + 1] || 0);
+
+                // Preenche os dados para a visão SEMANAL (por dias da semana)
+                dadosProcessados.semanal.labels = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+                dadosProcessados.semanal.data = dadosProcessados.semanal.labels.map((_, index) => faturamentoSemanal[index] || 0);
+                // Preenche os dados para a visão DIÁRIA (por horas)
+                dadosProcessados.diario.labels = Array.from({ length: 24 }, (_, i) => `${i}:00`);
+                dadosProcessados.diario.data = dadosProcessados.diario.labels.map((_, i) => faturamentoDiario[i] || 0);
+
+                // Preenche os dados para a visão ANUAL (por meses)
+                const nomesMeses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+                dadosProcessados.anual.labels = nomesMeses;
+                dadosProcessados.anual.data = nomesMeses.map((_, index) => faturamentoPorMes[index] || 0);
+
+                return dadosProcessados;
+            }
+            
+            const dados = processarDadosFaturamento();
+            
+            // Dados simulados para o gráfico do iFood
+            const dadosIfood = {
+                diario: {
+                    labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
+                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50, 80, 120, 60, 0, 0, 0, 150, 200, 250, 180, 100, 40, 0],
+                    label: 'Vendas iFood Hoje (R$)'
+                },
+                semanal: {
+                    labels: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+                    data: [600, 350, 400, 500, 700, 950, 1100],
+                    label: 'Vendas iFood Semana (R$)'
+                },
+                mensal: {
+                    labels: ["Semana 1", "Semana 2", "Semana 3", "Semana 4"],
+                    data: [1200, 1500, 1300, 1900],
+                    label: 'Vendas iFood por Semana (R$)'
+                },
+                anual: {
+                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                    data: [3500, 3200, 4000, 3800, 4500, 4800, 4200, 5100, 4900, 5500, 5400, 6200],
+                    label: 'Vendas iFood Anual (R$)'
+                }
+            };
+
+            // Configuração inicial do gráfico (Mensal)
+            const faturamentoChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: dados.diario?.labels || [], // Inicia com dados diários
+                    datasets: [{
+                        label: dados.diario?.label || 'Faturamento Diário (R$)',
+                        data: dados.diario?.data || [],
+                        backgroundColor: corLaranja,
+                        borderColor: corAmarela,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: corBranca },
+                            grid: { color: '#444' }
+                        },
+                        x: {
+                            ticks: { color: corBranca },
+                            grid: { color: '#444' }
+                        }
+                    },
+                    plugins: { legend: { labels: { color: corBranca } } }
+                }
+            });
+
+            // Configuração inicial do gráfico iFood
+            const ifoodChart = new Chart(ctxIfood, {
+                type: 'line',
+                data: {
+                    labels: dadosIfood.diario.labels,
+                    datasets: [{
+                        label: dadosIfood.diario.label,
+                        data: dadosIfood.diario.data,
+                        backgroundColor: 'rgba(234, 29, 44, 0.2)',
+                        borderColor: '#ea1d2c',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, ticks: { color: corBranca }, grid: { color: '#444' } },
+                        x: { ticks: { color: corBranca }, grid: { color: '#444' } }
+                    },
+                    plugins: { legend: { labels: { color: corBranca } } }
+                }
+            });
+
+            function atualizarCardTotal(periodo) {
+                const dadosPeriodo = dados[periodo]?.data || [];
+                const total = dadosPeriodo.reduce((sum, value) => sum + value, 0);
+                // Formata o número para o padrão brasileiro
+                valorTotalEl.textContent = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            }
+
+            // Lógica para os botões de filtro
+            const filtrosContainer = document.querySelector('.filtros-container');
+            filtrosContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('btn-filtro')) {
+                    const periodo = e.target.dataset.period;
+
+                    // Atualiza o estado ativo dos botões
+                    filtrosContainer.querySelector('.btn-filtro.active').classList.remove('active');
+                    e.target.classList.add('active');
+
+                    // Atualiza os dados do gráfico
+                    const novosDados = dados[periodo];
+                    faturamentoChart.data.labels = novosDados?.labels || [];
+                    faturamentoChart.data.datasets[0].data = novosDados?.data || [];
+                    faturamentoChart.data.datasets[0].label = novosDados?.label || `Faturamento ${periodo}`; 
+                    faturamentoChart.data.datasets[0].backgroundColor = corLaranja;
+                    
+                    // Atualiza o card de total
+                    atualizarCardTotal(periodo);
+                    
+                    // Atualiza gráfico iFood
+                    const novosDadosIfood = dadosIfood[periodo];
+                    ifoodChart.data.labels = novosDadosIfood.labels;
+                    ifoodChart.data.datasets[0].data = novosDadosIfood.data;
+                    ifoodChart.data.datasets[0].label = novosDadosIfood.label;
+                    ifoodChart.update();
+
+                    faturamentoChart.update();
+                }
+            });
+            // Carregamento inicial do card de total
+            atualizarCardTotal('diario');
+        });
+    </script>
+    <!-- VLibras Widget -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+</body>
+</html>

@@ -1,0 +1,365 @@
+/* Estilos para a página de Login do Cliente */
+
+body {
+    background-color: var(--color-black);
+    color: var(--color-white);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding-top: 0; /* Remove o padding-top herdado do estilo geral */
+}
+
+.cabecalho .link-logo {
+    display: inline-block;
+}
+
+.icone-voltar {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    transform: none;
+    font-size: 2.2em;
+    color: var(--color-white);
+    
+}
+
+@keyframes slideLeftSimple {
+    0% { transform: translateX(0); }
+    50% { transform: translateX(-4px); }
+    100% { transform: translateX(0); }
+}
+
+.icone-voltar:hover {
+    color: var(--color-orange);
+    animation: slideLeftSimple 0.8s ease-in-out infinite;
+}
+
+.mascote-login {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 355px;
+    z-index: 10;
+}
+
+@media (max-width: 1290px) {
+    .mascote-login {
+        display: none;
+    }
+}
+
+.conteudo-principal-login {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 15px;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 500px;
+    background-color: var(--color-dark-gray);
+    padding: 30px 40px;
+    border-radius: 8px;
+    border: 1px solid var(--color-orange);
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+}
+
+.login-container h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-orange);
+    text-align: center;
+    font-size: 2.5em;
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.login-subtitulo {
+    text-align: center;
+    color: #aaa;
+    font-size: 1em;
+    margin-top: 0;
+    margin-bottom: 30px;
+}
+
+#form-login-cliente {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.campo-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.campo-form label {
+    color: #ccc;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.campo-form input {
+    background-color: #333;
+    border: 1px solid #555;
+    color: white;
+    padding: 12px;
+    border-radius: 4px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1em;
+    width: 100%; /* Garante que o input ocupe todo o espaço do container pai */
+    transition: border-color 0.3s;
+}
+
+.campo-form input:focus {
+    border-color: var(--color-orange);
+    outline: none;
+}
+
+/* Força tema escuro em inputs date */
+input[type="date"] {
+    background-color: #1f1f1f !important;
+    color: #fff !important;
+    border: 1px solid #555 !important;
+    border-radius: 4px;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(200%) !important;
+}
+
+input[type="date"]::-moz-focus-inner {
+    border: 0;
+}
+
+.campo-form input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(200%);
+    color: white;
+}
+
+.campo-form input[type="date"]::-webkit-inner-spin-button,
+.campo-form input[type="date"]::-webkit-clear-button {
+    display: none;
+}
+
+.campo-form input[type="date"] {
+    color: white;
+}
+
+.campo-form-duplo {
+    display: flex;
+    gap: 15px;
+}
+.campo-form-duplo .campo-form {
+    flex: 1;
+}
+.campo-form-duplo .campo-cidade {
+    flex: 3; /* Cidade ocupa mais espaço */
+}
+.campo-form-duplo .campo-estado {
+    flex: 1; /* Estado (UF) ocupa menos espaço */
+}
+
+.cep-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.cep-container input {
+    flex-grow: 1;
+}
+.cep-container .fa-spinner {
+    position: absolute;
+    right: 15px;
+    color: var(--color-yellow);
+}
+
+.divisor-form {
+    border: none;
+    border-top: 1px solid #444;
+    margin: 10px 0;
+}
+
+.btn-principal-form {
+    background-color: var(--color-orange);
+    color: var(--color-black);
+    border: none;
+    padding: 14px;
+    border-radius: 5px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4em;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background-color 0.2s, transform 0.1s;
+    font-weight: bold;
+}
+
+.btn-principal-form:hover {
+    background-color: #ff8533;
+    transform: translateY(-2px);
+}
+
+.error-message-field, .error-message-form {
+    color: #e74c3c;
+    font-size: 0.85em;
+    min-height: 1.2em;
+    margin-top: 4px;
+}
+.error-message-form {
+    text-align: center;
+}
+
+.termos-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.85em;
+    color: #aaa;
+}
+
+.termos-container input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--color-orange);
+    cursor: pointer;
+}
+
+.termos-container a {
+    color: var(--color-yellow);
+    text-decoration: underline;
+    transition: color 0.2s;
+}
+
+.termos-container a:hover {
+    color: var(--color-orange);
+}
+
+.termos-container .link-modal {
+    color: var(--color-yellow);
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.termos-container .link-modal:hover {
+    color: var(--color-orange);
+}
+
+/* Estilos para o Modal de Documentos */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.oculto {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.modal-container-doc {
+    background-color: var(--color-dark-gray);
+    padding: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--color-orange);
+    width: 90%;
+    max-width: 800px;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    color: var(--color-white);
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-container-doc .btn-fechar-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    left: auto;
+    transform: none;
+    background: none;
+    border: none;
+    color: var(--color-white);
+    font-size: 1.8em;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.modal-container-doc .btn-fechar-modal:hover {
+    color: var(--color-orange);
+}
+
+#modal-doc-titulo { font-family: 'Bebas Neue', sans-serif; color: var(--color-yellow); font-size: 2em; margin-bottom: 20px; text-align: center; border-bottom: 1px solid #444; padding-bottom: 15px; }
+
+#modal-doc-conteudo { overflow-y: auto; padding-right: 15px; font-family: 'Roboto', sans-serif; line-height: 1.6; }
+
+#modal-doc-conteudo h3 { font-family: 'Bebas Neue', sans-serif; color: var(--color-orange); font-size: 1.5em; margin-top: 15px; margin-bottom: 10px; }
+
+#modal-doc-conteudo p { color: #ccc; margin-bottom: 15px; }
+
+
+/* Estilos do Rodapé (padrão Painel de Controle) */
+.rodape-copyright {
+    text-align: left;
+    position: static; /* Garante que o rodapé fique no fluxo normal do documento */
+    margin-top: auto; /* Empurra o rodapé para o final da página */
+    padding: 20px 40px;
+    border-top: 2px solid var(--color-orange);
+    color: var(--color-white);
+}
+
+.rodape-copyright p {
+    margin: 2px 0;
+    font-size: 0.8em; /* Aumentado para melhor leitura */
+    text-transform: uppercase;
+    color: #7c7676;
+}
+
+.link-desenvolvedor {
+    text-decoration: none;
+    color: inherit;
+}
+
+.nome-desenvolvedor {
+    display: inline-block;
+    transition: color 0.3s, transform 0.3s;
+    cursor: pointer;
+}
+
+.nome-desenvolvedor:hover {
+    color: var(--color-orange);
+    transform: scale(1.1);
+}
+
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 600px) {
+    .campo-form-duplo {
+        flex-direction: column;
+    }
+    .login-container {
+        padding: 30px 25px;
+    }
+    .rodape-copyright {
+        padding: 20px 25px;
+    }
+    .icone-voltar {
+        right: 25px;
+        font-size: 1.8em;
+    }
+}

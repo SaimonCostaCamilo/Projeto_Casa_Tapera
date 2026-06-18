@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automações de Marketing - Casa Tapera</title>
+    <link rel="stylesheet" href="../estilos/PainelDeControle.css">
+    <link rel="stylesheet" href="../estilos/AutomacoesMarketing.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        .opcoes-rede-social {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .btn-rede-social {
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: transform 0.2s;
+        }
+        .btn-rede-social:hover { transform: scale(1.02); }
+        .btn-whatsapp { background-color: #25D366; }
+        .btn-instagram { background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); }
+        .btn-email { background-color: #EA4335; }
+
+        .modal-container { position: relative; }
+        .btn-fechar-modal {
+            position: absolute; top: 15px; right: 15px; left: auto; transform: none;
+            background: none; border: none; color: white; font-size: 1.8em; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header class="cabecalho-painel">
+        <a href="PainelDeControle.html"><img src="../imagens/Logo_Tapera.jpeg" alt="Logotipo Casa Tapera" class="imagem-logo"></a>
+        <h1>Automações de Marketing</h1>
+        <a href="PainelDeControle.html" class="icone-voltar" title="Voltar ao Painel">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+    </header>
+
+    <main class="painel-principal">
+        <div class="container-gerenciamento">
+            <h2>Crie Automações e Engaje seus Clientes</h2>
+            <p class="instrucoes">Selecione uma plataforma para ver sugestões de mensagens automáticas e configurar seus envios.</p>
+
+            <div class="container-categorias-automacao">
+                <button class="btn-categoria-automacao active" data-target="coluna-inativo">
+                    <i class="fas fa-user-clock"></i> Cliente Inativo
+                </button>
+                <button class="btn-categoria-automacao" data-target="coluna-pos-compra">
+                    <i class="fas fa-star"></i> Pós-Compra
+                </button>
+                <button class="btn-categoria-automacao" data-target="coluna-aniversariante">
+                    <i class="fas fa-birthday-cake"></i> Aniversariante
+                </button>
+            </div>
+
+            <div class="container-sugestoes">
+                <div class="header-sugestoes">
+                    <h3>Sugestões e Automações</h3>
+                    <button id="btn-add-automacao" class="btn-acao-automacao"><i class="fas fa-plus"></i> Criar Automação</button>
+                </div>
+                <div id="grid-sugestoes" class="container-conteudo-automacao">
+                    <div class="coluna-automacao active" id="coluna-inativo">
+                        <h4 class="titulo-coluna-automacao"><i class="fas fa-user-clock"></i> Para Cliente Inativo</h4>
+                        <div class="cards-na-coluna">
+                            <div class="card-sugestao">
+                                <p class="sugestao-texto">"SUMIU POR QUÊ? 😱 [Nome do Cliente], a chapa tá quente e a saudade tá grande! Volta com 10% OFF agora mesmo: Cupom VOLTA10. Vem matar essa fome! 🍔🔥"</p>
+                                <div class="card-sugestao-acoes">
+                                    <button class="btn-excluir-automacao"><i class="fas fa-trash"></i> Excluir</button>
+                                    <button class="btn-usar-automacao"><i class="fas fa-rocket"></i> Usar Automação</button>
+                                </div>
+                            </div>
+                            <div class="card-sugestao">
+                                <p class="sugestao-texto">"ALERTA DE SAUDADE! 🚨 [Nome do Cliente], faz tempo que não te vemos! Que tal um PASTEL DOCE GRÁTIS pra adoçar o retorno? Use DOCEESAUDADE no próximo pedido! 🍫😋"</p>
+                                <div class="card-sugestao-acoes">
+                                    <button class="btn-excluir-automacao"><i class="fas fa-trash"></i> Excluir</button>
+                                    <button class="btn-usar-automacao"><i class="fas fa-rocket"></i> Usar Automação</button>
+                                </div>
+                            </div>
+                            <div class="card-sugestao">
+                                <p class="sugestao-texto">"O QUE ACONTECEU? 🤔 [Nome do Cliente], nosso cardápio tá sentindo sua falta! Tem BATATA FRITA P NA FAIXA te esperando se pedir hoje. Bora? 🍟🏃‍♂️"</p>
+                                <div class="card-sugestao-acoes">
+                                    <button class="btn-excluir-automacao"><i class="fas fa-trash"></i> Excluir</button>
+                                    <button class="btn-usar-automacao"><i class="fas fa-rocket"></i> Usar Automação</button>
+                                </div>
+                            </div>
+                            <div class="card-sugestao">
+                                <p class="sugestao-texto">"VOLTA LOGO! 😭 [Nome do Cliente], a Casa Tapera não é a mesma sem você. Toma aqui R$5 DE DESCONTO pra gente fazer as pazes: Cupom SAUDADE5. ❤️🍔"</p>
+                                <div class="card-sugestao-acoes">
+                                    <button class="btn-excluir-automacao"><i class="fas fa-trash"></i> Excluir</button>
+                                    <button class="btn-usar-automacao"><i class="fas fa-rocket"></i> Usar Automação</button>
+                                </div>
+                            </div>
+                            <div class="card-sugestao">
+                                <p class="sugestao-texto">"PROMOÇÃO RELÂMPAGO DE RETORNO! ⚡ [Nome do Cliente], só hoje: Comprou 1 Burguer, o 2º sai pela METADE DO PREÇO! É pra voltar com tudo! 🍔🍔💥"</p>
+                                <div class="card-sugestao-acoes">
+                                    <button class="btn-excluir-automacao"><i class="fas fa-trash"></i> Excluir</button>
+                                    <button class="btn-usar-automacao"><i class="fas fa-rocket"></i> Usar Automação</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="coluna-automacao" id="coluna-pos-compra">
+                        <h4 class="titulo-coluna-automacao"><i class="fas fa-star"></i> Para Pós-Compra</h4>
+                        <div class="cards-na-coluna">
+                            <div class="card-sugestao">
+                                <p class="sugestao-texto">"O PEDIDO CHEGOU! 🍔 [Nome do Cliente], esperamos que esteja tudo delicioso! Se puder, avalie a gente com 5 estrelas? Ajuda muito! ⭐⭐⭐⭐⭐"</p>
+                                <div class="card-sugestao-acoes">
+                                    <button class="btn-excluir-automacao"><i class="fas fa-trash"></i> Excluir</button>
+                                    <button class="btn-usar-automacao"><i class="fas fa-rocket"></i> Usar Automação</button>
+                                </div>
+                            </div>
+                            <div class="card-sugestao">
+                                <p class="sugestao-texto">"E AÍ, MATOU A FOME? 😋 [Nome do Cliente], conta pra gente o que achou! Adoramos receber feedback dos nossos clientes VIPs. 💬👇"</p>
+                                <div class="card-sugestao-acoes">
+                                    <button class="btn-excluir-automacao"><i class="fas fa-trash"></i> Excluir</button>
+                                    <button class="btn-usar-automacao"><i class="fas fa-rocket"></i> Usar Automação</button>
+                                </div>
+                            </div>
+                            <div class="card-sugestao">
+                                <p class="sugestao-texto">"FOTO OU NÃO ACONTECEU! 📸 [Nome do Cliente], posta seu lanche e marca @casatapera! Queremos repostar você nos nossos stories! 😉✨"</p>
+                                <div class="card-sugestao-acoes">
+                                    <button class="btn-excluir-automacao"><i class="fas fa-trash"></i> Excluir</button>
+                                    <button class="btn-usar-automacao"><i class="fas fa-rocket"></i> Usar Automação</button>
+                                </div>
+                            </div>
+                            <div class="card-sugestao">
+                                <p class="sugestao-texto">"OBRIGADO PELA PREFERÊNCIA! ❤️ [Nome do Cliente], foi um prazer atender você hoje. Esperamos te ver em breve para mais um burger incrível! 🍔🔥"</p>
+                                <div class="card-sugestao-acoes">
+                                    <button class="btn-excluir-automacao"><i class="fas fa-trash"></i> Excluir</button>
+                                    <button class="btn-usar-automacao"><i class="fas fa-rocket"></i> Usar Automação</button>
+                                </div>
+                            </div>
+                            <div class="card-sugestao">
+                                <p class="sugestao-texto">"AVALIAÇÃO RÁPIDA ⚡ [Nome do Cliente], de 0 a 10, qual a chance de você pedir de novo? Responde aqui pra gente melhorar sempre! 🚀"</p>
+                                <div class="card-sugestao-acoes">
+                                    <button class="btn-excluir-automacao"><i class="fas fa-trash"></i> Excluir</button>
+                                    <button class="btn-usar-automacao"><i class="fas fa-rocket"></i> Usar Automação</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="coluna-automacao" id="coluna-aniversariante">
+                        <h4 class="titulo-coluna-automacao"><i class="fas fa-birthday-cake"></i> Para Aniversariante</h4>
+                        <div class="cards-na-coluna">
+                            <div class="card-sugestao">
+                                <p class="sugestao-texto">"HOJE PODE TUDO! 🎉 [Nome do Cliente], feliz aniversário! Seu presente é um PASTEL DOCE na faixa no próximo pedido. Aproveite seu dia! 🍫🎈"</p>
+                                <div class="card-sugestao-acoes">
+                                    <button class="btn-excluir-automacao"><i class="fas fa-trash"></i> Excluir</button>
+                                    <button class="btn-usar-automacao"><i class="fas fa-rocket"></i> Usar Automação</button>
+                                </div>
+                            </div>
+                            <div class="card-sugestao">
+                                <p class="sugestao-texto">"PARABÉNS [Nome do Cliente]! 🎂 A Casa Tapera quer celebrar com você: Ganhe ENTREGA GRÁTIS hoje! Use o cupom NIVERFRETE. 🛵💨"</p>
+                                <div class="card-sugestao-acoes">
+                                    <button class="btn-excluir-automacao"><i class="fas fa-trash"></i> Excluir</button>
+                                    <button class="btn-usar-automacao"><i class="fas fa-rocket"></i> Usar Automação</button>
+                                </div>
+                            </div>
+                            <div class="card-sugestao">
+                                <p class="sugestao-texto">"FELIZ ANIVERSÁRIO! 🥳 [Nome do Cliente], você merece o melhor! Toma aqui 15% OFF pra comemorar com a gente: Cupom FESTA15. 🎁🍔"</p>
+                                <div class="card-sugestao-acoes">
+                                    <button class="btn-excluir-automacao"><i class="fas fa-trash"></i> Excluir</button>
+                                    <button class="btn-usar-automacao"><i class="fas fa-rocket"></i> Usar Automação</button>
+                                </div>
+                            </div>
+                            <div class="card-sugestao">
+                                <p class="sugestao-texto">"BRINDE DE ANIVERSÁRIO! 🥂 [Nome do Cliente], parabéns! Peça qualquer lanche hoje e ganhe um SUCO NATURAL grátis. Saúde! 🍹✨"</p>
+                                <div class="card-sugestao-acoes">
+                                    <button class="btn-excluir-automacao"><i class="fas fa-trash"></i> Excluir</button>
+                                    <button class="btn-usar-automacao"><i class="fas fa-rocket"></i> Usar Automação</button>
+                                </div>
+                            </div>
+                            <div class="card-sugestao">
+                                <p class="sugestao-texto">"SEU DIA, SEU COMBO! 👑 [Nome do Cliente], preparamos uma oferta exclusiva de aniversário pra você. Vem conferir no cardápio! 🎈🍔"</p>
+                                <div class="card-sugestao-acoes">
+                                    <button class="btn-excluir-automacao"><i class="fas fa-trash"></i> Excluir</button>
+                                    <button class="btn-usar-automacao"><i class="fas fa-rocket"></i> Usar Automação</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="modal-selecionar-cliente" class="modal-overlay oculto">
+        <div class="modal-container">
+            <button class="btn-fechar-modal">&times;</button>
+            <h3>Selecionar Cliente para Envio</h3>
+            <div class="container-busca-cliente-modal">
+                <input type="text" id="busca-cliente-modal" placeholder="Buscar cliente...">
+            </div>
+            <div id="lista-clientes-modal" class="lista-clientes-modal">
+            </div>
+            <div class="modal-acoes-cliente">
+                <button id="btn-confirmar-selecao" class="btn-acao-automacao" disabled>Copiar Mensagem e Abrir</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-criar-automacao" class="modal-overlay oculto">
+        <div class="modal-container">
+            <button class="btn-fechar-modal">&times;</button>
+            <h3>Nova Automação</h3>
+            <form id="form-nova-automacao">
+                <label for="categoria-nova-automacao" style="display: block; margin-bottom: 8px; color: #ccc;">Categoria:</label>
+                <select id="categoria-nova-automacao" style="width: 100%; padding: 10px; margin-bottom: 15px; background-color: #333; border: 1px solid #555; border-radius: 4px; color: white; font-family: 'Roboto', sans-serif;" required>
+                    <option value="coluna-inativo">Cliente Inativo</option>
+                    <option value="coluna-pos-compra">Pós-Compra</option>
+                    <option value="coluna-aniversariante">Aniversariante</option>
+                </select>
+                <textarea id="texto-nova-automacao" class="textarea-automacao" placeholder="Digite sua mensagem aqui..." required></textarea>
+                <div class="modal-acoes-cliente" style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="btn-cancelar-nova-automacao">Cancelar</button>
+                    <button type="submit" class="btn-salvar-nova-automacao">Salvar Automação</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-escolher-rede-social" class="modal-overlay oculto">
+        <div class="modal-container">
+            <button class="btn-fechar-modal">&times;</button>
+            <h3>Escolher Canal de Envio</h3>
+            <p style="text-align: center; color: #ccc;">Por onde você deseja enviar esta mensagem?</p>
+            <div class="opcoes-rede-social">
+                <button class="btn-rede-social btn-whatsapp" data-rede="whatsapp">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </button>
+                <button class="btn-rede-social btn-instagram" data-rede="instagram">
+                    <i class="fab fa-instagram"></i> Instagram
+                </button>
+                <button class="btn-rede-social btn-email" data-rede="email">
+                    <i class="fas fa-envelope"></i> E-mail
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="rodape-copyright">
+        <div class="rodape-info">
+           <p>&copy; 2026 CASA TAPERA. TODOS OS DIREITOS RESERVADOS | DESENVOLVIDO POR EQUIPE <a href="https://www.instagram.com/s.aib0t/" target="_blank" rel="noopener noreferrer" class="link-desenvolvedor"><span class="nome-desenvolvedor">S.AIB0T</span></a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Função para salvar item na lixeira
+        function salvarNaLixeira(item) {
+            const lixeira = JSON.parse(localStorage.getItem('casaTaperaLixeira')) || [];
+            
+            const itemLixeira = {
+                id: 'auto_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                tipo: item.tipo,
+                dado: item.dado,
+                origem: item.origem,
+                dataExclusao: new Date().toISOString()
+            };
+            
+            lixeira.unshift(itemLixeira);
+            localStorage.setItem('casaTaperaLixeira', JSON.stringify(lixeira));
+            
+            // Notifica o sistema
+            window.dispatchEvent(new CustomEvent('lixeiraAtualizada'));
+        }
+    </script>
+    <script src="../animações/AutomacoesMarketing.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const modalRedeSocial = document.getElementById('modal-escolher-rede-social');
+            const btnFecharModalRede = modalRedeSocial.querySelector('.btn-fechar-modal');
+            const btnsUsarAutomacao = document.querySelectorAll('.btn-usar-automacao');
+            
+            const modalCriarAutomacao = document.getElementById('modal-criar-automacao');
+            const btnAbrirCriar = document.getElementById('btn-add-automacao');
+            const formNovaAutomacao = document.getElementById('form-nova-automacao');
+            let textoParaEnvio = '';
+
+            const categoryButtons = document.querySelectorAll('.btn-categoria-automacao');
+            const columns = document.querySelectorAll('.coluna-automacao');
+
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    categoryButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    const targetId = button.getAttribute('data-target');
+                    columns.forEach(col => col.classList.remove('active'));
+                    document.getElementById(targetId).classList.add('active');
+                });
+            });
+
+            function abrirModalRedeSocial(texto) {
+                textoParaEnvio = texto.replace(/^"|"$/g, '');
+                modalRedeSocial.classList.remove('oculto');
+            }
+
+            btnFecharModalRede.addEventListener('click', () => {
+                modalRedeSocial.classList.add('oculto');
+            });
+            
+            modalRedeSocial.addEventListener('click', (e) => {
+                if (e.target === modalRedeSocial) modalRedeSocial.classList.add('oculto');
+            });
+
+            if (btnAbrirCriar) {
+                btnAbrirCriar.addEventListener('click', () => {
+                    const colunaAtiva = document.querySelector('.coluna-automacao.active');
+                    if (colunaAtiva) {
+                        const selectCategoria = document.getElementById('categoria-nova-automacao');
+                        if (selectCategoria) selectCategoria.value = colunaAtiva.id;
+                    }
+                    modalCriarAutomacao.classList.remove('oculto');
+                });
+            }
+
+            modalCriarAutomacao.querySelectorAll('.btn-fechar-modal, .btn-cancelar-nova-automacao').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    modalCriarAutomacao.classList.add('oculto');
+                });
+            });
+
+            document.querySelectorAll('.btn-excluir-automacao').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    if (confirm('Tem certeza que deseja excluir esta automação?')) {
+                        const card = e.target.closest('.card-sugestao');
+                        const texto = card.querySelector('.sugestao-texto').textContent;
+                        const coluna = card.closest('.coluna-automacao');
+                        const tituloColuna = coluna.querySelector('.titulo-coluna-automacao').textContent.trim();
+                        
+                        // Salvar na lixeira
+                        salvarNaLixeira({
+                            tipo: 'automacao',
+                            dado: {
+                                texto: texto,
+                                categoria: tituloColuna
+                            },
+                            origem: 'Automações'
+                        });
+                        
+                        card.remove();
+                    }
+                });
+            });
+
+            formNovaAutomacao.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const texto = document.getElementById('texto-nova-automacao').value;
+                const categoriaId = document.getElementById('categoria-nova-automacao').value;
+                
+                const colunaAlvo = document.getElementById(categoriaId);
+                if (colunaAlvo) {
+                    const containerCards = colunaAlvo.querySelector('.cards-na-coluna');
+                    const novoCard = document.createElement('div');
+                    novoCard.className = 'card-sugestao';
+                    novoCard.innerHTML = `
+                        <p class="sugestao-texto">"${texto}"</p>
+                        <div class="card-sugestao-acoes">
+                            <button class="btn-excluir-automacao"><i class="fas fa-trash"></i> Excluir</button>
+                            <button class="btn-usar-automacao"><i class="fas fa-rocket"></i> Usar Automação</button>
+                        </div>
+                    `;
+                    
+                    novoCard.querySelector('.btn-usar-automacao').addEventListener('click', () => abrirModalRedeSocial(texto));
+                    
+                    novoCard.querySelector('.btn-excluir-automacao').addEventListener('click', () => {
+                        if (confirm('Tem certeza que deseja excluir esta automação?')) {
+                            const texto = novoCard.querySelector('.sugestao-texto').textContent;
+                            const coluna = novoCard.closest('.coluna-automacao');
+                            const tituloColuna = coluna.querySelector('.titulo-coluna-automacao').textContent.trim();
+                            
+                            // Salvar na lixeira
+                            salvarNaLixeira({
+                                tipo: 'automacao',
+                                dado: {
+                                    texto: texto,
+                                    categoria: tituloColuna
+                                },
+                                origem: 'Automações'
+                            });
+                            
+                            novoCard.remove();
+                        }
+                    });
+
+                    containerCards.insertBefore(novoCard, containerCards.firstChild);
+                    modalCriarAutomacao.classList.add('oculto');
+                    formNovaAutomacao.reset();
+                }
+            });
+
+            btnsUsarAutomacao.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const card = e.target.closest('.card-sugestao');
+                    const texto = card.querySelector('.sugestao-texto').textContent;
+                    abrirModalRedeSocial(texto);
+                });
+            });
+
+            const btnsRede = modalRedeSocial.querySelectorAll('.btn-rede-social');
+            btnsRede.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const rede = btn.dataset.rede;
+                    if (rede === 'whatsapp') {
+                        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textoParaEnvio)}`, '_blank');
+                    } else if (rede === 'email') {
+                        window.location.href = `mailto:?body=${encodeURIComponent(textoParaEnvio)}`;
+                    } else if (rede === 'instagram') {
+                        navigator.clipboard.writeText(textoParaEnvio).then(() => {
+                            alert('Texto copiado! Cole no Direct do Instagram.');
+                            window.open('https://www.instagram.com/direct/inbox/', '_blank');
+                        });
+                    }
+                    modalRedeSocial.classList.add('oculto');
+                });
+            });
+        });
+    </script>
+    <!-- VLibras Widget -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+</body>
+</html>

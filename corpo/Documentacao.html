@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentação - Sistema Casa Tapera</title>
+    <!-- Estilos Globais e do Painel -->
+    <link rel="stylesheet" href="../estilos/PainelDeControle.css">
+    <!-- Estilos Específicos da Documentação -->
+    <link rel="stylesheet" href="../estilos/Documentacao.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+</head>
+<body>
+
+    <header class="cabecalho-painel" style="margin-bottom: 0; flex-direction: row; justify-content: space-between; padding: 15px 30px;">
+        <a href="PainelDeControle.html"><img src="../imagens/Logo_Tapera.jpeg" alt="Logotipo Casa Tapera" class="imagem-logo" style="height: 50px; width: auto;"></a>
+        <h1>Documentação do Sistema</h1>
+        <a href="PainelDeControle.html" class="icone-voltar" title="Voltar ao Painel">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+    </header>
+
+    <div class="container-documentacao">
+        <section class="intro-doc">
+            <h2>Bem-vindo ao Sistema de Gestão Casa Tapera</h2>
+            <p>
+                Esta documentação fornece uma visão geral da arquitetura, funcionalidades e casos de uso do sistema de gestão da Casa Tapera. O sistema foi projetado para ser uma ferramenta completa, abrangendo desde o gerenciamento de mesas e comandas em tempo real até a análise de dados financeiros e de vendas.
+            </p>
+        </section>
+
+        <section class="secao-doc">
+            <h3><i class="fas fa-tasks"></i>Casos de Uso Principais</h3>
+            <p>Os casos de uso descrevem as interações entre os usuários (atores) e o sistema para atingir um objetivo específico. Abaixo estão detalhados os fluxos mais importantes da aplicação.</p>
+
+            <div class="guia-container" style="grid-template-columns: 1fr; gap: 30px;">
+                <!-- Caso de Uso 1: Gerenciar Comanda -->
+                <div class="guia-item">
+                    <h4 class="guia-titulo" style="font-size: 1.8em; color: var(--color-yellow);"><i class="fas fa-file-invoice-dollar"></i>Caso de Uso: Gerenciar Comanda de Mesa</h4>
+                    <ul class="guia-lista">
+                        <li>
+                            <strong>Ator Primário:</strong>
+                            <span>Garçom / Operador de Caixa</span>
+                        </li>
+                        <li>
+                            <strong>Resumo:</strong>
+                            <span>Este caso de uso abrange o ciclo de vida completo de uma comanda, desde a adição de itens até o fechamento da conta.</span>
+                        </li>
+                        <li>
+                            <strong>Cenário Principal (Fluxo de Sucesso)</strong>
+                            <span>
+                                1. O Garçom seleciona uma mesa <strong>Ocupada</strong> na tela de distribuição.<br>
+                                2. O sistema exibe os detalhes da comanda (itens e total).<br>
+                                3. O Garçom clica em <strong>"Adicionar Item"</strong> e seleciona um produto no modal do cardápio.<br>
+                                4. O sistema adiciona o item, recalcula o total e atualiza a visualização da comanda.<br>
+                                5. Ao final, o Garçom clica em <strong>"Fechar Conta"</strong>.<br>
+                                6. O sistema abre o modal de pagamento.<br>
+                                7. O Garçom seleciona o método (Dinheiro, Cartão ou Pix).<br>
+                                8. O sistema registra a venda no caixa, limpa a comanda e altera o status da mesa para <strong>Livre</strong>.
+                            </span>
+                        </li>
+                        <li>
+                            <strong>Cenários Alternativos</strong>
+                            <span>
+                                - <strong>Alterar Quantidade:</strong> O Garçom utiliza os botões "+" ou "-" ao lado de um item para ajustar sua quantidade, e o sistema recalcula o total automaticamente.<br>
+                                - <strong>Remover Item:</strong> O Garçom clica no botão "×" para remover um item da comanda, confirma a ação, e o sistema o retira da lista, atualizando o total.
+                            </span>
+                        </li>
+                        <li>
+                            <strong>Cenário de Exceção</strong>
+                            <span>
+                                - Se o sistema não conseguir salvar os dados no navegador (ex: `localStorage` cheio), uma mensagem de erro pode ser exibida, e as alterações não serão persistidas.
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Caso de Uso 2: Gerenciar QR Codes -->
+                <div class="guia-item">
+                    <h4 class="guia-titulo" style="font-size: 1.8em; color: var(--color-yellow);"><i class="fas fa-qrcode"></i>Caso de Uso: Gerar QR Code de Mesa</h4>
+                    <ul class="guia-lista">
+                        <li>
+                            <strong>Ator Primário:</strong>
+                            <span>Gerente</span>
+                        </li>
+                        <li>
+                            <strong>Resumo:</strong>
+                            <span>Permite ao gerente visualizar e baixar QR Codes individuais para cada mesa, que direcionam os clientes para o cardápio digital.</span>
+                        </li>
+                        <li>
+                            <strong>Cenário Principal (Fluxo de Sucesso)</strong>
+                            <span>
+                                1. O Gerente clica no botão <strong>"Gerenciar QR Codes"</strong>.<br>
+                                2. O sistema exibe um modal com a lista de mesas cadastradas.<br>
+                                3. O Gerente seleciona uma mesa da lista (ex: "Mesa 05").<br>
+                                4. O sistema gera e exibe o QR Code para a URL da mesa selecionada na área de visualização.<br>
+                                5. O Gerente clica em <strong>"Baixar QR Code"</strong>.<br>
+                                6. O sistema inicia o download de um arquivo de imagem PNG (ex: `QRCode-Mesa-05.png`).
+                            </span>
+                        </li>
+                        <li>
+                            <strong>Cenários Alternativos</strong>
+                            <span>
+                                - <strong>Mesa recém-criada:</strong> Após criar uma nova mesa no modal "Gerenciar Mesas", ela aparecerá automaticamente na lista do gerenciador de QR Codes, pronta para ter seu código gerado.
+                            </span>
+                        </li>
+                        <li>
+                            <strong>Cenário de Exceção</strong>
+                            <span>
+                                - Se a biblioteca externa (`qrcode.js`) não for carregada por falha de conexão, o sistema exibirá um alerta de erro ao tentar visualizar o QR Code, e a geração falhará.
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="secao-doc">
+            <h3><i class="fas fa-project-diagram"></i>Diagrama de Caso de Uso</h3>
+            <div class="diagrama-container">
+                <div class="use-case-diagram">
+                    <div class="actor">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Gerente</span>
+                    </div>
+                    <div class="use-cases-group">
+                        <div class="use-case-oval">Gerenciar Mesas</div>
+                        <div class="use-case-oval">Gerenciar QR Codes</div>
+                        <div class="use-case-oval">Ver Relatórios</div>
+                        <div class="use-case-oval">Gerenciar Cardápio</div>
+                    </div>
+                    <div class="actor">
+                        <i class="fas fa-user"></i>
+                        <span>Garçom / Caixa</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="secao-doc">
+            <h3><i class="fas fa-database"></i>Modelo Entidade-Relacionamento (MER)</h3>
+            <p>O diagrama abaixo representa as principais entidades do sistema e como elas se relacionam. Ele serve como base para a estrutura do banco de dados ou, neste caso, para a organização dos dados salvos localmente (`localStorage`).</p>
+            <div class="diagrama-container">
+                <!-- Conteúdo do Diagrama MER aqui -->
+                <p style="text-align: center; color: #666;"><i>(Diagrama MER a ser inserido)</i></p>
+            </div>
+        </section>
+    </div>
+
+    <footer class="rodape-copyright" style="text-align: center; position: static; border-top: 2px solid var(--color-orange); margin-top: 40px;">
+        <p>&copy; 2026 CASA TAPERA. TODOS OS DIREITOS RESERVADOS | DESENVOLVIDO POR EQUIPE <a href="https://www.instagram.com/s.aib0t/" target="_blank" rel="noopener noreferrer" class="link-desenvolvedor"><span class="nome-desenvolvedor">S.AIB0T</span></a></p>
+    </footer>
+
+    <!-- VLibras Widget -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+</body>
+</html>

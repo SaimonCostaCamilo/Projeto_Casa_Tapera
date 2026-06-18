@@ -1,0 +1,836 @@
+/* Estilos específicos para a página de Personalizar Cardápio */
+
+.container-gerenciamento {
+    background-color: var(--color-dark-gray);
+    padding: 25px;
+    border-radius: 8px;
+    margin: 30px auto;
+    width: 95%;
+    max-width: 1200px;
+    box-sizing: border-box;
+}
+.container-gerenciamento h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-yellow);
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 2.5em;
+    border-bottom: 2px solid var(--color-orange);
+    padding-bottom: 10px;
+}
+
+/* --- Estilos para as Abas de Edição (Padrão Tapera) --- */
+.container-abas {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #333;
+}
+
+/* Estilo extra para abas no index (cliente) */
+#abas-menu-cliente {
+    margin-bottom: 40px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.btn-aba {
+    padding: 12px 30px;
+    border: none;
+    background-color: transparent;
+    color: #888;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 4px solid transparent;
+    margin-bottom: -2px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.btn-aba:hover { color: var(--color-white); }
+
+.btn-aba.active {
+    color: var(--color-orange);
+    border-bottom-color: var(--color-orange);
+}
+
+.grid-edicao-cardapio {
+    display: grid;
+    /* minmax ajustado para permitir 3 colunas em ~700px e 4 colunas em telas largas */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+    gap: 20px;
+}
+.categoria-cardapio {
+    background-color: #2a2a2a;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #444;
+}
+.categoria-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #555;
+    padding-bottom: 8px;
+}
+.categoria-cardapio h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-orange);
+    font-size: 1.8em;
+}
+.btn-reorganizar-categoria {
+    display: none !important;
+}
+.item-editavel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #3a3a3a;
+}
+.item-editavel:last-child {
+    border-bottom: none;
+}
+.nome-item-editavel {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1em;
+    flex-grow: 1; /* Garante que o nome ocupe o espaço disponível */
+    margin-right: 10px; /* Espaço entre o nome e as ações */
+}
+.acoes-item {
+    display: flex;
+    align-items: center;
+    gap: 6px; /* Espaçamento entre os botões e o preço */
+}
+.container-preco {
+    position: relative; /* Permite posicionamento absoluto do R$ */
+}
+.prefixo-moeda {
+    position: absolute; /* Posiciona o R$ sobre o campo */
+    left: 10px; /* Distância da esquerda */
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa; /* Cor do R$ no modo de edição */
+    pointer-events: none; /* Permite clicar através do R$ no input */
+    font-family: 'Roboto', sans-serif;
+    font-weight: normal;
+}
+.input-preco {
+    background-color: #333;
+    color: var(--color-white);
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 6px 10px 6px 28px; /* Padding ajustado para R$ e alinhamento à direita */
+    width: 100px; /* Aumentado para 100px */
+    text-align: right;
+}
+
+.input-preco:disabled {
+    background-color: transparent;
+    border-color: transparent;
+    color: var(--color-yellow);
+    font-weight: bold;
+    /* A regra de padding é herdada de .input-preco para manter o tamanho estável */
+}
+/* Seleciona o prefixo quando o input dentro do mesmo container está desabilitado */
+.container-preco:has(.input-preco:disabled) .prefixo-moeda {
+    color: #888;
+}
+
+.btn-ocultar-item { color: #888; }
+.btn-ocultar-item:hover { color: var(--color-white); }
+
+.item-editavel.item-desativado {
+    opacity: 0.5;
+}
+.item-editavel.item-desativado .nome-item-editavel {
+    text-decoration: line-through;
+    color: #888;
+}
+
+.categoria-cardapio.arrastando {
+    opacity: 0.4;
+    border: 2px dashed var(--color-orange);
+    cursor: grabbing;
+}
+.item-editavel.arrastando-item {
+    opacity: 0.5;
+    background-color: #333;
+    border: 1px dashed var(--color-orange);
+    cursor: grabbing;
+    transform: scale(0.98);
+}
+
+.btn-acao-item {
+    background: none;
+    border: none;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: transform 0.2s;
+    padding: 0; /* Garante que não haja padding extra */
+}
+.btn-acao-item:hover {
+    transform: scale(1.2);
+}
+.btn-editar-item { color: var(--color-yellow); }
+.btn-salvar-item {
+    display: none; /* Escondido por padrão */
+    color: var(--color-green);
+}
+.btn-remover-item {
+    color: #aaa; /* Cor cinza/branca padrão */
+}
+.btn-remover-item:hover {
+    color: var(--color-red); /* Cor vermelha no hover */
+}
+
+
+.container-atualizar-geral {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 2px solid var(--color-orange);
+}
+/* Estilo copiado do botão "Atualizar Pedidos" do PainelDeControle.css */
+#btn-atualizar-index,
+#btn-exportar-pdf {
+    padding: 10px 20px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2em;
+    border: 2px solid var(--color-orange);
+    background-color: var(--color-dark-gray);
+    color: var(--color-white);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+#btn-atualizar-index:hover,
+#btn-exportar-pdf:hover {
+    background-color: var(--color-orange);
+    color: var(--color-black);
+}
+
+/* Animação de giro (copiada do PainelDeControle.css) */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.girando {
+    display: inline-block;
+    animation: spin 1s linear;
+}
+
+
+/* Estilos para o botão Adicionar Novo Item */
+.container-add-item {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 25px;
+    width: 100%;
+}
+
+/* Novo estilo para o botão de exportar no topo */
+#btn-exportar-pdf-topo,
+#btn-add-novo-item, #btn-gerenciar-categorias {
+    padding: 10px 20px;
+    font-family: 'Bebas Neue', sans-serif; /* Usa a fonte padrão para botões */
+    font-size: 1.2em; /* Alinha o tamanho da fonte */
+    border: 2px solid var(--color-orange); /* Borda laranja */
+    background-color: var(--color-dark-gray); /* Fundo cinza escuro */
+    color: var(--color-white); /* Texto branco */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+#btn-exportar-pdf-topo:hover,
+#btn-add-novo-item:hover, 
+#btn-gerenciar-categorias:hover {
+    background-color: var(--color-orange); /* Fundo laranja no hover */
+    color: var(--color-black); /* Texto preto no hover */    
+}
+
+/* Estilos para o Modal de Adicionar Item (copiado e adaptado de MeusClientesRelatorio) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1002;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.modal-overlay.visivel {
+    opacity: 1;
+    pointer-events: auto;
+}
+.modal-container {
+    background-color: var(--color-dark-gray);
+    padding: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--color-orange);
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    max-height: 85vh; /* Adicionado para consistência */
+    overflow-y: auto; /* Adicionado para consistência */
+}
+.modal-container .btn-fechar-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none; border: none; color: var(--color-white); font-size: 1.8em; cursor: pointer;
+}
+/* Ajuste para a barra de rolagem dentro do modal respeitar as bordas arredondadas */
+.modal-container::-webkit-scrollbar-track {
+    border-radius: 0 8px 8px 0; /* Aplica o raio da borda apenas no canto direito */
+}
+.modal-container h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-yellow);
+    font-size: 2em;
+    margin-bottom: 20px;
+    text-align: center;
+}
+.form-novo-item label { display: block; margin-bottom: 5px; }
+.form-novo-item input, .form-novo-item select, .form-novo-item textarea {
+    width: 100%; padding: 10px; margin-bottom: 15px; background-color: #333;
+    border: 1px solid #555; border-radius: 4px; color: var(--color-white);
+    font-family: 'Roboto', sans-serif;
+}
+.form-novo-item button {
+    width: 100%; /* Mantém a largura total */
+    padding: 12px; /* Mantém o padding */
+    background-color: var(--color-dark-gray); /* Fundo cinza escuro */
+    color: var(--color-white); /* Texto branco */
+    border: 2px solid var(--color-orange); /* Borda laranja */
+    border-radius: 5px; /* Mantém o raio da borda */
+    font-family: 'Bebas Neue', sans-serif; /* Mantém a fonte */
+    font-size: 1.2em; /* Mantém o tamanho da fonte */
+    text-transform: uppercase; /* Mantém o texto em maiúsculas */
+    cursor: pointer; /* Mantém o cursor */
+    margin-top: 10px; /* Adiciona um espaçamento acima do botão */
+    transition: all 0.3s ease; /* Transição suave para todas as propriedades */
+}
+.form-novo-item button:hover {
+    background-color: var(--color-orange); /* Fundo laranja no hover */
+    color: var(--color-black); /* Texto preto no hover */
+}
+
+/* Estilos para o Modal de Gerenciar Categorias (adaptado de EstoqueControle.css) */
+#lista-categorias-gerenciar {
+    list-style: none;
+    margin-bottom: 20px;
+    max-height: 30vh;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+#lista-categorias-gerenciar li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #2a2a2a;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+.btn-remover-categoria-modal {
+    background: none; border: none; font-size: 1.1em;
+    color: #aaa; cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-remover-categoria-modal:hover { color: var(--color-red); transform: scale(1.2); }
+.form-nova-categoria {
+    border-top: 1px solid #444;
+    padding-top: 20px;
+    margin-top: 15px;
+}
+.form-nova-categoria h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-orange);
+    font-size: 1.5em;
+    margin-bottom: 15px;
+}
+.form-nova-categoria div { display: flex; gap: 10px; }
+.form-nova-categoria input { 
+    flex-grow: 1; 
+    padding: 10px; 
+    background-color: #333;
+    border: 1px solid #555; 
+    border-radius: 4px; 
+    color: var(--color-white);
+    font-family: 'Roboto', sans-serif;
+}
+.form-nova-categoria button {
+    padding: 10px 20px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1em;
+    border: 2px solid var(--color-orange);
+    background-color: var(--color-dark-gray);
+    color: var(--color-white);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+}
+.form-nova-categoria button:hover {
+    background-color: var(--color-orange);
+    color: var(--color-black);
+}
+
+
+/* Estilos para a edição de categorias dentro do modal */
+.nome-categoria-display {
+    flex-grow: 1;
+    margin-right: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.input-editar-categoria {
+    width: 100%;
+    padding: 5px 10px;
+    background-color: #333;
+    border: 1px solid var(--color-orange);
+    border-radius: 4px;
+    color: var(--color-white);
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.95em;
+}
+
+.acoes-categoria-modal {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Cores específicas para os botões do modal */
+.btn-editar-categoria-modal { 
+    color: var(--color-yellow) !important; 
+}
+
+.btn-salvar-categoria-modal { 
+    color: var(--color-green) !important; 
+}
+
+.container-gerenciamento {
+    background-color: var(--color-dark-gray);
+    padding: 25px;
+    border-radius: 8px;
+    margin: 30px auto;
+    width: 95%;
+    max-width: 1200px;
+    box-sizing: border-box;
+}
+.container-gerenciamento h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-yellow);
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 2.5em;
+    border-bottom: 2px solid var(--color-orange);
+    padding-bottom: 10px;
+}
+.grid-edicao-cardapio {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: 25px;
+}
+.categoria-cardapio {
+    background-color: #2a2a2a;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #444;
+}
+.categoria-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #555;
+    padding-bottom: 8px;
+}
+.categoria-cardapio h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-orange);
+    font-size: 1.8em;
+}
+.btn-reorganizar-categoria {
+    display: none !important;
+}
+.categoria-cardapio.arrastando {
+    opacity: 0.4;
+    border: 2px dashed var(--color-orange);
+    cursor: grabbing;
+}
+.item-editavel.arrastando-item {
+    opacity: 0.5;
+    background-color: #333;
+    border: 1px dashed var(--color-orange);
+    cursor: grabbing;
+    transform: scale(0.98);
+}
+.item-editavel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #3a3a3a;
+}
+.item-editavel:last-child {
+    border-bottom: none;
+}
+.nome-item-editavel {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1em;
+    flex-grow: 1; /* Garante que o nome ocupe o espaço disponível */
+    margin-right: 10px; /* Espaço entre o nome e as ações */
+}
+.acoes-item {
+    display: flex;
+    align-items: center;
+    gap: 6px; /* Espaçamento entre os botões e o preço */
+}
+.container-preco {
+    position: relative; /* Permite posicionamento absoluto do R$ */
+}
+.prefixo-moeda {
+    position: absolute; /* Posiciona o R$ sobre o campo */
+    left: 8px; /* Distância da esquerda */
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa; /* Cor do R$ no modo de edição */
+    pointer-events: none; /* Permite clicar através do R$ no input */
+    font-family: 'Roboto', sans-serif;
+    font-weight: normal;
+}
+.input-preco {
+    background-color: #333;
+    color: var(--color-white);
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 6px 10px 6px 28px; /* Padding ajustado para R$ e alinhamento à direita */
+    width: 95px;
+    text-align: right;
+}
+
+.input-preco {
+    background-color: transparent;
+    border-color: transparent;
+    color: var(--color-yellow);
+    font-weight: bold;
+    /* A regra de padding é herdada de .input-preco para manter o tamanho estável */
+}
+/* Seleciona o prefixo quando o input dentro do mesmo container está desabilitado */
+.container-preco:has(.input-preco) .prefixo-moeda {
+    color: #888; /* Cor do R$ alterada para cinza escuro no modo de visualização */
+}
+
+.btn-acao-item {
+    background: none;
+    border: none;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: transform 0.2s;
+    padding: 0; /* Garante que não haja padding extra */
+}
+.btn-acao-item:hover {
+    transform: scale(1.2);
+}
+.btn-editar-item { color: var(--color-yellow); }
+.btn-salvar-item {
+    display: none; /* Escondido por padrão */
+    color: var(--color-green);
+}
+.btn-remover-item {
+    color: #aaa; /* Cor cinza/branca padrão */
+}
+.btn-remover-item:hover {
+    color: var(--color-red); /* Cor vermelha no hover */
+}
+
+/* Estilos para itens ocultados/desativados */
+.btn-ocultar-item { color: #888; }
+.btn-ocultar-item:hover { color: var(--color-white); }
+
+.item-editavel.item-desativado {
+    opacity: 0.5;
+}
+.item-editavel.item-desativado .nome-item-editavel {
+    text-decoration: line-through;
+    color: #888;
+}
+
+.container-atualizar-geral {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 2px solid var(--color-orange);
+}
+/* Estilo copiado do botão "Atualizar Pedidos" do PainelDeControle.css */
+#btn-atualizar-index,
+#btn-exportar-pdf {
+    padding: 10px 20px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2em;
+    border: 2px solid var(--color-orange);
+    background-color: var(--color-dark-gray);
+    color: var(--color-white);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+#btn-atualizar-index:hover,
+#btn-exportar-pdf:hover {
+    background-color: var(--color-orange);
+    color: var(--color-black);
+}
+
+/* Animação de giro (copiada do PainelDeControle.css) */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.girando {
+    display: inline-block;
+    animation: spin 1s linear;
+}
+
+
+/* Estilos para o botão Adicionar Novo Item */
+.container-add-item {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 25px;
+    width: 100%;
+}
+
+/* Novo estilo para o botão de exportar no topo */
+#btn-exportar-pdf-topo,
+#btn-add-novo-item, #btn-gerenciar-categorias {
+    padding: 10px 20px;
+    font-family: 'Bebas Neue', sans-serif; /* Usa a fonte padrão para botões */
+    font-size: 1.2em; /* Alinha o tamanho da fonte */
+    border: 2px solid var(--color-orange); /* Borda laranja */
+    background-color: var(--color-dark-gray); /* Fundo cinza escuro */
+    color: var(--color-white); /* Texto branco */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+#btn-exportar-pdf-topo:hover,
+#btn-add-novo-item:hover, 
+#btn-gerenciar-categorias:hover {
+    background-color: var(--color-orange); /* Fundo laranja no hover */
+    color: var(--color-black); /* Texto preto no hover */    
+}
+
+/* Estilos para o Modal de Adicionar Item (copiado e adaptado de MeusClientesRelatorio) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1002;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.modal-overlay.visivel {
+    opacity: 1;
+    pointer-events: auto;
+}
+.modal-container {
+    background-color: var(--color-dark-gray);
+    padding: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--color-orange);
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    max-height: 85vh; /* Adicionado para consistência */
+    overflow-y: auto; /* Adicionado para consistência */
+}
+/* Ajuste para a barra de rolagem dentro do modal respeitar as bordas arredondadas */
+.modal-container::-webkit-scrollbar-track {
+    border-radius: 0 8px 8px 0; /* Aplica o raio da borda apenas no canto direito */
+}
+.modal-container h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-yellow);
+    font-size: 2em;
+    margin-bottom: 20px;
+    text-align: center;
+}
+.modal-container .btn-fechar-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    left: auto;
+    transform: none;
+    background: none; border: none; color: var(--color-white); font-size: 1.8em; cursor: pointer;
+}
+.form-novo-item label { display: block; margin-bottom: 5px; }
+.form-novo-item input, .form-novo-item select, .form-novo-item textarea {
+    width: 100%; padding: 10px; margin-bottom: 15px; background-color: #333;
+    border: 1px solid #555; border-radius: 4px; color: var(--color-white);
+    font-family: 'Roboto', sans-serif;
+}
+.form-novo-item button {
+    width: 100%; /* Mantém a largura total */
+    padding: 12px; /* Mantém o padding */
+    background-color: var(--color-dark-gray); /* Fundo cinza escuro */
+    color: var(--color-white); /* Texto branco */
+    border: 2px solid var(--color-orange); /* Borda laranja */
+    border-radius: 5px; /* Mantém o raio da borda */
+    font-family: 'Bebas Neue', sans-serif; /* Mantém a fonte */
+    font-size: 1.2em; /* Mantém o tamanho da fonte */
+    text-transform: uppercase; /* Mantém o texto em maiúsculas */
+    cursor: pointer; /* Mantém o cursor */
+    margin-top: 10px; /* Adiciona um espaçamento acima do botão */
+    transition: all 0.3s ease; /* Transição suave para todas as propriedades */
+}
+.form-novo-item button:hover {
+    background-color: var(--color-orange); /* Fundo laranja no hover */
+    color: var(--color-black); /* Texto preto no hover */
+}
+
+/* Estilos para o Modal de Gerenciar Categorias (adaptado de EstoqueControle.css) */
+#lista-categorias-gerenciar {
+    list-style: none;
+    margin-bottom: 20px;
+    max-height: 30vh;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+#lista-categorias-gerenciar li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #2a2a2a;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+.btn-remover-categoria-modal {
+    background: none; border: none; font-size: 1.1em;
+    color: #aaa; cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-remover-categoria-modal:hover { color: var(--color-red); transform: scale(1.2); }
+.form-nova-categoria {
+    border-top: 1px solid #444;
+    padding-top: 20px;
+    margin-top: 15px;
+}
+.form-nova-categoria h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-orange);
+    font-size: 1.5em;
+    margin-bottom: 15px;
+}
+.form-nova-categoria div { display: flex; gap: 10px; }
+.form-nova-categoria input { 
+    flex-grow: 1; 
+    padding: 10px; 
+    background-color: #333;
+    border: 1px solid #555; 
+    border-radius: 4px; 
+    color: var(--color-white);
+    font-family: 'Roboto', sans-serif;
+}
+.form-nova-categoria button {
+    padding: 10px 20px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1em;
+    border: 2px solid var(--color-orange);
+    background-color: var(--color-dark-gray);
+    color: var(--color-white);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+}
+.form-nova-categoria button:hover {
+    background-color: var(--color-orange);
+    color: var(--color-black);
+}
+
+/* --- RESPONSIVIDADE: COLUNA ÚNICA ENTRE 300px E 880px --- */
+@media (max-width: 880px) {
+    .container-gerenciamento {
+        padding: 20px 15px;
+        width: 98%;
+    }
+
+    .container-add-item {
+        justify-content: center;
+    }
+
+    .grid-edicao-cardapio {
+        grid-template-columns: 1fr; /* Organiza em uma única coluna conforme solicitado */
+        gap: 20px;
+    }
+
+    .categoria-cardapio {
+        padding: 15px;
+    }
+
+    .container-abas {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .btn-aba {
+        font-size: 1.2em;
+        padding: 10px 20px;
+    }
+}
+
+/* Ajustes específicos para celulares e telas muito pequenas dentro da coluna única */
+@media (max-width: 480px) {
+    .item-editavel {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 15px 0;
+    }
+
+    .acoes-item {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .input-preco {
+        width: 90px;
+        padding-left: 24px;
+    }
+
+    .container-add-item button {
+        width: 100%;
+    }
+
+    .form-nova-categoria div {
+        flex-direction: column;
+    }
+}

@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Estoque - Casa Tapera</title>
+    <link rel="stylesheet" href="../estilos/PainelDeControle.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../estilos/EstoqueControle.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        .container-gerenciamento, .container-lista-compras {
+            width: 95%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+    </style>
+</head>
+<body>
+    <header class="cabecalho-painel">
+        <a href="PainelDeControle.html"><img src="../imagens/Logo_Tapera.jpeg" alt="Logotipo Casa Tapera" class="imagem-logo"></a>
+        <h1>Controle de Estoque</h1>
+        <a href="PainelDeControle.html" class="icone-voltar" title="Voltar ao Painel">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+    </header>
+
+    <main class="painel-principal">
+        <div class="container-gerenciamento">
+            <h2>Gerenciador de Estoque</h2>
+
+            <div class="cards-resumo-container">
+                <div class="card-resumo">
+                    <h3 class="card-titulo">Valor Total em Estoque</h3>
+                    <p id="valor-total-estoque" class="card-valor">R$ 0,00</p>
+                </div>
+            </div>
+
+            <div class="container-busca">
+                <i class="fas fa-search"></i>
+                <input type="text" id="busca-ingrediente" placeholder="Buscar ingrediente pelo nome...">
+            </div>
+
+            <div class="container-add-item">
+                <button id="btn-gerenciar-categorias"><i class="fas fa-tags"></i> Gerenciar Categorias</button>
+                <button id="btn-add-novo-item"><i class="fas fa-plus"></i> Adicionar Novo Item</button>
+            </div>
+            
+            <table class="tabela-estoque">
+                <thead>
+                    <tr>
+                        <th>Imagem</th>
+                        <th>Ingrediente</th>
+                        <th>Qtd. Atual</th>
+                        <th>Custo (R$)</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Categoria Carnes e Proteínas -->
+                    <tr class="categoria-row"><td colspan="6" class="categoria-header">Carnes e Proteínas</td></tr>
+                    <tr data-limite-baixo="20" data-limite-critico="10">
+                        <td data-label="Imagem"><div class="imagem-ingrediente"><i class="fas fa-drumstick-bite"></i></div></td>
+                        <td data-label="Ingrediente">Bife de Hambúrguer</td>
+                        <td data-label="Qtd. Atual"><div class="container-qtd"><input type="number" class="input-editavel input-quantidade" value="50" disabled> <span class="unidade-medida">(Un)</span></div></td>
+                        <td data-label="Custo (R$)"><div class="container-custo"><span class="prefixo-moeda">R$</span><input type="number" step="0.01" class="input-editavel input-custo" value="3.50" disabled></div></td>
+                        <td data-label="Status"><span class="status-estoque status-ok">OK</span></td>
+                        <td data-label="Ações">
+                            <button class="btn-acao-estoque btn-editar" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-estoque btn-salvar" title="Salvar" style="display: none;"><i class="fas fa-save"></i></button>
+                        </td>
+                    </tr>
+                    <tr data-limite-baixo="20" data-limite-critico="10">
+                        <td data-label="Imagem"><div class="imagem-ingrediente"><i class="fas fa-drumstick-bite"></i></div></td>
+                        <td data-label="Ingrediente">Bife de Frango Empanado</td>
+                        <td data-label="Qtd. Atual"><div class="container-qtd"><input type="number" class="input-editavel input-quantidade" value="40" disabled> <span class="unidade-medida">(Un)</span></div></td>
+                        <td data-label="Custo (R$)"><div class="container-custo"><span class="prefixo-moeda">R$</span><input type="number" step="0.01" class="input-editavel input-custo" value="4.00" disabled></div></td>
+                        <td data-label="Status"><span class="status-estoque status-ok">OK</span></td>
+                        <td data-label="Ações">
+                            <button class="btn-acao-estoque btn-editar" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-estoque btn-salvar" title="Salvar" style="display: none;"><i class="fas fa-save"></i></button>
+                        </td>
+                    </tr>
+
+                    <!-- Categoria Laticínios -->
+                    <tr class="categoria-row"><td colspan="6" class="categoria-header">Laticínios</td></tr>
+                    <tr data-limite-baixo="4" data-limite-critico="1.5">
+                        <td data-label="Imagem"><div class="imagem-ingrediente"><i class="fas fa-cheese"></i></div></td>
+                        <td data-label="Ingrediente">Queijo Mussarela</td>
+                        <td data-label="Qtd. Atual"><div class="container-qtd"><input type="number" step="0.1" class="input-editavel input-quantidade" value="5" disabled> <span class="unidade-medida">(Kg)</span></div></td>
+                        <td data-label="Custo (R$)"><div class="container-custo"><span class="prefixo-moeda">R$</span><input type="number" step="0.01" class="input-editavel input-custo" value="35.00" disabled></div></td>
+                        <td data-label="Status"><span class="status-estoque status-baixo">Baixo</span></td>
+                        <td data-label="Ações">
+                            <button class="btn-acao-estoque btn-editar" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-estoque btn-salvar" title="Salvar" style="display: none;"><i class="fas fa-save"></i></button>
+                        </td>
+                    </tr>
+
+                    <!-- Categoria Vegetais -->
+                    <tr class="categoria-row"><td colspan="6" class="categoria-header">Vegetais e Hortaliças</td></tr>
+                    <tr data-limite-baixo="5" data-limite-critico="2">
+                        <td data-label="Imagem"><div class="imagem-ingrediente"><i class="fas fa-leaf"></i></div></td>
+                        <td data-label="Ingrediente">Alface</td>
+                        <td data-label="Qtd. Atual"><div class="container-qtd"><input type="number" step="0.1" class="input-editavel input-quantidade" value="3" disabled> <span class="unidade-medida">(Kg)</span></div></td>
+                        <td data-label="Custo (R$)"><div class="container-custo"><span class="prefixo-moeda">R$</span><input type="number" step="0.01" class="input-editavel input-custo" value="2.50" disabled></div></td>
+                        <td data-label="Status"><span class="status-estoque status-critico">Crítico</span></td>
+                        <td data-label="Ações">
+                            <button class="btn-acao-estoque btn-editar" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-estoque btn-salvar" title="Salvar" style="display: none;"><i class="fas fa-save"></i></button>
+                        </td>
+                    </tr>
+                    <!-- Adicione mais linhas para outros ingredientes seguindo o mesmo padrão -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Nova Seção: Lista de Compras para Reposição -->
+        <div class="container-lista-compras">
+            <h2>Lista de Compras para Reposição</h2>
+            <table id="tabela-lista-compras" class="tabela-estoque">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Qtd. a Comprar</th>
+                        <th>Preço Unit. (Mercado)</th>
+                        <th>Subtotal</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <div class="resumo-lista-compras">
+                <button id="btn-exportar-lista" class="btn-acao-relatorio"><i class="fas fa-file-export"></i> Exportar Lista</button>
+                <span class="total-compra-valor">Custo Total: R$ 0,00</span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="rodape-copyright">
+        <div class="rodape-info">
+           <p>&copy; 2026 CASA TAPERA. TODOS OS DIREITOS RESERVADOS | DESENVOLVIDO POR EQUIPE <a href="https://www.instagram.com/s.aib0t/" target="_blank" rel="noopener noreferrer" class="link-desenvolvedor"><span class="nome-desenvolvedor">S.AIB0T</span></a></p>
+        </div>
+    </footer>
+
+    <!-- Modal para Adicionar Novo Item -->
+    <div id="modal-add-item" class="modal-overlay">
+        <div class="modal-container">
+            <button class="btn-fechar-modal" title="Fechar">&times;</button>
+            <h3>Adicionar Novo Item ao Estoque</h3>
+            <form id="form-novo-item" class="form-novo-item">
+                <label for="novo-item-categoria">Categoria:</label>
+                <select id="novo-item-categoria" required></select>
+
+                <label for="novo-item-icone">Ícone (Font Awesome):</label>
+                <input type="text" id="novo-item-icone" placeholder="Ex: fas fa-bread-slice" required>
+
+                <label for="novo-item-nome">Nome do Ingrediente:</label>
+                <input type="text" id="novo-item-nome" required>
+
+                <label for="novo-item-qtd">Quantidade Atual:</label>
+                <input type="number" step="0.1" id="novo-item-qtd" required>
+
+                <label for="novo-item-unidade">Unidade de Medida (Ex: Un, Kg, L):</label>
+                <input type="text" id="novo-item-unidade" placeholder="Un" required>
+
+                <label for="novo-item-limite-baixo">Limite para Estoque Baixo:</label>
+                <input type="number" step="0.1" id="novo-item-limite-baixo" placeholder="Ex: 20" required>
+
+                <label for="novo-item-limite-critico">Limite para Estoque Crítico:</label>
+                <input type="number" step="0.1" id="novo-item-limite-critico" placeholder="Ex: 10" required>
+
+                <button type="submit">Adicionar Item</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Gerenciar Categorias -->
+    <div id="modal-gerenciar-categorias" class="modal-overlay">
+        <div class="modal-container">
+            <button class="btn-fechar-modal" title="Fechar">&times;</button>
+            <h3>Gerenciar Categorias</h3>
+            <ul id="lista-categorias-gerenciar">
+                <!-- Lista de categorias será populada aqui -->
+            </ul>
+            <div class="form-nova-categoria">
+                <h4>Criar Nova Categoria</h4>
+                <div><input type="text" id="input-nova-categoria" placeholder="Nome da nova categoria"><button id="btn-criar-categoria">Criar</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabela = document.querySelector('.tabela-estoque');
+            const tabelaBody = tabela.querySelector('tbody');
+
+            // --- FUNÇÃO AUXILIAR PARA A LIXEIRA GERAL ---
+            function adicionarALixeira(tipo, dado, origem) {
+                const lixeira = JSON.parse(localStorage.getItem('casaTaperaLixeira')) || [];
+                lixeira.unshift({
+                    id: `trash-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+                    tipo: tipo, 
+                    dado: dado, 
+                    origem: origem, 
+                    dataExclusao: new Date().toISOString()
+                });
+                localStorage.setItem('casaTaperaLixeira', JSON.stringify(lixeira));
+            }
+
+            // Função para atualizar o status visual de uma linha
+            function atualizarStatusVisual(linha) {
+                const statusSpan = linha.querySelector('.status-estoque');
+                const quantidade = parseFloat(linha.dataset.quantidade);
+ 
+                const limiteBaixo = parseFloat(linha.dataset.limiteBaixo);
+                const limiteCritico = parseFloat(linha.dataset.limiteCritico);
+
+                // Remove as classes de status existentes
+                statusSpan.classList.remove('status-ok', 'status-baixo', 'status-critico');
+
+                if (quantidade <= limiteCritico) {
+                    statusSpan.classList.add('status-critico');
+                    statusSpan.textContent = 'Crítico';
+                } else if (quantidade <= limiteBaixo) {
+                    statusSpan.classList.add('status-baixo');
+                    statusSpan.textContent = 'Baixo';
+                } else {
+                    statusSpan.classList.add('status-ok');
+                    statusSpan.textContent = 'OK';
+                }
+            }
+
+            function atualizarCardsResumo() {
+                let valorTotal = 0;
+                for (const categoria in estoque) {
+                    for (const itemId in estoque[categoria]) {
+                        const item = estoque[categoria][itemId];
+                        valorTotal += item.qtd * item.custo;
+                    }
+                }
+
+                document.getElementById('valor-total-estoque').textContent = valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            }
+
+            function popularModalCategorias() {
+                listaCategoriasGerenciar.innerHTML = '';
+                const categorias = new Set();
+                document.querySelectorAll('.categoria-header').forEach(header => {
+                    categorias.add(header.textContent);
+                });
+
+                categorias.forEach(nome => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span class="nome-categoria">${nome}</span>
+                        <input type="text" class="input-categoria-nome" value="${nome}" style="display: none;">
+                        <div class="acoes-categoria">
+                            <button class="btn-acao-categoria btn-editar-cat" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-categoria btn-salvar-cat" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-categoria btn-remover-cat" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    `;
+                    listaCategoriasGerenciar.appendChild(li);
+                });
+            }
+
+            // --- LÓGICA DE DADOS E LOCALSTORAGE ---
+            let estoque = {};
+            const CHAVE_STORAGE = 'casaTaperaEstoque';
+
+            function salvarEstoque() {
+                localStorage.setItem(CHAVE_STORAGE, JSON.stringify(estoque));
+            }
+
+            function carregarEstoque() {
+                const dadosSalvos = JSON.parse(localStorage.getItem(CHAVE_STORAGE));
+                if (dadosSalvos && Object.keys(dadosSalvos).length > 0) {
+                    estoque = dadosSalvos;
+                } else {
+                    // Se não houver nada salvo, cria dados padrão a partir do HTML original
+                    estoque = {
+                        "Carnes e Proteínas": {
+                            "bife-hamburguer": { nome: "Bife de Hambúrguer", qtd: 50, unidade: "Un", custo: 3.50, limiteBaixo: 20, limiteCritico: 10, icone: "fas fa-drumstick-bite" },
+                            "bife-frango": { nome: "Bife de Frango Empanado", qtd: 40, unidade: "Un", custo: 4.00, limiteBaixo: 20, limiteCritico: 10, icone: "fas fa-drumstick-bite" }
+                        },
+                        "Laticínios": {
+                            "queijo-mussarela": { nome: "Queijo Mussarela", qtd: 5, unidade: "Kg", custo: 35.00, limiteBaixo: 4, limiteCritico: 1.5, icone: "fas fa-cheese" }
+                        },
+                        "Vegetais e Hortaliças": {
+                            "alface": { nome: "Alface", qtd: 3, unidade: "Kg", custo: 2.50, limiteBaixo: 5, limiteCritico: 2, icone: "fas fa-leaf" }
+                        }
+                    };
+                    salvarEstoque();
+                }
+            }
+
+            function renderizarTabela() {
+                tabelaBody.innerHTML = '';
+                for (const nomeCategoria in estoque) {
+                    // Cria a linha da categoria
+                    const linhaCategoria = document.createElement('tr');
+                    linhaCategoria.className = 'categoria-row';
+                    linhaCategoria.innerHTML = `<td colspan="6" class="categoria-header">${nomeCategoria}</td>`;
+                    tabelaBody.appendChild(linhaCategoria);
+
+                    // Cria as linhas dos itens
+                    for (const itemId in estoque[nomeCategoria]) {
+                        const item = estoque[nomeCategoria][itemId];
+                        const linhaItem = document.createElement('tr');
+                        linhaItem.dataset.itemId = itemId;
+                        linhaItem.dataset.categoria = nomeCategoria;
+                        linhaItem.dataset.quantidade = item.qtd;
+                        linhaItem.dataset.limiteBaixo = item.limiteBaixo;
+                        linhaItem.dataset.limiteCritico = item.limiteCritico;
+
+                        const stepValue = item.unidade.toLowerCase() === 'un' ? '1' : '0.1';
+
+                        linhaItem.innerHTML = `
+                            <td data-label="Imagem"><div class="imagem-ingrediente"><i class="${item.icone || 'fas fa-box-open'}"></i></div></td>
+                            <td data-label="Ingrediente">${item.nome}</td>
+                            <td data-label="Qtd. Atual"><div class="container-qtd"><input type="number" step="${stepValue}" class="input-editavel input-quantidade" value="${item.qtd}" disabled> <span class="unidade-medida">(${item.unidade})</span></div></td>
+                            <td data-label="Custo (R$)"><div class="container-custo"><span class="prefixo-moeda">R$</span><input type="number" step="0.01" class="input-editavel input-custo" value="${item.custo.toFixed(2)}" disabled></div></td>
+                            <td data-label="Status"><span class="status-estoque"></span></td>
+                            <td data-label="Ações">
+                                <button class="btn-acao-estoque btn-editar" title="Editar"><i class="fas fa-edit"></i></button>
+                                <button class="btn-acao-estoque btn-salvar" title="Salvar" style="display: none;"><i class="fas fa-save"></i></button>
+                            </td>
+                        `;
+                        tabelaBody.appendChild(linhaItem);
+                        atualizarStatusVisual(linhaItem);
+                    }
+                }
+                popularModalCategorias(); // Atualiza a lista de categorias no modal
+                atualizarCardsResumo(); // Atualiza os cards de resumo
+            }
+
+            // --- LÓGICA DOS MODAIS E EVENTOS ---
+            const modal = document.getElementById('modal-add-item');
+            const btnAbrirModal = document.getElementById('btn-add-novo-item');
+            const btnFecharModal = modal.querySelector('.btn-fechar-modal');
+            const form = document.getElementById('form-novo-item');
+            const selectCategoria = document.getElementById('novo-item-categoria');
+            const modalCategorias = document.getElementById('modal-gerenciar-categorias');
+            const btnAbrirModalCategorias = document.getElementById('btn-gerenciar-categorias');
+            const btnFecharModalCategorias = modalCategorias.querySelector('.btn-fechar-modal');
+            const listaCategoriasGerenciar = document.getElementById('lista-categorias-gerenciar');
+            const btnCriarCategoria = document.getElementById('btn-criar-categoria');
+            const inputNovaCategoria = document.getElementById('input-nova-categoria');
+            const inputNovaUnidade = document.getElementById('novo-item-unidade');
+            const inputNovaQtd = document.getElementById('novo-item-qtd');
+
+            function popularCategoriasSelect() {
+                selectCategoria.innerHTML = '';
+                Object.keys(estoque).forEach(nomeCategoria => {
+                    const option = document.createElement('option');
+                    option.value = nomeCategoria;
+                    option.textContent = nomeCategoria;
+                    selectCategoria.appendChild(option);
+                });
+            }
+
+            // Ajusta o 'step' do input de quantidade no modal de novo item
+            inputNovaUnidade.addEventListener('input', () => {
+                if (inputNovaUnidade.value.trim().toLowerCase() === 'un') {
+                    inputNovaQtd.step = '1';
+                } else {
+                    inputNovaQtd.step = '0.1';
+                }
+            });
+
+            btnAbrirModal.addEventListener('click', () => {
+                popularCategoriasSelect();
+                modal.classList.add('visivel');
+            });
+
+            btnFecharModal.addEventListener('click', () => modal.classList.remove('visivel'));
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.classList.remove('visivel');
+            });
+
+            btnAbrirModalCategorias.addEventListener('click', () => {
+                popularModalCategorias();
+                modalCategorias.classList.add('visivel');
+            });
+
+            btnFecharModalCategorias.addEventListener('click', () => modalCategorias.classList.remove('visivel'));
+            modalCategorias.addEventListener('click', (e) => {
+                if (e.target === modalCategorias) modalCategorias.classList.remove('visivel');
+            });
+
+            listaCategoriasGerenciar.addEventListener('click', (e) => {
+                const li = e.target.closest('li');
+                if (!li) return;
+
+                const spanNome = li.querySelector('.nome-categoria');
+                const inputNome = li.querySelector('.input-categoria-nome');
+                const btnEditar = li.querySelector('.btn-editar-cat');
+                const btnSalvar = li.querySelector('.btn-salvar-cat');
+
+                if (e.target.closest('.btn-editar-cat')) {
+                    spanNome.style.display = 'none';
+                    inputNome.style.display = 'block';
+                    inputNome.focus();
+                    btnEditar.style.display = 'none';
+                    btnSalvar.style.display = 'inline-block';
+                }
+
+                if (e.target.closest('.btn-salvar-cat')) {
+                    const nomeAntigo = spanNome.textContent;
+                    const nomeNovo = inputNome.value.trim();
+
+                    if (nomeNovo && nomeNovo !== nomeAntigo) {
+                        // Renomeia a chave no objeto de estoque
+                        const itens = estoque[nomeAntigo];
+                        delete estoque[nomeAntigo];
+                        estoque[nomeNovo] = itens;
+                        salvarEstoque();
+                        renderizarTabela();
+                        alert(`Categoria "${nomeAntigo}" renomeada para "${nomeNovo}".`);
+                    }
+                    
+                    spanNome.style.display = 'block';
+                    inputNome.style.display = 'none';
+                    btnEditar.style.display = 'inline-block';
+                    btnSalvar.style.display = 'none';
+                }
+
+                if (e.target.closest('.btn-remover-cat')) {
+                    const nomeCategoria = spanNome.textContent;
+                    if (confirm(`Mover a categoria "${nomeCategoria}" e seus itens para a lixeira?`)) {
+                        const itensDaCat = estoque[nomeCategoria];
+                        const indexCat = Object.keys(estoque).indexOf(nomeCategoria);
+                        adicionarALixeira('categoria', { nome: nomeCategoria, itens: Object.values(itensDaCat), secao: 'Estoque', originalIndex: indexCat }, 'Controle de Estoque');
+                        
+                        delete estoque[nomeCategoria];
+                        salvarEstoque();
+                        renderizarTabela();
+                        alert(`Categoria "${nomeCategoria}" removida.`);
+                    }
+                }
+            });
+
+            tabelaBody.addEventListener('click', (e) => {
+                const linha = e.target.closest('tr[data-item-id]');
+                if (!linha) return;
+
+                const btnEditar = e.target.closest('.btn-editar');
+                const btnSalvar = e.target.closest('.btn-salvar');
+                // Lógica para editar e salvar itens
+                if (btnEditar) {
+                    const inputs = linha.querySelectorAll('.input-editavel');
+                    inputs.forEach(input => input.disabled = false);
+                    e.target.closest('.btn-editar').style.display = 'none';
+                    linha.querySelector('.btn-salvar').style.display = 'inline-block';
+                }
+
+                if (btnSalvar) {
+                    const inputs = linha.querySelectorAll('.input-editavel');
+                    inputs.forEach(input => input.disabled = true);
+                    e.target.closest('.btn-salvar').style.display = 'none';
+                    linha.querySelector('.btn-editar').style.display = 'inline-block';
+
+                    const itemId = linha.dataset.itemId;
+                    const categoria = linha.dataset.categoria;
+                    const novaQtd = parseFloat(linha.querySelector('.input-quantidade').value);
+                    const novoCusto = parseFloat(linha.querySelector('.input-custo').value);
+
+                    // Atualiza o objeto de estoque
+                    estoque[categoria][itemId].qtd = novaQtd;
+                    estoque[categoria][itemId].custo = novoCusto;
+                    salvarEstoque();
+
+                    // Atualiza os atributos da linha e o status visual
+                    linha.dataset.quantidade = novaQtd;
+                    atualizarStatusVisual(linha);
+
+                    // Atualiza os cards de resumo financeiro
+                    atualizarCardsResumo();
+
+                    alert('Dados do ingrediente salvos!');
+                }
+            });
+
+            // Adiciona um listener para atualizar o status visual enquanto o usuário digita
+            document.addEventListener('input', (e) => {
+                if (e.target.classList.contains('input-quantidade')) {
+                    const linha = e.target.closest('tr[data-item-id]');
+                    if (!linha) return;
+                    const itemId = linha.dataset.itemId;
+                    const categoria = linha.dataset.categoria;
+                    const novaQtd = parseFloat(e.target.value) || 0;
+
+                    estoque[categoria][itemId].qtd = novaQtd; // Atualiza o objeto de dados
+                    linha.dataset.quantidade = novaQtd; // Atualiza o dataset para o status visual
+                    atualizarStatusVisual(linha);
+                    atualizarCardsResumo(); // Atualiza os cards em tempo real
+                }
+                // Adicionado para atualizar o custo em tempo real
+                if (e.target.classList.contains('input-custo')) {
+                    const linha = e.target.closest('tr[data-item-id]');
+                    if (!linha) return;
+                    const itemId = linha.dataset.itemId;
+                    const categoria = linha.dataset.categoria;
+                    // Atualiza o custo no objeto de estoque para o cálculo
+                    estoque[categoria][itemId].custo = parseFloat(e.target.value) || 0;
+                    atualizarCardsResumo();
+                }
+            });
+
+            // Lógica para criar nova categoria
+            btnCriarCategoria.addEventListener('click', () => {
+                const nomeNovaCategoria = inputNovaCategoria.value.trim();
+                if (!nomeNovaCategoria) {
+                    alert('Por favor, insira um nome para a nova categoria.');
+                    return;
+                }
+
+                // Verifica se a categoria já existe
+                if (estoque[nomeNovaCategoria]) {
+                    alert('Esta categoria já existe.');
+                    return;
+                }
+
+                estoque[nomeNovaCategoria] = {};
+                salvarEstoque();
+                renderizarTabela();
+                inputNovaCategoria.value = '';
+                alert(`Categoria "${nomeNovaCategoria}" criada com sucesso!`);
+            });
+
+            // Lógica para adicionar novo item
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const nome = document.getElementById('novo-item-nome').value;
+                const qtd = parseFloat(document.getElementById('novo-item-qtd').value);
+                const unidade = document.getElementById('novo-item-unidade').value;
+                const categoriaNome = selectCategoria.value;
+                const limiteBaixo = parseFloat(document.getElementById('novo-item-limite-baixo').value);
+                const limiteCritico = parseFloat(document.getElementById('novo-item-limite-critico').value);
+
+                const itemId = `item-${Date.now()}`;
+                const novoItem = {
+                    nome: nome,
+                    icone: document.getElementById('novo-item-icone').value,
+                    qtd: qtd,
+                    unidade: unidade,
+                    custo: 0.00,
+                    limiteBaixo: limiteBaixo,
+                    limiteCritico: limiteCritico,
+                    icone: "fas fa-box-open"
+                };
+
+                estoque[categoriaNome][itemId] = novoItem;
+                salvarEstoque();
+                renderizarTabela();
+
+                alert(`Item "${nome}" adicionado ao estoque!`);
+                form.reset();
+                modal.classList.remove('visivel');
+            });
+
+            carregarEstoque();
+            renderizarTabela();
+            atualizarCardsResumo(); // Calcula os valores iniciais ao carregar a página
+        });
+
+        // --- LÓGICA DA NOVA LISTA DE COMPRAS ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabelaCompraBody = document.querySelector('#tabela-lista-compras tbody');
+            const totalCompraValor = document.querySelector('.total-compra-valor');
+            const CHAVE_STORAGE = 'casaTaperaEstoque';
+
+            function renderizarListaDeCompras() {
+                const estoque = JSON.parse(localStorage.getItem(CHAVE_STORAGE)) || {};
+                tabelaCompraBody.innerHTML = ''; // Limpa a lista
+
+                for (const categoria in estoque) {
+                    for (const itemId in estoque[categoria]) {
+                        const item = estoque[categoria][itemId];
+                        const custoPadrao = parseFloat(item.custo).toFixed(2);
+
+                        const novaLinha = document.createElement('tr');
+                        novaLinha.dataset.itemId = itemId;
+                        novaLinha.innerHTML = `
+                            <td data-label="Item">${item.nome}</td>
+                            <td data-label="Qtd. a Comprar"><div class="input-com-unidade">
+                                    <input type="number" class="input-editavel input-compra input-qtd-compra" value="0" min="0" step="${item.unidade.toLowerCase() === 'un' ? '1' : '0.1'}">
+                                    <span>${item.unidade}</span>
+                                </div></td>
+                            <td data-label="Preço Unit. (Mercado)"><div class="container-preco-compra"><span class="prefixo-moeda">R$</span><input type="number" step="0.01" class="input-editavel input-compra input-preco-compra" value="${custoPadrao}"></div></td>
+                            <td data-label="Subtotal" class="subtotal-compra">R$ 0,00</td>
+                            <td data-label="Ação"><button class="btn-acao-estoque btn-remover-compra" title="Zerar item"><i class="fas fa-times-circle"></i></button></td>
+                        `;
+                        tabelaCompraBody.appendChild(novaLinha);
+                    }
+                }
+                calcularTotalCompra();
+            }
+
+            function exportarListaParaTxt() {
+                const linhas = tabelaCompraBody.querySelectorAll('tr');
+                const total = totalCompraValor.textContent;
+                let conteudoTexto = "Lista de Compras - Casa Tapera\n";
+                conteudoTexto += "===================================\n\n";
+                let temItens = false;
+
+                linhas.forEach(linha => {
+                    const qtd = parseFloat(linha.querySelector('.input-qtd-compra').value) || 0;
+                    if (qtd > 0) {
+                        temItens = true;
+                        const nomeItem = linha.querySelector('td[data-label="Item"]').textContent;
+                        const unidade = linha.querySelector('.input-com-unidade span').textContent;
+                        const subtotal = linha.querySelector('.subtotal-compra').textContent;
+
+                        conteudoTexto += `Item: ${nomeItem}\n`;
+                        conteudoTexto += `Quantidade: ${qtd} ${unidade}\n`;
+                        conteudoTexto += `Subtotal: ${subtotal}\n`;
+                        conteudoTexto += "-----------------------------------\n";
+                    }
+                });
+
+                if (!temItens) {
+                    alert("A lista de compras está vazia. Adicione a quantidade dos itens que deseja comprar.");
+                    return;
+                }
+
+                conteudoTexto += `\n${total.toUpperCase()}\n`;
+
+                const blob = new Blob([conteudoTexto], { type: 'text/plain;charset=utf-8' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'lista_de_compras.txt';
+                link.click();
+                URL.revokeObjectURL(link.href);
+            }
+
+            function calcularTotalCompra() {
+                let total = 0;
+                tabelaCompraBody.querySelectorAll('tr').forEach(linha => {
+                    const subtotalText = linha.querySelector('.subtotal-compra').textContent;
+                    const subtotal = parseFloat(subtotalText.replace('R$', '').replace(/\./g, '').replace(',', '.')) || 0;
+                    total += subtotal;
+                });
+                totalCompraValor.textContent = `Custo Total: ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+            }
+
+            tabelaCompraBody.addEventListener('input', (e) => {
+                if (e.target.classList.contains('input-compra')) {
+                    const linha = e.target.closest('tr');
+                    const qtd = parseFloat(linha.querySelector('.input-qtd-compra').value) || 0;
+                    const preco = parseFloat(linha.querySelector('.input-preco-compra').value) || 0;
+                    const subtotal = qtd * preco;
+                    linha.querySelector('.subtotal-compra').textContent = subtotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                    calcularTotalCompra();
+                }
+            });
+
+            tabelaCompraBody.addEventListener('click', (e) => {
+                if (e.target.closest('.btn-remover-compra')) {
+                    const linha = e.target.closest('tr');
+                    linha.querySelector('.input-qtd-compra').value = 0;
+                    linha.querySelector('.subtotal-compra').textContent = 'R$ 0,00';
+                    calcularTotalCompra();
+                }
+            });
+
+            // Adiciona evento ao novo botão de exportar
+            const btnExportar = document.getElementById('btn-exportar-lista');
+            btnExportar.addEventListener('click', exportarListaParaTxt);
+
+            // Renderiza a lista de compras quando a página carrega
+            renderizarListaDeCompras();
+        });
+    </script>
+    <!-- VLibras Widget -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+</body>
+</html>

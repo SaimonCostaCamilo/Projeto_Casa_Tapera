@@ -1,0 +1,231 @@
+:root {
+    --color-black: #000000;
+    --color-orange: #f06400;
+    --color-white: #cecaca;
+    --color-yellow: #ffc600;
+    --color-dark-gray: #1a1a1a;
+    --color-red: #ff0019;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--color-black);
+    font-family: 'Roboto', sans-serif;
+    color: var(--color-white);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+    flex: 1;
+}
+
+.login-box {
+    background-color: var(--color-dark-gray);
+    padding: 40px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.login-logo {
+    width: 100%;
+    max-width: 250px;
+    margin-bottom: 20px;
+}
+
+.login-box h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-yellow);
+    font-size: 2.5em;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+}
+
+#login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-group {
+    position: relative;
+}
+
+.input-group > .fa-user, .input-group > .fa-lock {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    z-index: 2;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 15px 12px 45px;
+    background-color: var(--color-dark-gray);
+    border: 1px solid #555;
+    border-radius: 5px;
+    color: var(--color-white);
+    font-size: 1em;
+    transition: border-color 0.3s;
+}
+
+.input-group input#password {
+    padding-right: 45px;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--color-orange);
+}
+
+.input-group input:-webkit-autofill,
+.input-group input:-webkit-autofill:hover, 
+.input-group input:-webkit-autofill:focus, 
+.input-group input:-webkit-autofill:active  {
+    -webkit-box-shadow: 0 0 0 30px var(--color-dark-gray) inset !important;
+    -webkit-text-fill-color: var(--color-white) !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.toggle-password-btn {
+    position: absolute;
+    right: 0px;
+    top: 28%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    padding: 0;
+    font-size: 0.7em;
+    z-index: 2;
+    outline: none;
+    transition: color 0.3s, transform 0.3s;
+}
+
+.toggle-password-btn:hover i {
+    color: var(--color-orange);
+}
+
+#login-form button {
+    padding: 12px;
+    background-color: var(--color-orange);
+    color: var(--color-black);
+    border: none;
+    border-radius: 5px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.0em;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 10px;
+}
+
+#login-form button.loading {
+    background-color: #e65a00;
+    cursor: wait;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+.spinner-icon {
+    display: none;
+    margin-right: 8px;
+}
+
+#login-form button.loading .spinner-icon {
+    display: inline-block;
+}
+
+#login-form button:hover {
+    background-color: #ff8533;
+}
+
+.btn-text {
+    display: inline-block;
+}
+
+.error-message {
+    color: var(--color-red);
+    margin-top: 15px;
+    font-size: 0.9em;
+    height: 20px;
+}
+
+.rodape-copyright-login {
+    width: 100%;
+    padding: 20px;
+    text-align: left;
+    color: #7c7676;
+}
+
+.rodape-copyright-login p {
+    margin: 2px 0;
+    font-size: 0.7em;
+    text-transform: uppercase;
+}
+
+.link-desenvolvedor {
+    text-decoration: none;
+    color: inherit;
+}
+
+.nome-desenvolvedor {
+    display: inline-block;
+    transition: color 0.3s, transform 0.3s;
+    cursor: pointer;
+}
+
+.nome-desenvolvedor:hover {
+    color: var(--color-orange);
+    transform: scale(1.1);
+}
+
+@media (max-width: 480px) {
+    .login-box {
+        padding: 30px 20px;
+        border: none;
+        box-shadow: none;
+    }
+
+    .login-logo {
+        max-width: 180px;
+    }
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}

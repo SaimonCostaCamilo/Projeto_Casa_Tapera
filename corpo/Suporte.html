@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suporte e Documentação - Casa Tapera</title>
+    <link rel="stylesheet" href="../estilos/Documentacao.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        /* Estilos para o Modelo Conceitual (DER) */
+        .container-documentacao {
+            width: 95%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+        .conceptual-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            padding: 50px;
+            background-color: #1a1a1a;
+            border-radius: 12px;
+            border: 1px solid #333;
+            overflow-x: auto;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+        }
+        .conceptual-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+        .entity-box {
+            background: linear-gradient(135deg, var(--color-orange, #f06400), #cc5200);
+            color: #000;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.4em;
+            min-width: 120px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s ease;
+        }
+        .entity-box:hover {
+            transform: translateY(-3px);
+        }
+        .relation-diamond {
+            width: 100px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75em;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: var(--color-yellow, #ffc600);
+            position: relative;
+            z-index: 1;
+            margin: 0 15px;
+            font-family: 'Roboto', sans-serif;
+        }
+        .relation-diamond::before {
+            content: '';
+            position: absolute;
+            width: 42px; height: 42px;
+            background-color: #2a2a2a;
+            border: 2px solid var(--color-yellow, #ffc600);
+            transform: rotate(45deg);
+            z-index: -1;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        }
+        .connector-line {
+            height: 2px;
+            width: 40px;
+            background-color: #666;
+        }
+        .cardinality {
+            color: #aaa;
+            font-size: 0.85em;
+            font-family: 'Roboto', sans-serif;
+            margin: 0 8px;
+            background-color: #222;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #444;
+        }
+    </style>
+</head>
+<body>
+    <header class="cabecalho-painel">
+        <h1>Documentação Técnica</h1>
+        <a href="PainelDeControle.html" class="icone-voltar" title="Voltar ao Painel">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+    </header>
+
+    <main class="container-documentacao">
+
+        <div class="intro-doc">
+            <h2>Manual do Sistema Casa Tapera</h2>
+            <p>Guia completo de operação, arquitetura e funcionalidades do sistema de gestão.</p>
+        </div>
+
+        
+        <section class="secao-doc">
+            <h3><i class="fas fa-info-circle"></i> Sobre o Sistema Casa Tapera</h3>
+            <p>
+                O Sistema de Gestão Casa Tapera foi desenvolvido sob medida para atender às demandas específicas de uma lanchonete moderna e dinâmica. 
+                Mais do que um simples painel administrativo, ele atua como o cérebro operacional do negócio, integrando o atendimento ao cliente (via Cardápio Digital e Redes Sociais) 
+                com a retaguarda administrativa.
+            </p>
+            <p>
+                Sua arquitetura permite o controle total do fluxo de pedidos, desde a escolha do cliente até a entrega, passando pela produção na cozinha e gestão financeira. 
+                Com módulos de automação de marketing, o sistema não apenas gerencia, mas ajuda a vender mais, fidelizando clientes através de dados inteligentes. 
+                A interface intuitiva e o design responsivo garantem que a gestão possa ser feita de qualquer lugar, seja no computador do caixa ou no celular do gerente.
+            </p>
+        </section>
+
+
+        <section class="secao-doc">
+            <h3><i class="fas fa-book-open"></i> Guia de Funcionalidades e Botões</h3>
+            <p>Detalhamento de cada módulo do Painel de Controle para operação diária.</p>
+            
+            <div class="guia-container">
+                <div class="guia-item">
+                    <div class="guia-titulo"><i class="fas fa-book-open"></i> GESTÃO (Menu)</div>
+                    <ul class="guia-lista">
+                        <li><strong>Personalizar Cardápio</strong><span>Edite preços, oculte itens esgotados e crie novos produtos em tempo real.</span></li>
+                        <li><strong>Controle de Estoque</strong><span>Monitore ingredientes, defina alertas de estoque baixo e gere listas de compras para reposição.</span></li>
+                       
+                    </ul>
+                </div>
+
+                <div class="guia-item">
+                    <div class="guia-titulo"><i class="fas fa-bullhorn"></i> MARKETING</div>
+                    <ul class="guia-lista">
+                        <li><strong>Cupons/Links Desconto</strong><span>Crie campanhas promocionais com códigos fixos ou percentuais.</span></li>
+                        <li><strong>Histórico de Clientes</strong><span>Visualize o comportamento de compra e fidelidade dos consumidores.</span></li>
+                        <li><strong>Automações</strong><span>Configure mensagens automáticas para aniversariantes e pós-venda.</span></li>
+                    </ul>
+                </div>
+
+                <div class="guia-item">
+                    <div class="guia-titulo"><i class="fas fa-cogs"></i> OPERACIONAIS</div>
+                    <ul class="guia-lista">
+                        <li><strong>Taxa de Entrega</strong><span>Configure valores de entrega baseados em distância (KM) ou bairros.</span></li>
+                        <li><strong>Horários</strong><span>Defina os horários de abertura e fechamento automático do delivery.</span></li>
+                        <li><strong>Loja iFood</strong><span>Integre com o iFood para abrir/fechar a loja, visualizar métricas e acompanhar pedidos em tempo real.</span></li>
+                        <li><strong>Distribuição de Mesas</strong><span>Gerencie o salão, status das mesas (Livre/Ocupada/Reservada), comandas individuais, e crie ou remova mesas.</span></li> 
+                        <li><strong>Gerenciador de QR Codes</strong><span>Visualize e baixe os QR Codes gerados automaticamente para cada mesa do salão.</span></li>
+                    </ul>
+                </div>
+
+                <div class="guia-item">
+                    <div class="guia-titulo"><i class="fas fa-dollar-sign"></i> FINANCEIRO</div>
+                    <ul class="guia-lista">
+                        <li><strong>Controle de Caixa</strong><span>Registre entradas, saídas, sangrias e visualize o lucro líquido diário.</span></li>
+                        <li><strong>Contas a Pagar/Receber</strong><span>Gestão de boletos, fornecedores e recebimentos futuros.</span></li>
+                    </ul>
+                </div>
+
+                <div class="guia-item">
+                    <div class="guia-titulo"><i class="fas fa-chart-pie"></i> RELATÓRIOS</div>
+                    <ul class="guia-lista">
+                        <li><strong>Faturamento</strong><span>Gráficos detalhados de receita diária, semanal e mensal.</span></li>
+                        <li><strong>Ranking de Clientes</strong><span>Identifique os clientes VIPs e maiores consumidores.</span></li>
+                        <li><strong>Itens Mais Vendidos</strong><span>Análise de saída de produtos para otimização do cardápio.</span></li>
+                    </ul>
+                </div>
+
+                <div class="guia-item">
+                    <div class="guia-titulo"><i class="fas fa-store-slash"></i> STATUS LOJA</div>
+                    <ul class="guia-lista">
+                        <li><strong>Controle de Loja</strong><span>Controle total ou parcial (apenas delivery ou apenas salão) do funcionamento.</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="rodape-copyright">
+        <p>&copy; 2026 CASA TAPERA. DOCUMENTAÇÃO DO SISTEMA | DESENVOLVIDO POR EQUIPE <a href="https://www.instagram.com/s.aib0t/" target="_blank" rel="noopener noreferrer" class="link-desenvolvedor">S.AIB0T</a></p>
+    </footer>
+
+    <!-- Modal Detalhes Caso de Uso -->
+    <div id="modal-detalhes-usecase" class="modal-overlay">
+        <div class="modal-container" style="max-width: 700px;">
+            <button class="btn-fechar-modal" id="btn-fechar-usecase">&times;</button>
+            <h3 id="titulo-usecase-modal" style="border-bottom: 1px solid #444; padding-bottom: 15px;"></h3>
+            <div id="conteudo-usecase-modal" style="text-align: left; max-height: 60vh; overflow-y: auto; padding-right: 10px;"></div>
+        </div>
+    </div>
+
+    <!-- Dados Ocultos para os Modais -->
+    <div id="dados-casos-uso" style="display: none;">
+        <div id="data-uc-cardapio">
+            <ul class="guia-lista">
+                <li><strong>Ator:</strong> Gerente</li>
+                <li><strong>Resumo:</strong> Edição de preços, nomes e disponibilidade dos itens.</li>
+                <li><strong>Cenário Principal:</strong> 1. Acessa "Personalizar Cardápio". 2. Edita item. 3. Salva.</li>
+                <li><strong>Cenário Alternativo:</strong> 1. Clica em "Adicionar Novo Item". 2. Preenche dados. 3. Salva.</li>
+                <li><strong>Cenário de Exceção:</strong> 1. Tenta salvar com preço inválido. 2. Sistema exibe alerta.</li>
+            </ul>
+        </div>
+        <div id="data-uc-estoque">
+            <ul class="guia-lista">
+                <li><strong>Ator:</strong> Gerente / Estoquista</li>
+                <li><strong>Resumo:</strong> Monitoramento de insumos e alertas de nível baixo.</li>
+                <li><strong>Cenário Principal:</strong> 1. Acessa "Controle de Estoque". 2. Atualiza quantidade. 3. Sistema verifica limites.</li>
+                <li><strong>Cenário Alternativo:</strong> 1. Clica em "Gerar Lista de Compras". 2. Sistema gera PDF com itens em baixa.</li>
+                <li><strong>Cenário de Exceção:</strong> 1. Insere quantidade negativa. 2. Sistema bloqueia a entrada.</li>
+            </ul>
+        </div>
+        <div id="data-uc-financeiro">
+            <ul class="guia-lista">
+                <li><strong>Ator:</strong> Operador de Caixa</li>
+                <li><strong>Resumo:</strong> Registro de entradas, saídas e fechamento de caixa.</li>
+                <li><strong>Cenário Principal:</strong> 1. Recebe pagamento. 2. Registra entrada. 3. Sistema atualiza saldo.</li>
+                <li><strong>Cenário Alternativo:</strong> 1. Registra sangria (retirada) para pagamento de despesa menor.</li>
+                <li><strong>Cenário de Exceção:</strong> 1. Tenta fechar caixa com divergência de valores. 2. Sistema solicita justificativa.</li>
+            </ul>
+        </div>
+        <div id="data-uc-mesas-qr">
+            <ul class="guia-lista">
+                <li><strong>Ator:</strong> Garçom / Gerente</li>
+                <li><strong>Resumo:</strong> Gestão de mesas, comandas e geração de QR Codes.</li>
+                <li><strong>Cenário Principal:</strong> 1. Abre mesa. 2. Adiciona itens à comanda. 3. Fecha conta.</li>
+                <li><strong>Cenário Alternativo:</strong> 1. Gera e baixa QR Code para uma nova mesa cadastrada.</li>
+                <li><strong>Cenário de Exceção:</strong> 1. Tenta adicionar item a uma mesa fechada. 2. Sistema alerta que mesa precisa ser reaberta.</li>
+            </ul>
+        </div>
+        <div id="data-uc-relatorios">
+            <ul class="guia-lista">
+                <li><strong>Ator:</strong> Gerente</li>
+                <li><strong>Resumo:</strong> Visualização de desempenho financeiro e vendas.</li>
+                <li><strong>Cenário Principal:</strong> 1. Acessa Relatórios. 2. Filtra por período (Mensal). 3. Analisa gráficos.</li>
+                <li><strong>Cenário Alternativo:</strong> 1. Filtra por "Itens Mais Vendidos" para ajustar cardápio.</li>
+                <li><strong>Cenário de Exceção:</strong> 1. Seleciona período sem vendas. 2. Sistema exibe aviso de "Sem dados".</li>
+            </ul>
+        </div>
+        <div id="data-uc-marketing">
+            <ul class="guia-lista">
+                <li><strong>Ator:</strong> Gerente</li>
+                <li><strong>Resumo:</strong> Configuração de mensagens automáticas e IA.</li>
+                <li><strong>Cenário Principal:</strong> 1. Acessa Automações. 2. Ativa mensagem de aniversário. 3. Sistema envia automaticamente.</li>
+                <li><strong>Cenário Alternativo:</strong> 1. Cria cupom de desconto. 2. Define validade. 3. Compartilha link.</li>
+                <li><strong>Cenário de Exceção:</strong> 1. Cliente optou por não receber mensagens (opt-out). 2. Sistema ignora envio.</li>
+            </ul>
+        </div>
+        <div id="data-uc-pedido">
+            <ul class="guia-lista">
+                <li><strong>Ator:</strong> Cliente</li>
+                <li><strong>Resumo:</strong> Seleção de itens e envio do pedido.</li>
+                <li><strong>Cenário Principal:</strong> 1. Acessa cardápio. 2. Adiciona itens. 3. Finaliza no WhatsApp.</li>
+                <li><strong>Cenário Alternativo:</strong> 1. Insere cupom de desconto válido. 2. Valor total é atualizado.</li>
+                <li><strong>Cenário de Exceção:</strong> 1. Tenta finalizar com carrinho vazio. 2. Sistema bloqueia ação.</li>
+            </ul>
+        </div>
+        <div id="data-uc-pagamento">
+            <ul class="guia-lista">
+                <li><strong>Ator:</strong> Cliente</li>
+                <li><strong>Resumo:</strong> Escolha da forma de pagamento no checkout.</li>
+                <li><strong>Cenário Principal:</strong> 1. Seleciona "Pix". 2. Envia comprovante. 3. Loja confirma.</li>
+                <li><strong>Cenário Alternativo:</strong> 1. Seleciona "Dinheiro". 2. Informa troco para R$ 50,00.</li>
+                <li><strong>Cenário de Exceção:</strong> 1. Pagamento online recusado (simulação). 2. Cliente escolhe outro método.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('modal-detalhes-usecase');
+            const btnFechar = document.getElementById('btn-fechar-usecase');
+            const tituloModal = document.getElementById('titulo-usecase-modal');
+            const conteudoModal = document.getElementById('conteudo-usecase-modal');
+
+            // Seleciona todos os botões de informação dos casos de uso
+            document.querySelectorAll('.btn-info-usecase').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Impede que o clique se propague para o oval
+                    const oval = btn.closest('.use-case-oval');
+                    if (!oval) return;
+
+                    const id = oval.dataset.id;
+                    // Pega o texto do oval, ignorando o ícone.
+                    const titulo = oval.firstChild.textContent.trim();
+                    const conteudoElement = document.getElementById(`data-${id}`);
+
+                    if (conteudoElement) {
+                        tituloModal.innerText = titulo;
+                        conteudoModal.innerHTML = conteudoElement.innerHTML;
+                        modal.classList.add('visivel');
+                    } else {
+                        console.warn('Conteúdo não encontrado para:', id);
+                    }
+                });
+            });
+
+            btnFechar.addEventListener('click', () => modal.classList.remove('visivel'));
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.classList.remove('visivel');
+            });
+        });
+    </script>
+    <!-- VLibras Widget -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+</body>
+</html>

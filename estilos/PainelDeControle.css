@@ -1,0 +1,1156 @@
+.dropdown {
+    position: relative; 
+    display: inline-block;
+}
+
+.dropdown-toggle::after {
+    content: '▼';
+    font-size: 0.8em;
+    display: inline-block;
+    transition: margin-left 0.4s ease-out;
+    margin-left: 8px;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: var(--color-dark-gray);
+    min-width: 240px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 5px;
+    top: 100%;
+    left: 0;
+    margin-bottom: 5px;
+    border: 1px solid var(--color-orange);
+    padding: 5px 0;
+}
+
+.dropdown-menu a {
+    color: var(--color-white);
+    padding: 10px 12px;
+    text-decoration: none;
+    display: block;
+    font-family: 'Roboto', sans-serif;
+    transition: all 0.2s;
+    border-bottom: 1px solid #333;
+}
+
+.dropdown-menu a:hover {background-color: var(--color-orange); color: var(--color-black);}
+
+/* Destaque em verde para abrir a loja (Suporta open-all e open) */
+.dropdown-menu a[data-action="open-all"]:hover,
+.dropdown-menu a[data-action="open"]:hover {
+    background-color: var(--color-green) !important;
+    color: var(--color-white) !important;
+}
+
+/* Destaque em vermelho para o fechamento total da loja */
+.dropdown-menu a[data-action="close-all"]:hover {
+    background-color: var(--color-red) !important;
+    color: var(--color-white) !important;
+}
+
+.dropdown-menu a:last-child { border-bottom: none; }
+
+.dropdown-menu a i {
+    margin-right: 8px;
+}
+
+.dropdown-menu a.highlight-link {
+    color: var(--color-yellow);
+    font-weight: bold;
+}
+
+.dropdown.show .dropdown-menu {display: block;}
+
+.link-sair {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--color-white);
+    transition: transform 0.3s;
+}
+
+.link-sair i {
+    font-size: 1.5em;
+    margin-bottom: 5px;
+    transition: color 0.3s;
+}
+
+.link-sair span {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1em;
+    text-transform: uppercase;
+}
+
+.link-sair:hover i { color: var(--color-orange); }
+.link-sair:hover { transform: scale(1.1); }
+
+:root {
+    --color-black: #000000;
+    --color-orange: #f06400;
+    --color-white: #cecaca;
+    --color-yellow: #ffc600;
+    --color-dark-gray: #1a1a1a;
+    --color-green: #28a745;
+    --color-red: #ff0019;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--color-black);
+    font-family: 'Roboto', sans-serif;
+    color: var(--color-white);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+.cabecalho-painel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 20px;
+    margin-bottom: 40px;
+    border-bottom: 2px solid var(--color-orange);
+    position: relative;
+}
+
+.cabecalho-painel .imagem-logo {
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 0px;
+    position: relative;
+    z-index: 20;
+}
+
+.mascote-header {
+    position: absolute;
+    left: 0px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 300px;
+    height: 359px;
+    border-radius: 0%;
+    transition: transform 0.3s ease;
+    z-index: 1;
+}
+
+
+.cabecalho-painel h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-orange);
+    font-size: 3.5em;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+.icone-configuracoes {
+    position: absolute;
+    top: 40px;
+    right: 20px;
+    transform: translateY(-50%);
+    color: var(--color-white);
+    background: none; border: none; cursor: pointer;
+    font-size: 2.2em;
+    text-decoration: none;
+    transition: color 0.3s, transform 0.3s;
+}
+
+.icone-configuracoes:hover {
+    color: var(--color-orange);
+    transform: translateY(-50%) rotate(90deg);
+}
+
+.icone-voltar {
+    position: absolute;
+    top: 40px;
+    right: 20px;
+    transform: translateY(-50%);
+    font-size: 2.2em;
+    color: var(--color-white);
+    transition: color 0.3s, transform 0.3s;
+}
+
+@keyframes slideLeftAbsolute {
+    0% { transform: translateY(-50%) translateX(0); }
+    100% { transform: translateY(-50%) translateX(-5px); }
+}
+
+@keyframes slideLeftStatic {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-5px); }
+}
+
+.icone-voltar:hover {
+    color: var(--color-orange);
+    animation: slideLeftAbsolute 0.6s ease-in-out infinite alternate;
+}
+
+.barra-lateral-configuracoes {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100%;
+    background-color: var(--color-dark-gray);
+    border-left: 2px solid var(--color-orange);
+    box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+    z-index: 1001;
+    transition: right 0.4s ease-in-out;
+    display: flex;
+    flex-direction: column;
+}
+
+.perfil-barra-lateral {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 25px 20px;
+    border-bottom: 1px solid #444;
+    background-color: #222;
+}
+
+.imagem-perfil-barra-lateral {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--color-orange);
+    margin-bottom: 10px;
+}
+
+.perfil-barra-lateral span {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5em;
+    color: var(--color-white);
+    letter-spacing: 2px;
+}
+
+.barra-lateral-configuracoes.aberta {
+    right: 0;
+}
+
+.cabecalho-barra-lateral {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #444;
+}
+
+.cabecalho-barra-lateral h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-yellow);
+    margin: 0;
+    font-size: 1.8em;
+    text-transform: uppercase;
+}
+
+.btn-fechar {
+    background: none;
+    border: none;
+    color: var(--color-white);
+    font-size: 2.2em;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 5px;
+    transition: color 0.3s, transform 0.3s;
+}
+
+.btn-fechar:hover {
+    color: var(--color-orange);
+    animation: slideLeftStatic 0.6s ease-in-out infinite alternate;
+}
+
+.link-barra-lateral {
+    display: block;
+    padding: 15px 20px;
+    color: var(--color-white);
+    text-decoration: none;
+    font-size: 1.1em;
+    border-bottom: 1px solid #333;
+    transition: background-color 0.2s;
+    text-transform: uppercase;
+}
+.link-barra-lateral:hover { background-color: var(--color-orange); color: var(--color-black); }
+.link-barra-lateral i { margin-right: 10px; }
+
+/* --- Estilos para a Lixeira dentro da Sidebar --- */
+.lixeira-sidebar-container {
+    margin: 10px 15px;
+    background-color: #111;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 12px;
+    display: none; /* Oculto por padrão */
+    flex-direction: column;
+    gap: 10px;
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+.lixeira-sidebar-container.visivel {
+    display: flex;
+}
+
+.lixeira-sidebar-container h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-yellow);
+    font-size: 1.4em;
+    border-bottom: 1px solid #444;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+}
+
+.item-lixeira-sidebar {
+    background-color: #222;
+    border: 1px solid #444;
+    border-radius: 5px;
+    padding: 12px;
+    font-size: 0.85em;
+}
+
+.item-lixeira-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.origem-badge {
+    background-color: #444;
+    color: var(--color-orange);
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 0.75em;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.item-lixeira-sidebar h5 {
+    color: var(--color-white);
+    margin-bottom: 8px;
+    font-size: 1.1em;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.5px;
+}
+
+.nota-valor-total-sidebar {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-yellow);
+    font-size: 1.1em;
+    margin-top: 3px;
+    margin-bottom: 5px;
+}
+.msg-reposicao {
+    color: #888;
+    font-size: 0.9em;
+    margin-bottom: 12px;
+}
+
+.acoes-lixeira-sidebar {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-lixeira-restaurar { background-color: var(--color-green); color: black; border: none; padding: 6px; border-radius: 4px; flex: 1; cursor: pointer; font-weight: bold; font-family: 'Roboto', sans-serif; font-size: 0.9em; }
+.btn-lixeira-ver-itens { 
+    padding: 6px 12px; 
+    font-family: 'Roboto', sans-serif; 
+    font-weight: bold; 
+    font-size: 0.85em; 
+    border: 1px solid var(--color-yellow); 
+    background-color: transparent; 
+    color: var(--color-yellow); 
+    border-radius: 5px; 
+    cursor: pointer; 
+    transition: all 0.2s; 
+}
+.btn-lixeira-ver-itens:hover { 
+    background-color: var(--color-yellow); 
+    color: var(--color-black); 
+}
+.btn-lixeira-excluir { background-color: transparent; color: var(--color-red); border: 1px solid var(--color-red); padding: 6px; border-radius: 4px; cursor: pointer; }
+.btn-lixeira-excluir:hover { background-color: var(--color-red); color: white; }
+.lixeira-vazia-msg { text-align: center; color: #666; padding: 20px 0; font-style: italic; }
+
+.conteudo-barra-lateral {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.rodape-barra-lateral {
+    padding: 10px 0;
+    border-top: 1px solid #444;
+    background-color: var(--color-dark-gray);
+}
+
+.container-menu-instadelivery {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 15px;
+    margin-bottom: 30px;
+    padding: 10px;
+    background-color: var(--color-dark-gray);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    border: 1px solid #333;
+    
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.bloco-menu {
+    flex-grow: 1; 
+    min-width: 200px; 
+    padding: 5px;
+}
+
+.titulo-bloco {
+    display: block;
+    font-family: 'Bebas Neue', sans-serif;
+    font-weight: bold;
+    font-size: 1.4em;
+    color: var(--color-yellow);
+    margin-bottom: 10px;
+    border-bottom: 2px solid var(--color-orange);
+    padding-bottom: 5px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.botoes-bloco {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.btn-menu {
+    padding: 6px 10px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    border: 2px solid var(--color-orange);
+    border-radius: 5px;
+    background-color: var(--color-dark-gray);
+    color: var(--color-white);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.85em;
+    text-transform: uppercase;
+}
+
+.btn-menu > i {
+    margin-right: 6px;
+    font-size: 0.9em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .btn-menu:hover {
+        background-color: var(--color-orange);
+        color: var(--color-black);
+        transform: translateY(-1px);
+    }
+}
+
+.btn-menu span {
+    vertical-align: middle;
+    display: inline-block;
+    max-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: max-width 0.4s ease-out, margin-left 0.4s ease-out;
+    margin-left: 0;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .btn-menu:hover span {
+        max-width: 150px;
+        margin-left: 6px;
+    }
+    .btn-menu:hover::after {
+        margin-left: auto;
+    }
+}
+
+.painel-principal {
+    flex-grow: 1;
+}
+
+.controles-painel {
+    display: flex;
+    gap: 10px; /* Aumenta o espaçamento (margem) entre os botões */
+    margin-bottom: 10px;
+    justify-content: center;
+}
+
+.controles-painel button {
+    padding: 10px 10px;
+    margin: 20px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2em;
+    border: 2px solid var(--color-orange);
+    background-color: var(--color-dark-gray);
+    color: var(--color-white);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.controles-painel button:hover {
+    background-color: var(--color-orange);
+    color: var(--color-black);
+}
+
+.controles-painel .btn-perigo {
+    border-color: var(--color-red);
+}
+
+.controles-painel .btn-perigo:hover {
+    background-color: var(--color-red);
+    color: var(--color-black);
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.girando {
+    display: inline-block;
+    animation: spin 1s linear;
+}
+
+.btn-perigo .fa-trash-can-arrow-up {
+    display: none;
+}
+
+.btn-perigo:hover .fa-trash-can {
+    display: none;
+}
+
+.btn-perigo:hover .fa-trash-can-arrow-up {
+    display: inline-block;
+}
+
+.grid-painel {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+}
+
+.coluna-painel {
+    background-color: var(--color-dark-gray);
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.coluna-painel h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-yellow);
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--color-orange);
+    padding-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.lista-pedidos {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-height: 300px;
+}
+
+.card-pedido {
+    background-color: #2a2a2a;
+    border: 1px solid #444;
+    border-left: 5px solid var(--color-orange);
+    border-radius: 5px;
+    padding: 15px;
+}
+
+#coluna-preparo .card-pedido { border-left-color: var(--color-yellow); }
+#coluna-finalizados .card-pedido { border-left-color: var(--color-green); }
+
+.card-pedido h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5em;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.id-pedido {
+    font-size: 0.8em;
+    color: #888;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.detalhes-pedido ul {
+    list-style: none;
+    margin-bottom: 10px;
+}
+
+.detalhes-pedido li {
+    padding: 2px 0;
+}
+
+.total-pedido {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: var(--color-yellow);
+    margin-top: 10px;
+    text-align: center;
+    border-top: 1px solid #444;
+    padding-top: 10px;
+}
+
+.card-pedido p {
+    font-size: 0.9em;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.acoes-pedido {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-acao {
+    flex-grow: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+}
+
+.btn-preparo { background-color: var(--color-orange); color: var(--color-black); }
+.btn-preparo:hover { background-color: #ff8533; }
+
+.btn-finalizar { background-color: var(--color-green); color: var(--color-white); }
+.btn-finalizar:hover { background-color: #218838; }
+
+.btn-excluir { background-color: #555; color: #ccc; }
+.btn-excluir:hover { background-color: var(--color-red); }
+
+.rodape-copyright {
+    text-align: left;
+    margin-top: 60px;
+    padding: 20px;
+    border-top: 2px solid var(--color-orange);
+    color: var(--color-white);
+}
+
+.rodape-copyright p {
+    margin: 2px 0;
+    font-size: 0.7em;
+    text-transform: uppercase;
+    color: #7c7676;
+}
+
+.link-desenvolvedor {
+    text-decoration: none;
+    color: inherit;
+}
+
+.nome-desenvolvedor {
+    display: inline-block;
+    transition: color 0.3s, transform 0.3s;
+    cursor: pointer;
+}
+
+.nome-desenvolvedor:hover {
+    color: var(--color-orange);
+    transform: scale(1.2);
+}
+
+@media (max-width: 992px) {
+    .bloco-menu {
+        min-width: 100%;
+    }
+
+    .btn-menu span {
+        max-width: 150px;
+        margin-left: 6px;
+    }
+}
+@media (max-width: 600px) {
+    .controles-painel {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 380px) {
+    .btn-menu {
+        font-size: 0.8em;
+    }
+}
+
+@media (max-width: 480px) {
+    #config-op-dropdown .btn-menu,
+    #close-options-dropdown .btn-menu {
+        font-size: 0.75em;
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+}
+
+@media (max-width: 600px) {
+    .botoes-bloco {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 1150px) {
+    .mascote-header {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .cabecalho-painel {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .cabecalho-painel h1 {
+        font-size: 2.5em;
+        width: 100%;
+        text-align: center;
+    }
+    .icone-voltar, .icone-configuracoes {
+        top: 25px;
+        right: 15px;
+        font-size: 1.8em;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px; /* Reduz o padding lateral para dar mais espaço ao conteúdo em 375px */
+    }
+
+    .cabecalho-painel h1 {
+        font-size: 1.8em; /* Reduz o título para não quebrar em 375px */
+    }
+    .icone-voltar, .icone-configuracoes {
+        top: 25px;
+        font-size: 1.6em;
+    }
+}
+
+@media (max-width: 375px) {
+    body {
+        padding: 8px;
+    }
+}
+
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-dark-gray);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #555;
+    border-radius: 10px;
+    border: 3px solid var(--color-dark-gray);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-orange);
+}
+
+/* Estilos do Modal de Agendamento */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: none; justify-content: center; align-items: center;
+    z-index: 2000; opacity: 0; transition: opacity 0.3s ease;
+}
+.modal-overlay.visivel { display: flex; opacity: 1; }
+
+.modal-container {
+    background-color: var(--color-dark-gray);
+    padding: 30px; border-radius: 8px;
+    border: 1px solid var(--color-orange);
+    width: 90%; max-width: 400px; position: relative;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+
+.modal-container h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-yellow);
+    font-size: 2em; margin-bottom: 15px;
+}
+
+.modal-container p { margin-bottom: 20px; color: #ccc; }
+
+.btn-fechar-modal {
+    position: absolute; top: 15px; right: 15px; left: auto; transform: none;
+    background: none; border: none; color: var(--color-white);
+    font-size: 1.8em; cursor: pointer;
+}
+
+.btn-imprimir-modal {
+    position: absolute; top: 12px; right: 15px;
+    background-color: var(--color-orange);
+    color: var(--color-white);
+    border: none;
+    border-radius: 5px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .btn-imprimir-modal:hover {
+    background-color: #ff9100;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.btn-acao.btn-imprimir {
+    background-color: var(--color-orange) !important;
+    color: var(--color-white) !important;
+    border: 1px solid #ffb347;
+    border-radius: 5px;
+    padding: 6px 12px;
+    font-weight: 700;
+}
+
+.btn-acao.btn-imprimir:hover {
+    background-color: #ff9100 !important;
+    color: #fff;
+}
+
+.cabecalho-pedido {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 10px;
+}
+
+.cabecalho-pedido > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.cabecalho-pedido h4 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.cabecalho-pedido .id-pedido {
+    margin: 0;
+    color: #ccc;
+    font-size: 0.8em;
+}
+
+.btn-imprimir-inline {
+    background-color: var(--color-orange) !important;
+    color: var(--color-white) !important;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75em;
+    padding: 0;
+}
+
+.btn-imprimir-inline:hover {
+    background-color: #ff9100 !important;
+    transform: scale(1.1);
+}
+
+/* Estilos do Picker Customizado */
+.picker-wrapper {
+    display: flex; justify-content: center; align-items: center;
+    height: 200px; margin-bottom: 20px;
+    background-color: #222; border-radius: 8px;
+    position: relative;
+    border: 1px solid #444;
+}
+.picker-column {
+    height: 100%; overflow-y: auto; width: 80px;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE 10+ */
+    padding: 80px 0; /* Espaço para centralizar */
+    scroll-behavior: smooth;
+}
+.picker-column::-webkit-scrollbar { display: none; }
+.picker-item {
+    padding: 10px; text-align: center; font-size: 1.5em;
+    color: #666; cursor: pointer; transition: all 0.2s;
+    font-family: 'Bebas Neue', sans-serif;
+}
+.picker-item:hover { color: #aaa; }
+.picker-item.selected {
+    color: var(--color-yellow); font-size: 2em;
+    background-color: rgba(240, 100, 0, 0.1);
+    border-radius: 5px;
+}
+.picker-separator { font-size: 2em; color: var(--color-orange); font-weight: bold; margin-top: -5px; }
+
+.modal-actions { display: flex; gap: 10px; justify-content: center; }
+
+.btn-confirmar, .btn-cancelar {
+    padding: 10px 20px; border-radius: 5px; cursor: pointer;
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.2em; border: none;
+}
+.btn-confirmar { background-color: var(--color-orange); color: black; }
+.btn-confirmar:hover { background-color: #ff8533; }
+.btn-cancelar { background-color: #555; color: white; }
+.btn-cancelar:hover { background-color: #666; }
+
+.dias-semana-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
+    margin-bottom: 15px;
+}
+.dias-semana-container label {
+    flex: 1;
+    text-align: center;
+}
+.dias-semana-container input[type="checkbox"] {
+    display: none; /* Esconde o checkbox padrão */
+}
+.dias-semana-container span {
+    display: block;
+    padding: 8px 5px;
+    border: 1px solid #555;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: bold;
+}
+.dias-semana-container input[type="checkbox"]:checked + span {
+    background-color: var(--color-orange);
+    color: var(--color-black);
+    border-color: var(--color-orange);
+}
+
+.repetir-agendamento-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 25px;
+    gap: 8px;
+}
+.repetir-agendamento-container label { cursor: pointer; }
+
+.agendamentos-existentes {
+    margin-bottom: 25px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 15px;
+}
+.agendamentos-existentes h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-orange);
+    font-size: 1.3em;
+    margin-bottom: 10px;
+}
+#lista-agendamentos-ativos { list-style: none; max-height: 120px; overflow-y: auto; padding-right: 5px; }
+#lista-agendamentos-ativos li { background-color: #2a2a2a; padding: 8px 12px; border-radius: 4px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; font-size: 0.9em; }
+.btn-remover-agendamento {
+    background: none; border: none; color: #aaa;
+    font-size: 1.2em; cursor: pointer; transition: color 0.2s;
+}
+.btn-remover-agendamento:hover {
+    color: var(--color-red);
+}
+
+/* ==========================================================================
+   ESTILOS PARA EDIÇÃO DE COMANDA NO PAINEL
+   ========================================================================== */
+
+/* --- 1. Estilo do Botão "Editar" Amarelo --- */
+.btn-editar-comanda {
+    background-color: var(--color-yellow) !important; /* Usa !important para garantir a sobreposição */
+    border-color: var(--color-yellow) !important;
+    color: var(--color-black) !important;
+    font-weight: bold;
+}
+.btn-editar-comanda:hover {
+    background-color: #ffdb4d !important; /* Amarelo mais claro */
+    border-color: #ffdb4d !important;
+}
+
+/* --- 2. Estilos para o Card em Modo de Edição ("Alterar Comanda") --- */
+.card-pedido.editing-comanda {
+    border: 2px solid var(--color-orange);
+    box-shadow: 0 0 15px rgba(240, 100, 0, 0.5);
+    background-color: #3a3a3a; /* Um pouco mais claro para destacar */
+}
+
+/* Itens da lista quando em modo de edição */
+.item-comanda-editavel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 5px;
+    border-bottom: 1px solid #4f4f4f;
+    font-family: 'Roboto', sans-serif;
+}
+.item-comanda-editavel:last-child {
+    border-bottom: none;
+}
+
+/* Controles de cada item (preço, botões de +/-/remover) */
+.controles-item-comanda {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Botões de quantidade (+/-) e remover item */
+.btn-qtd-comanda,
+.btn-remover-item-comanda {
+    background: none;
+    border: none;
+    color: #ccc;
+    cursor: pointer;
+    font-size: 1.3em; /* Aumenta um pouco o ícone */
+    transition: color 0.2s, transform 0.2s;
+    padding: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* Efeito de hover para os botões de quantidade */
+.btn-qtd-comanda:hover {
+    transform: scale(1.1);
+}
+
+/* Botão de aumentar (+) fica verde no hover */
+.btn-qtd-comanda[data-change="1"]:hover {
+    color: var(--color-green);
+}
+
+/* Botão de diminuir (-) fica laranja no hover para diferenciar */
+.btn-qtd-comanda[data-change="-1"]:hover {
+    color: var(--color-orange);
+}
+.btn-remover-item-comanda:hover {
+    color: var(--color-red);
+    transform: scale(1.1);
+}
+
+/* Botões de ação no rodapé do card em modo de edição */
+.btn-salvar-comanda {
+    background-color: var(--color-green) !important;
+    border-color: var(--color-green) !important;
+}
+.btn-cancelar-edicao {
+    background-color: #ff0000 !important;
+    border-color: #ff0000 important;
+}
+.btn-cancelar-edicao:hover {
+    background-color: #ff0000 !important;
+}
+.btn-add-item-comanda {
+    background-color: var(--color-yellow) !important;
+    color: var(--color-black) !important;
+    border: none !important;
+    transition: background-color 0.3s ease;
+}
+.btn-add-item-comanda:hover {
+    background-color: #ffdb4d !important;
+}
+
+
+/* --- 3. Estilos para o Modal de Adicionar Itens (Mini Cardápio Responsivo) --- */
+
+/* O modal em si */
+#modal-add-item-painel .modal-container {
+    max-width: 700px; /* Um pouco maior para o cardápio */
+    max-height: 85vh; /* Altura máxima para caber na tela */
+    display: flex; /* Necessário para o overflow do filho funcionar corretamente */
+    flex-direction: column;
+}
+
+/* Container do cardápio dentro do modal, para habilitar a rolagem */
+#cardapio-para-adicionar-painel {
+    overflow-y: auto; /* Adiciona a barra de rolagem vertical quando necessário */
+    padding-right: 10px; /* Espaço para a barra de rolagem não sobrepor o conteúdo */
+}
+
+/* Título da categoria dentro do modal */
+#modal-add-item-painel .categoria-modal h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-orange);
+    font-size: 1.5em;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #555;
+    padding-bottom: 5px;
+}
+
+/* Grid de itens (2 colunas por padrão) */
+#modal-add-item-painel .itens-categoria-modal {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+/* Botão de cada item do cardápio no modal */
+#modal-add-item-painel .btn-item-cardapio {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2a2a2a;
+    border: 1px solid #444;
+    color: var(--color-white);
+    padding: 10px;
+    border-radius: 5px;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+    font-family: 'Roboto', sans-serif;
+}
+#modal-add-item-painel .btn-item-cardapio:hover {
+    background-color: #3a3a3a;
+    transform: translateY(-2px);
+}
+#modal-add-item-painel .preco-item-modal {
+    font-weight: bold;
+    color: var(--color-yellow);
+}
+
+/* Media Query para responsividade do mini cardápio */
+@media (max-width: 600px) {
+    /* Muda para 1 coluna em telas menores */
+    #modal-add-item-painel .itens-categoria-modal {
+        grid-template-columns: 1fr;
+    }
+}

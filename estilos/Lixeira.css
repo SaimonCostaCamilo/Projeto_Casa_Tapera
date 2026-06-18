@@ -1,0 +1,221 @@
+.header-lixeira {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.header-lixeira h2 {
+    color: var(--color-yellow);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.8em;
+}
+
+.btn-limpar-lixeira {
+    background-color: transparent;
+    border: 2px solid var(--color-red);
+    color: var(--color-red);
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-limpar-lixeira:hover {
+    background-color: var(--color-red);
+    color: white;
+}
+
+/* Layout para Abas Verticais */
+.layout-lixeira-corpo {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+}
+
+/* Estilos para as abas */
+.container-abas {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-right: 2px solid #333;
+    padding-right: 25px;
+    min-width: 220px;
+    position: sticky;
+    top: 20px;
+}
+
+.btn-aba {
+    padding: 10px 15px;
+    border: none;
+    background-color: transparent;
+    color: #888;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: all 0.3s;
+    border-left: 4px solid transparent;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    text-align: left;
+}
+
+.btn-aba:hover { 
+    color: var(--color-white); 
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.btn-aba.active { 
+    color: var(--color-orange); 
+    border-left-color: var(--color-orange);
+    background-color: rgba(240, 100, 0, 0.05);
+}
+
+/* Estilo para abas que não possuem itens */
+.btn-aba.aba-vazia {
+    opacity: 0.35;
+}
+
+.btn-aba.aba-vazia:hover {
+    opacity: 0.6;
+}
+
+/* Garante que a aba ativa mantenha visibilidade total mesmo se estiver vazia */
+.btn-aba.active.aba-vazia {
+    opacity: 1;
+}
+
+.contador-aba {
+    background-color: #333;
+    color: #888;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    min-width: 30px;
+    text-align: center;
+}
+
+.btn-aba.active .contador-aba {
+    background-color: var(--color-orange);
+    color: var(--color-black);
+}
+
+.grid-lixeira {
+    flex-grow: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: 20px;
+}
+
+/* Responsividade para Abas */
+@media (max-width: 992px) {
+    .layout-lixeira-corpo { flex-direction: column; gap: 20px; }
+    .container-abas {
+        flex-direction: row;
+        border-right: none;
+        border-bottom: 2px solid #333;
+        padding-right: 0;
+        padding-bottom: 10px;
+        width: 100%;
+        position: static;
+        overflow-x: auto;
+        justify-content: flex-start;
+    }
+    .btn-aba {
+        border-left: none;
+        border-bottom: 4px solid transparent;
+        white-space: nowrap;
+        width: auto;
+        gap: 10px;
+    }
+    .btn-aba.active { border-bottom-color: var(--color-orange); }
+}
+
+.card-lixeira {
+    background-color: var(--color-dark-gray);
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: transform 0.2s;
+}
+
+.card-lixeira:hover { transform: translateY(-5px); border-color: var(--color-orange); }
+
+.header-card-lixeira {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85em;
+}
+
+.badge-tipo {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    color: rgb(255, 255, 255);
+}
+.badge-tipo.item { background-color: var(--color-yellow); }
+.badge-tipo.categoria { background-color: var(--color-orange); }
+.badge-tipo.pesquisa { background-color: #3498db; color: white; }
+.badge-tipo.cupom { background-color: #9b59b6; color: white; }
+.badge-tipo.conta, .badge-tipo.clientes { background-color: #e67e22; color: white; }
+.badge-tipo.mesa { background-color: #1abc9c; color: white; }
+.badge-tipo.pedido { background-color: #34495e; color: white; }
+.badge-tipo.nota { background-color: #7f8c8d; color: white; }
+.badge-tipo.automacao { background-color: #00b894; color: white; }
+
+.corpo-card-lixeira h3 {
+    color: var(--color-white);
+    margin-bottom: 8px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6em;
+}
+
+.nota-valor-total {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-yellow);
+    font-size: 1.4em;
+    margin-top: 5px;
+    margin-bottom: 8px;
+}
+
+.origem-texto { color: #aaa; font-size: 0.9em; }
+.aviso-reposicao { color: var(--color-yellow); font-size: 0.95em; font-weight: bold; margin-top: 5px; }
+
+.acoes-lixeira {
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
+}
+
+.btn-restaurar { background-color: var(--color-green); color: white; border: none; padding: 10px; border-radius: 4px; flex: 1; cursor: pointer; font-weight: bold; font-family: 'Bebas Neue', sans-serif; font-size: 1.2em; }
+.btn-ver-itens { 
+    padding: 6px 12px; 
+    font-family: 'Roboto', sans-serif; 
+    font-weight: bold; 
+    font-size: 0.9em; 
+    border: 1px solid var(--color-yellow); 
+    background-color: transparent; 
+    color: var(--color-yellow); 
+    border-radius: 5px; 
+    flex: 1; 
+    cursor: pointer; 
+    transition: all 0.2s; 
+}
+.btn-ver-itens:hover { 
+    background-color: var(--color-yellow); 
+    color: var(--color-black); 
+}
+.btn-excluir-permanente { background-color: #444; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; transition: background 0.2s; }
+.btn-excluir-permanente:hover { background-color: var(--color-red); }

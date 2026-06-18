@@ -1,0 +1,394 @@
+.container-gerenciamento, .container-lista-compras {
+    background-color: var(--color-dark-gray);
+    padding: 25px;
+    border-radius: 8px;
+    margin-top: 30px;
+}
+
+.container-gerenciamento h2, .container-lista-compras h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-yellow);
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 2.5em;
+    border-bottom: 2px solid var(--color-orange);
+    padding-bottom: 10px;
+}
+
+.cards-resumo-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+.card-resumo {
+    background-color: #2a2a2a;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    border-bottom: 3px solid var(--color-orange);
+    min-width: 280px;
+}
+.card-titulo {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.1em;
+    color: #aaa;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+.card-valor {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.8em;
+    color: var(--color-yellow);
+    letter-spacing: 1px;
+}
+
+.container-busca {
+    position: relative;
+    margin: 0 0 20px 0;
+    max-width: 500px;
+}
+#busca-ingrediente {
+    width: 100%;
+    padding: 10px 15px 10px 40px;
+    background-color: #333;
+    border: 1px solid #555;
+    border-radius: 5px;
+    color: var(--color-white);
+    font-size: 1em;
+}
+.container-busca .fa-search {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+}
+.container-add-item {
+    text-align: right;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+#btn-add-novo-item, #btn-gerenciar-categorias {
+    padding: 10px 20px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2em;
+    border: 2px solid var(--color-orange);
+    background-color: var(--color-dark-gray);
+    color: var(--color-white);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+#btn-add-novo-item:hover, #btn-gerenciar-categorias:hover {
+    background-color: var(--color-orange);
+    color: var(--color-black);
+}
+
+.tabela-estoque {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+.tabela-estoque th, .tabela-estoque td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #444;
+    vertical-align: middle;
+}
+.tabela-estoque th {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2em;
+    color: var(--color-orange);
+}
+.categoria-row {
+    background-color: #222;
+}
+.categoria-header {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4em;
+    color: var(--color-yellow);
+    text-align: center !important;
+}
+.imagem-ingrediente i {
+    font-size: 1.8em;
+    color: #888;
+}
+.container-qtd {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+.container-custo {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 3px;
+}
+.prefixo-moeda {
+    color: #888;
+    font-family: 'Roboto', sans-serif;
+    font-weight: normal;
+}
+
+.input-editavel {
+    background-color: transparent;
+    border: none;
+    color: var(--color-white);
+    font-family: 'Roboto', sans-serif;
+    font-size: 1em;
+    width: 60px;
+}
+.input-custo {
+    width: 70px;
+}
+.input-editavel:not(:disabled),
+.input-custo:not(:disabled) {
+    background-color: #333;
+    border: 1px solid #555;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.unidade-medida {
+    color: #888;
+    font-size: 0.9em;
+}
+.status-estoque {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 0.8em;
+    color: var(--color-black);
+}
+.status-ok { background-color: var(--color-green); }
+.status-baixo { background-color: var(--color-yellow); }
+.status-critico { background-color: var(--color-red); color: var(--color-white); }
+
+.btn-acao-estoque {
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: transform 0.2s;
+    color: var(--color-yellow);
+}
+.btn-acao-estoque:hover { transform: scale(1.2); }
+.btn-salvar { color: var(--color-green); }
+
+.container-lista-compras { margin-top: 40px; }
+.resumo-lista-compras {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+.total-compra-valor {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: var(--color-yellow);
+}
+.btn-acao-relatorio {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: var(--color-yellow);
+    color: var(--color-black);
+    border: none;
+    border-radius: 5px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-remover-compra { color: #aaa; }
+.btn-remover-compra:hover { color: var(--color-red); transform: scale(1.2); }
+
+.btn-remover-compra .fa-trash-can-arrow-up {
+    display: none;
+}
+.btn-remover-compra:hover .fa-trash-can {
+    display: none;
+}
+.btn-remover-compra:hover .fa-trash-can-arrow-up {
+    display: inline-block;
+}
+
+.input-com-unidade {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+.container-preco-compra {
+    position: relative;
+}
+.input-preco-compra {
+    width: 100px;
+    text-align: right;
+    padding-left: 22px;
+    background-color: #333;
+    border: 1px solid #555;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: none; justify-content: center; align-items: center;
+    z-index: 1002;
+}
+.modal-overlay.visivel { display: flex; }
+.modal-container {
+    background-color: var(--color-dark-gray);
+    padding: 30px; border-radius: 8px;
+    border: 1px solid var(--color-orange);
+    width: 90%; max-width: 500px; position: relative;
+}
+.modal-container h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-yellow);
+    font-size: 2em;
+    margin-bottom: 20px;
+    text-align: center;
+}
+.btn-fechar-modal {
+    position: absolute; top: 15px; right: 15px; left: auto; transform: none;
+    background: none; border: none; color: var(--color-white);
+    font-size: 1.8em; cursor: pointer;
+}
+.form-novo-item label { display: block; margin-bottom: 5px; }
+.form-novo-item input, .form-novo-item select {
+    width: 100%; padding: 10px; margin-bottom: 15px;
+    background-color: #333; 
+    border: 1px solid #555;
+    border-radius: 4px; 
+    color: var(--color-white);
+    font-family: 'Roboto', sans-serif;
+}
+.form-novo-item button {
+    width: 100%; padding: 12px; 
+    background-color: var(--color-dark-gray);
+    color: var(--color-white); 
+    border: 2px solid var(--color-orange); 
+    border-radius: 5px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2em;
+    text-transform: uppercase;
+    cursor: pointer; transition: all 0.3s ease;
+}
+
+#lista-categorias-gerenciar {
+    list-style: none;
+    margin-bottom: 20px;
+}
+#lista-categorias-gerenciar li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #2a2a2a;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+.acoes-categoria button {
+    background: none; border: none; font-size: 1.1em;
+    color: #aaa; cursor: pointer; margin-left: 10px;
+}
+.acoes-categoria .btn-editar-cat { color: var(--color-yellow); }
+.acoes-categoria .btn-salvar-cat { color: var(--color-green); display: none; }
+.acoes-categoria .btn-remover-cat:hover { color: var(--color-red); }
+.form-nova-categoria {
+    border-top: 1px solid #444;
+    padding-top: 20px;
+    margin-top: 15px;
+}
+.form-nova-categoria h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-orange);
+    font-size: 1.5em;
+    margin-bottom: 15px;
+}
+.form-nova-categoria div { display: flex; gap: 10px; }
+.form-nova-categoria input {
+    flex-grow: 1; padding: 10px; background-color: #333;
+    border: 1px solid #555; border-radius: 4px; color: var(--color-white);
+    font-size: 1em;
+}
+.form-nova-categoria button {
+    padding: 10px 20px; background-color: var(--color-yellow);
+    color: var(--color-black); border: none; border-radius: 4px; font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.form-nova-categoria button:hover { background-color: #ffdb4d; }
+
+@media (max-width: 768px) {
+    .container-gerenciamento, .container-lista-compras {
+        padding: 15px;
+    }
+
+    .tabela-estoque thead { display: none; }
+    .tabela-estoque, .tabela-estoque tbody, .tabela-estoque tr, .tabela-estoque td {
+        display: block;
+        width: 100%;
+    }
+    .tabela-estoque tr {
+        margin-bottom: 15px;
+        background-color: #2a2a2a;
+        border-radius: 5px;
+        border-left: 4px solid var(--color-orange);
+        padding: 10px;
+    }
+    .tabela-estoque td {
+        display: flex;
+        justify-content: space-between;
+        text-align: right;
+        position: relative;
+        border-bottom: 1px solid #3a3a3a;
+        padding: 10px 0;
+    }
+    .tabela-estoque td:last-child { border-bottom: none; }
+    .tabela-estoque td::before {
+        content: attr(data-label);
+        text-align: left;
+        font-weight: bold;
+        color: #aaa;
+        margin-right: auto;
+    }
+    .container-qtd {
+        justify-content: flex-end;
+        gap: 6px;
+    }
+    .tabela-estoque td[data-label^="Custo"],
+    .tabela-estoque td[data-label^="Preço"] {
+        justify-content: flex-end;
+    }
+    .input-editavel {
+        width: auto;
+        text-align: right;
+    }
+    .categoria-row { display: none; }
+}
+
+@media (max-width: 768px) {
+    .tabela-estoque td .container-qtd,
+    .tabela-estoque td .input-com-unidade,
+    .tabela-estoque td .container-preco-compra {
+        display: flex;
+        justify-content: flex-end; /* Alinha o R$ e o input à direita */
+        align-items: baseline;
+        gap: 4px;
+    }
+
+    .input-editavel {
+        width: auto;
+        max-width: 100px;
+    }
+}

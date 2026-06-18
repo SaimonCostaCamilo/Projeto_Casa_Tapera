@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistente de Marketing - Casa Tapera</title>
+    <link rel="stylesheet" href="../estilos/PainelDeControle.css">
+    <link rel="stylesheet" href="../estilos/SugestoesIA.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        .container-chatbot-wrapper {
+            width: 95%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+    </style>
+</head>
+<body>
+    <header class="cabecalho-painel">
+        <div class="titulo-com-avatar">
+            <img src="../imagens/bot_Tapera.jpeg" alt="Bot Tapera" class="imagem-bot-header">
+            <h1>Assistente de Marketing</h1>
+        </div>
+        <a href="PainelDeControle.html" class="icone-voltar" title="Voltar ao Painel">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+    </header>
+
+    <main class="painel-principal">
+        <div class="container-chatbot-wrapper">
+            <div class="container-chatbot">
+                <div class="chat-header">
+                    <h3>IA Casa Tapera</h3>
+                    <button id="btn-abrir-historico" class="btn-chat-config" title="Histórico e Opções">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+                <div id="chat-window" class="chat-window">
+                    <div id="typing-indicator" class="mensagem-chat mensagem-bot typing-indicator oculto">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+                <div class="chat-sugestoes-rapidas">
+                    <button class="btn-sugestao-rapida" data-comando="ideia">💡 Ideia de Post</button>
+                    <button class="btn-sugestao-rapida" data-comando="legenda">✍️ Sugerir Legenda</button>
+                    <button class="btn-sugestao-rapida" data-comando="hashtags"># Gerar Hashtags</button>
+                </div>
+                <div class="chat-input-area">
+                    <form id="form-chat">
+                        <input type="text" id="chat-input" placeholder="Pergunte ao Chatbot-Tapera..." autocomplete="off">
+                        <button type="submit" title="Enviar"><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="sidebar-historico" class="secao-historico-lateral">
+                <div class="cabecalho-historico">
+                    <h2 class="titulo-secao-ia"><i class="fas fa-history"></i> Histórico</h2>
+                    <button id="btn-limpar-historico" title="Limpar Histórico"><i class="fas fa-trash-alt"></i></button>
+                </div>
+                <ul id="lista-historico" class="lista-historico">
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <div id="modal-pesquisa" class="modal-overlay-pesquisa oculto">
+        <div class="modal-pesquisa-container">
+            <button id="btn-fechar-pesquisa" class="btn-fechar-pesquisa" title="Fechar Pesquisa">&times;</button>
+            <div id="loading-pesquisa" class="loading-pesquisa">Carregando resultados...</div>
+            <iframe id="iframe-pesquisa" src="about:blank"></iframe>
+        </div>
+    </div>
+
+    <footer class="rodape-copyright">
+        <p>&copy; 2026 CASA TAPERA. TODOS OS DIREITOS RESERVADOS | DESENVOLVIDO POR EQUIPE <a href="https://www.instagram.com/s.aib0t/" target="_blank" rel="noopener noreferrer" class="link-desenvolvedor"><span class="nome-desenvolvedor">S.AIB0T</span></a></p>
+    </footer>
+
+    <script src="../animações/SugestoesIA.js"></script>
+    <!-- VLibras Widget -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+</body>
+</html>

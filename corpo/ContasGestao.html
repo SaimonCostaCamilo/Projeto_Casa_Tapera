@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Contas - Casa Tapera</title>
+    <link rel="stylesheet" href="../estilos/PainelDeControle.css">
+    <link rel="stylesheet" href="../estilos/ContasGestao.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <!-- Biblioteca de Gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .modal-container { position: relative; }
+        .btn-fechar-modal {
+            position: absolute; top: 15px; right: 15px; left: auto; transform: none;
+            background: none; border: none; color: var(--color-white); font-size: 1.8em; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header class="cabecalho-painel">
+        <a href="PainelDeControle.html"><img src="../imagens/Logo_Tapera.jpeg" alt="Logotipo Casa Tapera" class="imagem-logo"></a>
+        <h1>Contas a Pagar e Receber</h1>
+        <a href="PainelDeControle.html" class="icone-voltar" title="Voltar ao Painel">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+    </header>
+
+    <main class="painel-principal">
+        <div class="container-gerenciamento">
+            <h2>Controle Financeiro</h2>
+
+            <!-- Cards de Resumo -->
+            <div class="cards-resumo-container">
+                <div class="card-resumo">
+                    <h3 class="card-titulo">Total a Pagar</h3>
+                    <p id="total-a-pagar" class="card-valor">R$ 1.250,00</p>
+                </div>
+                <div class="card-resumo">
+                    <h3 class="card-titulo">Total a Receber</h3>
+                    <p id="total-a-receber" class="card-valor">R$ 880,00</p>
+                </div>
+                <div class="card-resumo">
+                    <h3 class="card-titulo">Total em Fiados</h3>
+                    <p id="total-fiados" class="card-valor">R$ 320,00</p>
+                </div>
+            </div>
+
+            <!-- Abas de Navegação -->
+            <div class="container-abas">
+                <button class="btn-aba active" data-aba="pagar">Contas a Pagar</button>
+                <button class="btn-aba" data-aba="receber">Contas a Receber</button>
+                <button class="btn-aba" data-aba="fiados">Fiados</button>
+            </div>
+
+            <!-- Conteúdo das Abas -->
+            <div id="conteudo-abas">
+                <!-- Aba Contas a Pagar -->
+                <div id="aba-pagar" class="aba-conteudo active">
+                    <div class="cabecalho-aba">
+                        <h3>Despesas Pendentes</h3>
+                        <button class="btn-adicionar"><i class="fas fa-plus"></i> Adicionar Conta</button>
+                    </div>
+                    <div class="layout-aba-pagar">
+                        <div class="container-tabela">
+                            <table class="tabela-contas" id="tabela-contas-pagar">
+                                <thead>
+                                    <tr>
+                                        <th>Vencimento</th>
+                                        <th>Descrição</th>
+                                        <th>Categoria</th>
+                                        <th>Valor</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Exemplo de item -->
+                                    <tr data-id="pagar-1">
+                                        <td data-label="Vencimento">25/07/2024</td>
+                                        <td data-label="Descrição">Aluguel do Ponto</td>
+                                        <td data-label="Categoria">Imóvel</td>
+                                        <td data-label="Valor" class="valor-conta">R$ 800,00</td>
+                                        <td data-label="Status"><span class="status-conta status-pendente">Pendente</span></td>
+                                        <td data-label="Ações" class="coluna-acoes">
+                                            <button class="btn-acao-conta btn-pagar" title="Marcar como Paga"><i class="fas fa-check"></i></button>
+                                            <button class="btn-acao-conta btn-editar" title="Editar"><i class="fas fa-edit"></i></button>
+                                            <button class="btn-acao-conta btn-remover" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                                        </td>
+                                    </tr>
+                                    <tr data-id="pagar-2">
+                                        <td data-label="Vencimento">15/07/2024</td>
+                                        <td data-label="Descrição">Fornecedor de Bebidas</td>
+                                        <td data-label="Categoria">Fornecedores</td>
+                                        <td data-label="Valor" class="valor-conta">R$ 450,00</td>
+                                        <td data-label="Status"><span class="status-conta status-atrasado">Atrasado</span></td>
+                                        <td data-label="Ações" class="coluna-acoes">
+                                            <button class="btn-acao-conta btn-pagar" title="Marcar como Paga"><i class="fas fa-check"></i></button>
+                                            <button class="btn-acao-conta btn-editar" title="Editar"><i class="fas fa-edit"></i></button>
+                                            <button class="btn-acao-conta btn-remover" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="container-grafico">
+                            <canvas id="grafico-despesas"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Nova Seção: Relatório de Taxas por Motoboy -->
+                    <div class="secao-relatorio-motoboy">
+                        <h3 class="titulo-secao-interna">Relatório de Taxas por Motoboy</h3>
+
+                        <div class="filtros-container">
+                            <button class="btn-filtro active" data-period="diario">Diário</button>
+                            <button class="btn-filtro" data-period="semanal">Semanal</button>
+                            <button class="btn-filtro" data-period="mensal">Mensal</button>
+                        </div>
+            
+                        <div class="cards-resumo-container">
+                            <div class="card-resumo">
+                                <h3 class="card-titulo">Total de Entregas no Período</h3>
+                                <p id="total-entregas-motoboy" class="card-valor">18</p>
+                            </div>
+                            <div class="card-resumo">
+                                <h3 class="card-titulo">Valor Total Arrecadado</h3>
+                                <p id="valor-total-taxas-motoboy" class="card-valor">R$ 144,00</p>
+                            </div>
+                        </div>
+            
+                        <table class="tabela-relatorio">
+                            <thead>
+                                <tr>
+                                    <th>Motoboy</th>
+                                    <th>Total de Entregas</th>
+                                    <th>Valor Total das Taxas</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dados de exemplo -->
+                                <tr data-motoboy-id="carlos-almeida" class="linha-motoboy">
+                                    <td data-label="Motoboy">
+                                        <div class="info-motoboy">
+                                            <i class="fas fa-motorcycle"></i>
+                                            <span>Carlos Almeida</span>
+                                        </div>
+                                    </td>
+                                    <td data-label="Total de Entregas">10</td>
+                                    <td data-label="Valor Total das Taxas">R$ 80,00</td>
+                                    <td data-label="Ações">
+                                        <button class="btn-ver-detalhes">Ver Detalhes</button>
+                                    </td>
+                                </tr>
+                                <tr data-motoboy-id="mariana-costa" class="linha-motoboy">
+                                    <td data-label="Motoboy">
+                                        <div class="info-motoboy">
+                                            <i class="fas fa-motorcycle"></i>
+                                            <span>Mariana Costa</span>
+                                        </div>
+                                    </td>
+                                    <td data-label="Total de Entregas">8</td>
+                                    <td data-label="Valor Total das Taxas">R$ 64,00</td>
+                                    <td data-label="Ações">
+                                        <button class="btn-ver-detalhes">Ver Detalhes</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+                <!-- Aba Contas a Receber -->
+                <div id="aba-receber" class="aba-conteudo">
+                    <div class="cabecalho-aba">
+                        <h3>Recebimentos Pendentes</h3>
+                        <button class="btn-adicionar"><i class="fas fa-plus"></i> Adicionar Recebimento</button>
+                    </div>
+                    <table class="tabela-contas" id="tabela-contas-receber">
+                        <thead>
+                            <tr>
+                                <th>Vencimento</th>
+                                <th>Descrição</th>
+                                <th>Valor</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <!-- Conteúdo similar ao de Contas a Pagar -->
+                        <tbody>
+                            <tr data-id="receber-1">
+                                <td data-label="Vencimento">30/07/2024</td>
+                                <td data-label="Descrição">Pagamento Evento "Festa Junina"</td>
+                                <td data-label="Valor" class="valor-conta">R$ 880,00</td>
+                                <td data-label="Status"><span class="status-conta status-pendente">Pendente</span></td>
+                                <td data-label="Ações" class="coluna-acoes">
+                                    <button class="btn-acao-conta btn-pagar" title="Marcar como Recebido"><i class="fas fa-check"></i></button>
+                                    <button class="btn-acao-conta btn-editar" title="Editar"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-acao-conta btn-remover" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Aba Fiados -->
+                <div id="aba-fiados" class="aba-conteudo">
+                    <div class="cabecalho-aba">
+                        <h3>Controle de Fiados</h3>
+                        <button class="btn-adicionar"><i class="fas fa-plus"></i> Adicionar Fiado</button>
+                    </div>
+                    <table class="tabela-contas" id="tabela-contas-fiados">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Data</th>
+                                <th>Valor</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-id="fiado-1">
+                                <td data-label="Cliente">João da Silva</td>
+                                <td data-label="Data">10/07/2024</td>
+                                <td data-label="Valor" class="valor-conta">R$ 320,00</td>
+                                <td data-label="Status"><span class="status-conta status-pendente">Aberto</span></td>
+                                <td data-label="Ações" class="coluna-acoes">
+                                    <button class="btn-acao-conta btn-pagar" title="Marcar como Recebido"><i class="fas fa-check"></i></button>
+                                    <button class="btn-acao-conta btn-remover" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="rodape-copyright">
+        <p>&copy; 2026 CASA TAPERA. TODOS OS DIREITOS RESERVADOS | DESENVOLVIDO POR EQUIPE <a href="https://www.instagram.com/s.aib0t/" target="_blank" rel="noopener noreferrer" class="link-desenvolvedor"><span class="nome-desenvolvedor">S.AIB0T</span></a></p>
+    </footer>
+
+    <!-- NOVO: Modal Genérico para Seleção de Pagamento -->
+    <div id="modal-pagamento" class="modal-overlay">
+        <div class="modal-container modal-pagamento">
+            <button class="btn-fechar-modal" title="Fechar">&times;</button>
+            <h3>Confirmar Operação</h3>
+            <p id="modal-pagamento-descricao">Como esta operação foi paga?</p>
+            <div class="opcoes-pagamento-modal">
+                <button class="btn-pagamento-modal" data-metodo="Dinheiro"><i class="fas fa-money-bill-wave"></i> Dinheiro</button>
+                <button class="btn-pagamento-modal" data-metodo="Cartão"><i class="fas fa-credit-card"></i> Cartão</button>
+                <button class="btn-pagamento-modal" data-metodo="Pix"><i class="fab fa-pix"></i> Pix</button>
+            </div>
+            <div class="container-confirmar-modal">
+                <button id="btn-cancelar-pagamento-modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Detalhes do Motoboy -->
+    <div id="modal-motoboy-detalhes" class="modal-overlay">
+        <div class="modal-container">
+            <button class="btn-fechar-modal" title="Fechar">&times;</button>
+            <h3 id="modal-motoboy-titulo">Detalhes das Entregas</h3>
+            <table class="tabela-detalhes-motoboy">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Endereço</th>
+                        <th>Taxa (R$)</th>
+                    </tr>
+                </thead>
+                <tbody id="corpo-tabela-detalhes"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal para Adicionar/Editar Conta -->
+    <div id="modal-conta" class="modal-overlay">
+        <div class="modal-container">
+            <button class="btn-fechar-modal" title="Fechar">&times;</button>
+            <h3 id="modal-conta-titulo">Adicionar Nova Conta</h3>
+            <form id="form-conta" class="form-conta">
+                <input type="hidden" id="conta-id">
+                <input type="hidden" id="conta-tipo">
+                
+                <div id="campo-cliente" class="campo-form">
+                    <label for="conta-cliente">Nome do Cliente:</label>
+                    <input type="text" id="conta-cliente">
+                </div>
+                
+                <div class="campo-form">
+                    <label for="conta-descricao">Descrição:</label>
+                    <input type="text" id="conta-descricao" required>
+                </div>
+
+                <div id="campo-status" class="campo-form">
+                    <label for="conta-status">Status:</label>
+                    <select id="conta-status">
+                        <option value="pendente">Pendente</option>
+                        <option value="pago">Pago</option>
+                        <option value="atrasado">Atrasado</option>
+                    </select>
+                </div>
+
+                <div id="campo-categoria" class="campo-form">
+                    <label for="conta-categoria">Categoria:</label>
+                    <input type="text" id="conta-categoria" placeholder="Ex: Fornecedores, Imóvel">
+                </div>
+
+                <div class="grupo-campos">
+                    <div class="campo-form">
+                        <label for="conta-valor">Valor (R$):</label>
+                        <input type="number" step="0.01" id="conta-valor" required>
+                    </div>
+                    <div class="campo-form">
+                        <label for="conta-vencimento">Vencimento/Data:</label>
+                        <input type="date" id="conta-vencimento" required>
+                    </div>
+                </div>
+                <button type="submit" id="btn-salvar-conta">Salvar</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="../animações/ContasGestao.js"></script>
+    <!-- VLibras Widget -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+</body>
+</html>

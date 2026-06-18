@@ -1,0 +1,626 @@
+/* Estilos específicos para a página de Gestão de Mesas e Comandas */
+
+.container-gerenciamento {
+    max-width: 1200px;
+    margin: 30px auto 0;
+    background-color: var(--color-dark-gray);
+    padding: 25px;
+    border-radius: 8px;
+}
+
+.container-gerenciamento h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-yellow);
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 2.5em;
+    border-bottom: 2px solid var(--color-orange);
+    padding-bottom: 10px;
+}
+
+.container-acoes-topo {
+    display: flex;
+    gap: 10px;
+}
+
+.container-topo-mesas {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.container-acoes-topo-wrapper {
+    position: absolute;
+    right: 0;
+}
+
+.btn-acao-topo {
+    padding: 10px 20px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--color-dark-gray);
+    color: var(--color-white);
+    border: 2px solid var(--color-orange);
+}
+.btn-acao-topo:hover {
+    background-color: var(--color-orange);
+    color: var(--color-black);
+}
+
+.titulo-secao-mesas {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-yellow);
+    font-size: 1.8em;
+    letter-spacing: 1px;
+    margin: 0; /* Remove margin to allow flex alignment */
+}
+
+.legenda-mesas {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.legenda-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.9em;
+    color: #aaa;
+}
+
+.cor-legenda {
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
+}
+
+.layout-mesas {
+    display: grid;
+    grid-template-columns: 1fr; /* Por padrão, uma coluna para mobile */
+    gap: 30px;
+}
+
+.painel-mesas, .painel-detalhes {
+    display: none; /* Escondido por padrão */
+}
+
+.painel-mesas.ativo, .painel-detalhes.ativo {
+    display: block; /* Mostra o painel ativo */
+}
+
+.grid-mesas-container {
+    display: flex;
+    gap: 20px;
+}
+
+.coluna-mesas {
+    display: grid;
+    grid-template-columns: 1fr; /* Cada coluna terá apenas uma coluna de mesas */
+    gap: 20px;
+    flex: 1; /* Faz com que cada coluna ocupe metade do espaço */
+}
+
+@media (max-width: 768px) {
+    .grid-mesas-container {
+        flex-direction: column; /* Empilha as colunas em telas menores */
+    }
+}
+
+.mesa {
+    background-color: #2a2a2a;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-left: 5px solid; /* Borda lateral para indicar status */
+}
+
+.mesa:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.mesa i {
+    font-size: 3em;
+    color: #888;
+}
+
+.mesa span {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5em;
+    color: var(--color-white);
+}
+.nome-reserva {
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.8em;
+    color: var(--color-yellow);
+    background-color: rgba(0,0,0,0.3);
+    padding: 3px 8px;
+    border-radius: 10px;
+    margin-top: 5px;
+}
+
+/* Status das Mesas */
+.mesa.status-livre { border-left-color: var(--color-green); }
+.mesa.status-ocupada { border-left-color: var(--color-red); }
+.mesa.status-reservada { border-left-color: var(--color-yellow); }
+
+.cor-legenda.status-livre { background-color: var(--color-green); }
+.cor-legenda.status-ocupada { background-color: var(--color-red); }
+.cor-legenda.status-reservada { background-color: var(--color-yellow); }
+
+/* --- Estilos para o Painel de Detalhes --- */
+.painel-detalhes {
+    background-color: #2a2a2a;
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.cabecalho-detalhes {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.cabecalho-detalhes h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-yellow);
+    font-size: 1.8em;
+    margin: 0;
+}
+
+.conteudo-comanda {
+    margin-top: 20px;
+    flex-grow: 1; /* Faz o conteúdo crescer para ocupar espaço */
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+#lista-itens-comanda {
+    list-style: none;
+}
+
+.item-comanda {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 5px;
+    border-bottom: 1px solid #444;
+    font-family: 'Roboto', sans-serif;
+}
+
+.total-comanda {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 5px;
+    margin-top: 10px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5em;
+    color: var(--color-yellow);
+    border-top: 2px solid var(--color-orange);
+}
+
+.acoes-comanda {
+    display: flex;
+    gap: 15px;
+    margin-top: auto; /* Empurra as ações para o final */
+    padding-top: 20px;
+}
+
+.btn-acao-comanda {
+    flex-grow: 1;
+    padding: 12px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid var(--color-orange);
+    background-color: var(--color-dark-gray);
+    color: var(--color-white);
+}
+
+.btn-acao-comanda:hover {
+    background-color: var(--color-orange);
+    color: var(--color-black);
+}
+
+.btn-acao-comanda.btn-fechar-conta {
+    background-color: var(--color-green);
+    border-color: var(--color-green);
+    color: var(--color-white);
+}
+
+.btn-acao-comanda.btn-fechar-conta:hover {
+    background-color: #218838;
+}
+
+/* Botão de Voltar (visível apenas em telas menores) */
+.btn-voltar-grid {
+    display: none; /* Escondido por padrão em telas grandes */
+    background: none;
+    border: 1px solid #888;
+    color: #ccc;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+.btn-voltar-grid:hover {
+    background-color: #444;
+    border-color: #aaa;
+}
+
+/* Estilos para o conteúdo dinâmico do modal */
+.comanda-vazia {
+    text-align: center;
+    padding: 40px 20px;
+    color: #888;
+}
+.comanda-vazia i {
+    font-size: 3em;
+    margin-bottom: 15px;
+    color: var(--color-green);
+}
+.item-comanda-vazio {
+    text-align: center;
+    color: #888;
+    padding: 20px;
+    font-style: italic;
+}
+
+.controles-item-comanda {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.item-comanda-esquerda {
+    display: flex;
+    align-items: center;
+}
+
+.controles-qtd-wrapper {
+    display: flex;
+    align-items: center;
+    background-color: #444;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.btn-qtd {
+    background: none;
+    border: none;
+    color: white;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+.btn-qtd:hover {
+    background-color: #555;
+    color: var(--color-orange);
+}
+
+.qtd-valor {
+    padding: 0 5px;
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+.btn-remover-item-comanda {
+    background-color: #555;
+    color: var(--color-white);
+    border: none;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-right: 10px;
+}
+.btn-remover-item-comanda:hover { background-color: var(--color-red); }
+
+/* --- Responsividade --- */
+@media (min-width: 992px) {
+    .layout-mesas {
+        grid-template-columns: 1.5fr 1fr; /* Duas colunas em telas maiores */
+    }
+    .painel-mesas, .painel-detalhes {
+        display: block !important; /* Sempre visível em telas grandes */
+    }
+    .painel-detalhes:not(.ativo) {
+        /* Mostra um placeholder quando nenhuma mesa está selecionada */
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        color: #666;
+        font-style: italic;
+    }
+}
+
+@media (max-width: 991px) {
+    .btn-voltar-grid {
+        display: inline-flex; /* Mostra o botão de voltar em telas menores */
+    }
+}
+
+/* --- Estilos para o Modal de Adicionar Item (Cardápio) --- */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: none; justify-content: center; align-items: center;
+    z-index: 1002; opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.modal-overlay.visivel { display: flex; opacity: 1; pointer-events: auto; }
+
+.modal-container {
+    background-color: var(--color-dark-gray);
+    padding: 30px; border-radius: 8px;
+    border: 1px solid var(--color-orange);
+    width: 90%; max-width: 700px; position: relative;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    color: white;
+}
+.modal-container h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-yellow);
+    font-size: 2em;
+    margin-bottom: 20px;
+    text-align: center;
+}
+.btn-fechar-modal {
+    position: absolute; top: 15px; right: 15px; left: auto; transform: none;
+    background: none; border: none; color: var(--color-white);
+    font-size: 1.8em; cursor: pointer;
+}
+
+.cardapio-modal-content { overflow-y: auto; padding-right: 10px; }
+.categoria-modal h4 {
+    font-family: 'Bebas Neue', sans-serif; color: var(--color-orange);
+    font-size: 1.5em; margin-top: 15px; margin-bottom: 10px;
+    border-bottom: 1px solid #555; padding-bottom: 5px;
+}
+.itens-categoria-modal { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.btn-item-cardapio {
+    display: flex; justify-content: space-between; align-items: center;
+    background-color: #2a2a2a; border: 1px solid #444; color: var(--color-white);
+    padding: 10px; border-radius: 5px; text-align: left; cursor: pointer;
+    transition: background-color 0.2s;
+}
+.btn-item-cardapio:hover { background-color: #3a3a3a; }
+.preco-item-modal { font-weight: bold; color: var(--color-yellow); }
+
+@media (max-width: 600px) {
+    .itens-categoria-modal { grid-template-columns: 1fr; }
+}
+
+/* --- Estilos para o Modal de Editar Mesa --- */
+.form-editar-mesa {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.form-editar-mesa .campo-form {
+    display: flex;
+    flex-direction: column;
+}
+.form-editar-mesa label {
+    margin-bottom: 5px;
+    color: #aaa;
+}
+.form-editar-mesa input, .form-editar-mesa select {
+    width: 100%; padding: 10px; background-color: #333;
+    border: 1px solid #555; border-radius: 4px;
+    color: var(--color-white); font-family: 'Roboto', sans-serif; font-size: 1em;
+}
+.form-editar-mesa button {
+    width: 100%; padding: 12px; margin-top: 10px; background-color: var(--color-orange);
+    color: var(--color-black); border: none; border-radius: 5px;
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.2em; text-transform: uppercase;
+    cursor: pointer; transition: background-color 0.2s;
+}
+.form-editar-mesa button:hover { background-color: #ff8533; }
+
+.opcoes-pagamento-modal {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 25px;
+}
+.btn-pagamento-modal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3em;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    gap: 10px;
+}
+.btn-pagamento-modal i { font-size: 2.5em; }
+.btn-pagamento-modal:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    filter: brightness(1.1);
+}
+.btn-pagamento-dinheiro { background: linear-gradient(135deg, #27ae60, #2ecc71); }
+.btn-pagamento-cartao { background: linear-gradient(135deg, #2980b9, #3498db); }
+.btn-pagamento-pix { background: linear-gradient(135deg, #32b79d, #1abc9c); }
+
+/* Animação do ícone de engrenagem no botão de gerenciar mesas */
+.btn-acao-topo i {
+    transition: transform 0.5s ease;
+}
+
+.btn-acao-topo:hover i {
+    transform: rotate(180deg);
+}
+
+.btn-download-qr {
+    background-color: var(--color-yellow);
+    color: var(--color-black);
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    font-size: 0.9em;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s;
+}
+
+.btn-download-qr:hover {
+    background-color: #ffdb4d; /* Amarelo mais claro */
+}
+
+/* --- Estilos para o Gerenciador de QR Codes --- */
+.qr-code-manager-body {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+    min-height: 300px;
+}
+
+.qr-code-list-container {
+    flex: 0 0 220px; /* Largura fixa para a lista */
+    border-right: 1px solid #444;
+    padding-right: 20px;
+}
+
+#lista-mesas-qr {
+    list-style: none; padding: 0; margin: 0;
+    max-height: 300px; overflow-y: auto;
+}
+
+.item-mesa-qr {
+    display: flex; align-items: center;
+    padding: 12px 10px; border-radius: 5px;
+    cursor: pointer; transition: background-color 0.2s;
+    font-family: 'Roboto', sans-serif; font-weight: bold;
+    gap: 10px;
+}
+.item-mesa-qr:hover { background-color: #3a3a3a; }
+.item-mesa-qr.active { background-color: var(--color-orange); color: var(--color-black); }
+.item-mesa-qr .fa-chevron-right { margin-left: auto; opacity: 0.6; }
+.item-mesa-qr.active .fa-chevron-right { opacity: 1; }
+
+.qr-code-preview-container {
+    flex-grow: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    background-color: #2a2a2a; border-radius: 8px; padding: 20px;
+}
+
+.qr-placeholder { color: #777; text-align: center; }
+
+#qr-code-canvas-wrapper {
+    background-color: white; padding: 15px; border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5); margin-bottom: 20px;
+}
+#qr-code-canvas-wrapper canvas { display: block; }
+
+#btn-download-qr-visualizado {
+    width: 100%; justify-content: center;
+    padding: 10px; font-size: 1em;
+}
+
+/* --- Estilos para o Modal de Gerenciar Mesas --- */
+.gerenciador-secao {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #444;
+}
+
+/* Remove a borda do primeiro item para não ficar estranho */
+#modal-gerenciar-mesas .modal-container > .gerenciador-secao:first-of-type {
+    margin-top: 15px;
+    padding-top: 0;
+    border-top: none;
+}
+
+.gerenciador-secao h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-orange);
+    font-size: 1.5em;
+    margin-bottom: 15px;
+}
+
+.btn-acao-gerenciador {
+    width: 100%;
+    padding: 10px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    font-size: 1em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background-color: var(--color-yellow);
+    color: var(--color-black);
+    border: none;
+}
+
+.btn-acao-gerenciador:hover {
+    background-color: #ffdb4d; /* Amarelo mais claro */
+}
+
+.btn-acao-gerenciador.btn-perigo {
+    background-color: var(--color-red);
+    color: var(--color-white);
+}
+
+.btn-acao-gerenciador.btn-perigo:hover {
+    background-color: #c0392b; /* Vermelho mais escuro */
+}
+
+.excluir-container { display: flex; gap: 10px; align-items: center; }
+.excluir-container select { flex-grow: 1; padding: 10px; background-color: #333; border: 1px solid #555; border-radius: 4px; color: var(--color-white); font-family: 'Roboto', sans-serif; font-size: 1em; }
+.excluir-container .btn-acao-gerenciador {
+    width: auto; /* Para não ocupar 100% da largura dentro do flex container */
+    flex-shrink: 0;
+}

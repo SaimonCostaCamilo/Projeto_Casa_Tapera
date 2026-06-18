@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Controle de Cardápio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(240, 100, 0, 0.1);
+            border: 2px solid #f06400;
+            border-radius: 10px;
+        }
+        
+        .header h1 {
+            color: #ffc600;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #999;
+            font-size: 1.1em;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #f06400;
+            text-align: center;
+        }
+        
+        .stat-numero {
+            font-size: 2.5em;
+            color: #ffc600;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            color: #999;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .acoes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .acao-card {
+            background: #222;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #444;
+            transition: all 0.3s;
+        }
+        
+        .acao-card:hover {
+            border-color: #f06400;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(240, 100, 0, 0.3);
+        }
+        
+        .acao-card h3 {
+            color: #f06400;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.3em;
+        }
+        
+        .acao-card p {
+            color: #999;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+        
+        .botoes-acao {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            flex: 1;
+            min-width: 100px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-size: 0.95em;
+        }
+        
+        .btn-primario {
+            background-color: #f06400;
+            color: #fff;
+        }
+        
+        .btn-primario:hover {
+            background-color: #ff8533;
+            transform: scale(1.05);
+        }
+        
+        .btn-secundario {
+            background-color: #444;
+            color: #fff;
+        }
+        
+        .btn-secundario:hover {
+            background-color: #555;
+        }
+        
+        .btn-perigo {
+            background-color: #d32f2f;
+            color: #fff;
+        }
+        
+        .btn-perigo:hover {
+            background-color: #f44336;
+        }
+        
+        .lista-itens {
+            background: #222;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        .lista-titulo {
+            background: rgba(240, 100, 0, 0.2);
+            padding: 20px;
+            border-bottom: 2px solid #f06400;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #ffc600;
+        }
+        
+        .lista-conteudo {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .item-lista {
+            padding: 12px;
+            background: #333;
+            margin: 8px 0;
+            border-radius: 5px;
+            border-left: 3px solid #f06400;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .item-info {
+            flex: 1;
+        }
+        
+        .item-nome {
+            color: #fff;
+            font-weight: bold;
+        }
+        
+        .item-categoria {
+            color: #999;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+        
+        .item-preco {
+            color: #ffc600;
+            font-weight: bold;
+            min-width: 80px;
+            text-align: right;
+            margin-right: 10px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.ativo {
+            display: flex;
+        }
+        
+        .modal-conteudo {
+            background: #222;
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #f06400;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-conteudo h2 {
+            color: #ffc600;
+            margin-bottom: 20px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.8em;
+        }
+        
+        .modal-conteudo input,
+        .modal-conteudo textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: #333;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 5px;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        .modal-conteudo input:focus,
+        .modal-conteudo textarea:focus {
+            outline: none;
+            border-color: #f06400;
+        }
+        
+        .modal-botoes {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .modal-botoes button {
+            flex: 1;
+        }
+        
+        .alerta {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border-left: 4px solid;
+        }
+        
+        .alerta-sucesso {
+            background: rgba(76, 175, 80, 0.1);
+            border-left-color: #4caf50;
+            color: #4caf50;
+        }
+        
+        .alerta-info {
+            background: rgba(33, 150, 243, 0.1);
+            border-left-color: #2196f3;
+            color: #2196f3;
+        }
+        
+        .alerta-aviso {
+            background: rgba(255, 152, 0, 0.1);
+            border-left-color: #ff9800;
+            color: #ff9800;
+        }
+        
+        .rodape {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9em;
+            border-top: 1px solid #444;
+            margin-top: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .acoes {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Dashboard de Cardápio</h1>
+            <p>Gerencie seu cardápio de forma rápida e eficiente</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">Total de Itens</div>
+                <div class="stat-numero" id="total-itens">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Categorias</div>
+                <div class="stat-numero" id="total-categorias">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Itens Ocultos</div>
+                <div class="stat-numero" id="itens-ocultos">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Última Atualização</div>
+                <div class="stat-numero" id="ultima-atualizacao" style="font-size: 1.2em;">Agora</div>
+            </div>
+        </div>
+
+        <div class="alerta alerta-info">
+            <i class="fas fa-info-circle"></i> 
+            Este dashboard oferece acesso rápido aos controles do cardápio. Alterações podem ser feitas aqui ou em "Personalizar Cardápio".
+        </div>
+
+        <div class="acoes">
+            <div class="acao-card">
+                <h3><i class="fas fa-list"></i> Ver Itens</h3>
+                <p>Visualize todos os itens do cardápio, preços e categorias.</p>
+                <div class="botoes-acao">
+                    <button class="btn-primario" onclick="mostrarItens()">
+                        <i class="fas fa-eye"></i> Ver
+                    </button>
+                </div>
+            </div>
+
+            <div class="acao-card">
+                <h3><i class="fas fa-plus"></i> Nova Categoria</h3>
+                <p>Adicione uma nova categoria ao seu cardápio rapidamente.</p>
+                <div class="botoes-acao">
+                    <button class="btn-primario" onclick="abrirNovaCategoria()">
+                        <i class="fas fa-plus"></i> Adicionar
+                    </button>
+                </div>
+            </div>
+
+            <div class="acao-card">
+                <h3><i class="fas fa-edit"></i> Editar Item</h3>
+                <p>Personalize seus preços, nomes e categorias de produtos.</p>
+                <div class="botoes-acao">
+                    <button class="btn-primario" onclick="irParaPersonalizar()">
+                        <i class="fas fa-cog"></i> Personalizar
+                    </button>
+                </div>
+            </div>
+
+            <div class="acao-card">
+                <h3><i class="fas fa-sync"></i> Sincronizar</h3>
+                <p>Sincronize as alterações entre Index e Personalizar Cardápio.</p>
+                <div class="botoes-acao">
+                    <button class="btn-secundario" onclick="atualizarDados()">
+                        <i class="fas fa-sync-alt"></i> Atualizar
+                    </button>
+                </div>
+            </div>
+
+            <div class="acao-card">
+                <h3><i class="fas fa-download"></i> Backup</h3>
+                <p>Faça backup de todos os dados do seu cardápio para segurança.</p>
+                <div class="botoes-acao">
+                    <button class="btn-primario" onclick="fazerBackup()">
+                        <i class="fas fa-download"></i> Backup
+                    </button>
+                </div>
+            </div>
+
+            <div class="acao-card">
+                <h3><i class="fas fa-redo"></i> Ferramentas</h3>
+                <p>Acesse testes, debug e opções avançadas de cardápio.</p>
+                <div class="botoes-acao">
+                    <button class="btn-secundario" onclick="irParaTeste()">
+                        <i class="fas fa-flask"></i> Testes
+                    </button>
+                </div>
+            </div>
+
+            <div class="acao-card">
+                <h3><i class="fas fa-undo"></i> Resetar</h3>
+                <p>Restaure o cardápio ao estado padrão original. ⚠️ Não pode ser desfeito!</p>
+                <div class="botoes-acao">
+                    <button class="btn-perigo" onclick="confirmarReset()">
+                        <i class="fas fa-redo"></i> Resetar
+                    </button>
+                </div>
+            </div>
+
+            <div class="acao-card">
+                <h3><i class="fas fa-link"></i> Links Rápidos</h3>
+                <p>Acesso direto às páginas principais do projeto.</p>
+                <div class="botoes-acao">
+                    <button class="btn-secundario" onclick="irParaIndex()">
+                        <i class="fas fa-home"></i> Index
+                    </button>
+                    <button class="btn-secundario" onclick="irParaPersonalizar()">
+                        <i class="fas fa-cog"></i> Personalizar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="lista-itens">
+            <div class="lista-titulo">
+                <i class="fas fa-list"></i> Itens Recentes
+            </div>
+            <div class="lista-conteudo" id="lista-itens-recentes">
+                <p style="color: #999;">Carregando...</p>
+            </div>
+        </div>
+
+        <div class="rodape">
+            <p>🍔 Casa Tapera Dashboard v1.0</p>
+            <p>Sincronização de Cardápio - Desenvolvido para seu sucesso</p>
+        </div>
+    </div>
+
+    <!-- Modais -->
+    <div class="modal" id="modal-nova-categoria">
+        <div class="modal-conteudo">
+            <h2>Nova Categoria</h2>
+            <input type="text" id="input-categoria" placeholder="Digite o nome da categoria" autofocus>
+            <div class="modal-botoes">
+                <button class="btn-primario" onclick="salvarNovaCategoria()">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+                <button class="btn-secundario" onclick="fecharModal('modal-nova-categoria')">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="modal-itens">
+        <div class="modal-conteudo">
+            <h2>Todos os Itens</h2>
+            <div id="lista-todos-itens" style="max-height: 60vh; overflow-y: auto;"></div>
+            <div class="modal-botoes">
+                <button class="btn-secundario" onclick="fecharModal('modal-itens')" style="width: 100%;">
+                    <i class="fas fa-times"></i> Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../animações/cardapioSync.js"></script>
+    <script>
+        // Aguarda CardapioSync
+        let tentativas = 0;
+        const aguardarCardapioSync = setInterval(() => {
+            if (typeof CardapioSync !== 'undefined') {
+                clearInterval(aguardarCardapioSync);
+                inicializarDashboard();
+            } else if (tentativas++ > 10) {
+                clearInterval(aguardarCardapioSync);
+                alert('❌ Erro ao carregar sistema de sincronização');
+            }
+        }, 100);
+
+        function inicializarDashboard() {
+            atualizarEstatisticas();
+            atualizarListaRecentes();
+            
+            // Atualiza a cada 2 segundos
+            setInterval(() => {
+                atualizarEstatisticas();
+            }, 2000);
+
+            // Ouve mudanças
+            document.addEventListener('cardapioAtualizado', () => {
+                atualizarEstatisticas();
+                atualizarListaRecentes();
+            });
+        }
+
+        function atualizarEstatisticas() {
+            const itens = CardapioSync.obterTodosItens();
+            const categorias = CardapioSync.obterCategorias();
+            const ocultos = Object.values(itens).filter(i => i.desativado).length;
+
+            document.getElementById('total-itens').textContent = Object.keys(itens).length;
+            document.getElementById('total-categorias').textContent = categorias.length;
+            document.getElementById('itens-ocultos').textContent = ocultos;
+            
+            const agora = new Date();
+            document.getElementById('ultima-atualizacao').textContent = 
+                agora.toLocaleTimeString('pt-br');
+        }
+
+        function atualizarListaRecentes() {
+            const itens = CardapioSync.obterTodosItens();
+            const recentes = Object.entries(itens).slice(0, 5);
+
+            let html = recentes.map(([id, item]) => `
+                <div class="item-lista">
+                    <div class="item-info">
+                        <div class="item-nome">${item.nome}</div>
+                        <div class="item-categoria">${item.categoria}</div>
+                    </div>
+                    <div class="item-preco">R$ ${item.preco.toFixed(2).replace('.', ',')}</div>
+                </div>
+            `).join('');
+
+            if (recentes.length === 0) {
+                html = '<p style="color: #999; text-align: center; padding: 20px;">Nenhum item encontrado</p>';
+            }
+
+            document.getElementById('lista-itens-recentes').innerHTML = html;
+        }
+
+        function mostrarItens() {
+            const itens = CardapioSync.obterTodosItens();
+            let html = '';
+
+            Object.entries(itens).forEach(([id, item]) => {
+                html += `
+                    <div class="item-lista">
+                        <div class="item-info">
+                            <div class="item-nome">${item.nome} ${item.desativado ? '(Oculto)' : ''}</div>
+                            <div class="item-categoria">${item.categoria}</div>
+                        </div>
+                        <div class="item-preco">R$ ${item.preco.toFixed(2).replace('.', ',')}</div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('lista-todos-itens').innerHTML = html;
+            document.getElementById('modal-itens').classList.add('ativo');
+        }
+
+        function abrirNovaCategoria() {
+            document.getElementById('modal-nova-categoria').classList.add('ativo');
+            document.getElementById('input-categoria').focus();
+        }
+
+        function salvarNovaCategoria() {
+            const nomeCat = document.getElementById('input-categoria').value.trim();
+            
+            if (!nomeCat) {
+                alert('Digite um nome para a categoria');
+                return;
+            }
+
+            CardapioSync.adicionarCategoria(nomeCat);
+            alert(`✅ Categoria "${nomeCat}" adicionada com sucesso!`);
+            fecharModal('modal-nova-categoria');
+            document.getElementById('input-categoria').value = '';
+        }
+
+        function atualizarDados() {
+            location.reload();
+        }
+
+        function fazerBackup() {
+            const dados = CardapioSync.exportarDados();
+            const json = JSON.stringify(dados, null, 2);
+
+            const elemento = document.createElement('a');
+            elemento.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(json));
+            elemento.setAttribute('download', `backup-cardapio-${new Date().toISOString().split('T')[0]}.json`);
+            elemento.click();
+
+            alert('✅ Backup criado com sucesso!');
+        }
+
+        function irParaTeste() {
+            window.location.href = 'teste-sincronizacao.html';
+        }
+
+        function confirmarReset() {
+            if (confirm('⚠️ Isto restaurará o cardápio ao padrão ORIGINAL!\n\nTem CERTEZA?\n\nNÃO PODE SER DESFEITO!')) {
+                if (confirm('⚠️ ÚLTIMA CONFIRMAÇÃO!\n\nDeseja realmente resetar?')) {
+                    CardapioSync.resetarCardapio();
+                    alert('✅ Cardápio resetado ao padrão!');
+                    setTimeout(() => location.reload(), 1000);
+                }
+            }
+        }
+
+        function irParaIndex() {
+            window.location.href = 'index.html';
+        }
+
+        function irParaPersonalizar() {
+            window.location.href = 'CardapioPersonalizar.html';
+        }
+
+        function fecharModal(idModal) {
+            document.getElementById(idModal).classList.remove('ativo');
+        }
+
+        // Fecha modal ao clicar fora
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('ativo');
+                }
+            });
+        });
+
+        // Enter para adicionar categoria
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && document.getElementById('modal-nova-categoria').classList.contains('ativo')) {
+                salvarNovaCategoria();
+            }
+        });
+    </script>
+</body>
+</html>

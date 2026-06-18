@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Pedidos - Casa Tapera</title>
+    <link rel="stylesheet" href="../estilos/Projeto_Tapera.css">
+    <link rel="stylesheet" href="../estilos/MeusPedidos.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+</head>
+<body>
+    <header class="cabecalho">
+        <img src="../imagens/Mascote-Tapera.2.jpeg" alt="Mascote Tapera" class="mascote-login">
+        <a href="index.html" class="link-logo">
+            <div class="container-logo">
+                <img src="../imagens/Logo_Tapera.jpeg" alt="Logotipo Casa Tapera" class="imagem-logo">
+            </div>
+        </a>
+        <a href="index.html" class="icone-voltar" title="Voltar">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+    </header>
+
+    <main class="conteudo-principal-pedidos">
+        <div class="container-pedidos-page">
+            <h2>Meus Pedidos</h2>
+            
+            <div class="secao-pedidos">
+                <h3><i class="fas fa-clock"></i> Em Andamento</h3>
+                <div id="lista-pedidos-andamento" class="lista-pedidos"></div>
+            </div>
+
+            <div class="secao-pedidos">
+                <h3><i class="fas fa-history"></i> Histórico</h3>
+                <div id="lista-pedidos-historico" class="lista-pedidos"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="rodape-copyright">
+        <p>&copy; 2026 CASA TAPERA. TODOS OS DIREITOS RESERVADOS</p>
+    </footer>
+
+    <script src="../animações/MeusPedidos.js"></script>
+</body>
+</html>

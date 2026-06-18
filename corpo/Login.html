@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Painel Casa Tapera</title>
+    <link rel="stylesheet" href="../estilos/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        .login-box {
+            width: 90%;
+            max-width: 400px;
+        }
+        .input-group input {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1rem;
+        }
+        /* Correção: Força a fonte e tamanho no input de senha para evitar alteração visual ao desocultar */
+        #password {
+            font-family: 'Roboto', sans-serif !important;
+            font-size: 1rem !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <a href="index.html" title="Voltar ao Site"><img src="../imagens/Logo_Tapera.jpeg" alt="Logo Casa Tapera" class="login-logo"></a>
+            <h2>Acesso ao Painel</h2>
+            <form id="login-form">
+                <div class="input-group">
+                    <label for="username" class="sr-only">Usuário</label>
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="username" placeholder="Usuário" required autocomplete="username">
+                </div>
+                <div class="input-group">
+                    <label for="password" class="sr-only">Senha</label>
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="Senha" required autocomplete="current-password">
+                    <button type="button" id="toggle-password" class="toggle-password-btn" title="Mostrar/Ocultar senha">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <button type="submit">
+                    <span class="btn-text">Entrar</span>
+                </button>
+                <p id="error-message" class="error-message"></p>
+            </form>
+        </div>
+    </div>
+
+    <footer class="rodape-copyright-login">
+        <p>&copy; 2026 CASA TAPERA. TODOS OS DIREITOS RESERVADOS | DESENVOLVIDO POR EQUIPE <a href="https://www.instagram.com/s.aib0t/" target="_blank" rel="noopener noreferrer" class="link-desenvolvedor"><span class="nome-desenvolvedor">S.AIB0T</span></a></p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('login-form');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const errorMessage = document.getElementById('error-message');
+            const togglePassword = document.getElementById('toggle-password');
+
+            togglePassword.addEventListener('click', () => {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                
+                
+                const icon = togglePassword.querySelector('i');
+                icon.classList.toggle('fa-eye');
+                icon.classList.toggle('fa-eye-slash');
+            });
+
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault(); 
+
+                const correctUsername = 'CasaTapera';
+                const correctPassword = '#CT2411';
+
+                if (usernameInput.value === correctUsername && passwordInput.value === correctPassword) {
+                    
+                    errorMessage.style.color = '#2ecc71';
+                    errorMessage.textContent = 'Bem vindo ao sistema operacional';
+                    sessionStorage.setItem('isLoggedIn', 'true'); 
+                    
+                    setTimeout(() => {
+                        window.location.href = 'PainelDeControle.html';
+                    }, 1500);
+                } else {
+                    errorMessage.style.color = '#e74c3c';
+                    errorMessage.textContent = 'Usuário incorreto';
+                }
+            });
+        });
+    </script>
+    <!-- VLibras Widget -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+</body>
+</html>

@@ -1,0 +1,266 @@
+
+/* Estilos específicos para a página de Histórico de Clientes */
+
+.container-gerenciamento {
+    background-color: var(--color-dark-gray);
+    padding: 25px;
+    border-radius: 8px;
+    margin: 30px auto 0; /* Centraliza o container na página */
+    max-width: 800px; /* Largura máxima reduzida para compactar mais a tabela */
+}
+.container-gerenciamento h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-yellow);
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 2.5em;
+    border-bottom: 2px solid var(--color-orange);
+    padding-bottom: 10px;
+}
+.tabela-relatorio {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+.tabela-relatorio th, .tabela-relatorio td {
+    padding: 8px 10px; /* Padding reduzido para compactar a tabela */
+    text-align: left;
+    border-bottom: 1px solid #444;
+    vertical-align: middle;
+}
+.tabela-relatorio th {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2em;
+    color: var(--color-orange);
+    letter-spacing: 1px;
+}
+/* Centraliza a coluna de Nº de Pedidos */
+.tabela-relatorio th:nth-child(4),
+.tabela-relatorio td:nth-child(4) {
+    text-align: center;
+}
+
+.container-busca {
+    position: relative;
+    margin: 0 0 20px 0;
+    max-width: 500px;
+}
+#busca-cliente {
+    width: 100%;
+    padding: 10px 15px 10px 40px;
+    background-color: #333;
+    border: 1px solid #555;
+    border-radius: 5px;
+    color: var(--color-white);
+    font-size: 1em;
+}
+.container-busca .fa-search {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+}
+.container-ver-mais {
+    text-align: center;
+    margin-top: 20px;
+}
+#btn-ver-mais {
+    padding: 10px 25px;
+    background-color: var(--color-dark-gray);
+    color: var(--color-white);
+    border: 2px solid var(--color-orange);
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: all 0.2s;
+}
+#btn-ver-mais:hover {
+    background-color: var(--color-orange);
+    color: var(--color-black);
+}
+.linha-oculta {
+    display: none;
+}
+
+/* --- RESPONSIVIDADE DA TABELA --- */
+@media (max-width: 768px) {
+    .tabela-relatorio thead { display: none; }
+    .tabela-relatorio, .tabela-relatorio tbody, .tabela-relatorio tr, .tabela-relatorio td {
+        display: block;
+        width: 100%;
+    }
+    .tabela-relatorio tr {
+        margin-bottom: 10px; /* Margem entre os cards reduzida */
+        background-color: #2a2a2a;
+        border-radius: 5px;
+        border-left: 4px solid var(--color-orange);
+    }
+    .tabela-relatorio td {
+        display: flex;
+        justify-content: space-between;
+        text-align: right;
+        position: relative;
+        border-bottom: 1px solid #3a3a3a;
+        padding: 8px 12px; /* Padding interno dos cards reduzido */
+    }
+    .tabela-relatorio td:last-child { border-bottom: none; }
+    .tabela-relatorio td::before {
+        content: attr(data-label);
+        text-align: left;
+        font-weight: bold;
+        color: #aaa;
+        margin-right: auto;
+    }
+}
+.container-gerenciamento {
+    background-color: var(--color-dark-gray);
+    padding: 25px;
+    border-radius: 8px;
+    margin: 30px auto;
+    width: 95%;
+    max-width: 1200px;
+}
+.container-gerenciamento h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-yellow);
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 2.5em;
+    border-bottom: 2px solid var(--color-orange);
+    padding-bottom: 10px;
+}
+.tabela-relatorio {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+.tabela-relatorio th, .tabela-relatorio td {
+    padding: 8px 10px; /* Padding reduzido para compactar a tabela */
+    text-align: left;
+    border-bottom: 1px solid #444;
+    vertical-align: middle;
+}
+.tabela-relatorio th {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2em;
+    color: var(--color-orange);
+    letter-spacing: 1px;
+}
+/* Centraliza a coluna de Nº de Pedidos */
+.tabela-relatorio th:nth-child(4),
+.tabela-relatorio td:nth-child(4) {
+    text-align: center;
+}
+
+.container-busca {
+    position: relative;
+    margin: 0 0 20px 0;
+    max-width: 500px;
+}
+#busca-cliente {
+    width: 100%;
+    padding: 10px 15px 10px 40px;
+    background-color: #333;
+    border: 1px solid #555;
+    border-radius: 5px;
+    color: var(--color-white);
+    font-size: 1em;
+}
+.container-busca .fa-search {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+}
+.container-ver-mais {
+    text-align: center;
+    margin-top: 20px;
+}
+#btn-ver-mais {
+    padding: 10px 25px;
+    background-color: var(--color-dark-gray);
+    color: var(--color-white);
+    border: 2px solid var(--color-orange);
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: all 0.2s;
+}
+#btn-ver-mais:hover {
+    background-color: var(--color-orange);
+    color: var(--color-black);
+}
+.linha-oculta {
+    display: none;
+}
+
+/* --- RESPONSIVIDADE DA TABELA --- */
+@media (max-width: 768px) {
+    .tabela-relatorio thead { display: none; }
+    .tabela-relatorio, .tabela-relatorio tbody, .tabela-relatorio tr, .tabela-relatorio td {
+        display: block;
+        width: 100%;
+    }
+    .tabela-relatorio tr {
+        margin-bottom: 10px; /* Margem entre os cards reduzida */
+        background-color: #2a2a2a;
+        border-radius: 5px;
+        border-left: 4px solid var(--color-orange);
+    }
+    .tabela-relatorio td {
+        display: flex;
+        justify-content: space-between;
+        text-align: right;
+        position: relative;
+        border-bottom: 1px solid #3a3a3a;
+        padding: 8px 12px; /* Padding interno dos cards reduzido */
+    }
+    .tabela-relatorio td:last-child { border-bottom: none; }
+    .tabela-relatorio td::before {
+        content: attr(data-label);
+        text-align: left;
+        font-weight: bold;
+        color: #aaa;
+        margin-right: auto;
+    }
+}
+/* --- RESPONSIVIDADE DA TABELA (Padrão de MeusClientesRelatorio.css) --- */
+@media (max-width: 768px) {
+    .tabela-relatorio thead {
+        display: none; /* Esconde o cabeçalho da tabela */
+    }
+    .tabela-relatorio, .tabela-relatorio tbody, .tabela-relatorio tr, .tabela-relatorio td {
+        display: block; /* Transforma a tabela em blocos */
+        width: 100%;
+    }
+    .tabela-relatorio tr {
+        margin-bottom: 10px; /* Margem entre os cards reduzida */
+        background-color: #2a2a2a; /* Fundo de card para cada linha */
+        border-radius: 5px;
+        border-left: 4px solid var(--color-orange);
+    }
+    .tabela-relatorio td {
+        display: flex; /* Usa flexbox para alinhar rótulo e valor */
+        justify-content: space-between; /* Coloca rótulo na esquerda e valor na direita */
+        text-align: right; /* Alinha o valor à direita */
+        position: relative;
+        border-bottom: 1px solid #3a3a3a;
+        padding: 8px 12px; /* Padding interno dos cards reduzido */
+    }
+    .tabela-relatorio td:last-child {
+        border-bottom: none;
+    }
+    .tabela-relatorio td::before {
+        content: attr(data-label); /* Pega o texto do atributo data-label */
+        text-align: left; /* Alinha o rótulo à esquerda */
+        font-weight: bold;
+        color: #aaa; /* Cor do rótulo */
+        margin-right: auto; /* Empurra o valor para a direita */
+    }
+}

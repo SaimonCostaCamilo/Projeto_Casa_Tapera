@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes Cadastrados - Casa Tapera</title>
+    <link rel="stylesheet" href="../estilos/PainelDeControle.css">
+    <link rel="stylesheet" href="../estilos/MeusClientesRelatorio.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+</head>
+<body>
+    <header class="cabecalho-painel">
+        <a href="PainelDeControle.html"><img src="../imagens/Logo_Tapera.jpeg" alt="Logotipo Casa Tapera" class="imagem-logo"></a>
+        <h1>Clientes Cadastrados</h1>
+        <a href="PainelDeControle.html" class="icone-voltar" title="Voltar ao Painel">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+    </header>
+
+    <main class="painel-principal">
+        <div class="container-gerenciamento">
+            <h2> Lista de Clientes</h2>
+
+            <!-- Abas de Navegação -->
+            <div class="container-abas">
+                <button class="btn-aba active" data-aba="todos">Todos os Clientes</button>
+                <button class="btn-aba" data-aba="ranking">Ranking de Clientes</button>
+            </div>
+
+            <div id="conteudo-abas">
+                <!-- Aba Todos os Clientes -->
+                <div id="aba-todos" class="aba-conteudo active">
+                    <div class="container-busca">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="busca-todos-clientes" placeholder="Buscar cliente pelo nome...">
+                    </div>
+                    <table class="tabela-relatorio">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Último Pedido</th>
+                                <th>Total Gasto</th>
+                                <th>Nº de Pedidos</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-todos-clientes-body"></tbody>
+                    </table>
+                    <div class="container-ver-mais">
+                        <button id="btn-ver-mais-todos"><i class="fas fa-eye"></i> Ver Mais</button>
+                    </div>
+                </div>
+
+                <!-- Aba Ranking de Clientes -->
+                <div id="aba-ranking" class="aba-conteudo">
+                    <div class="filtros-container" id="filtros-periodo">
+                        <button class="btn-filtro active" data-periodo="mensal">Mensal</button>
+                        <button class="btn-filtro" data-periodo="semanal">Semanal</button>
+                        <button class="btn-filtro" data-periodo="diario">Diário</button>
+                    </div>
+                    <div class="filtros-container" id="filtros-ordenacao">
+                        <button class="btn-filtro active" data-ordenacao="pedidos">Mais Pedidos</button>
+                        <button class="btn-filtro" data-ordenacao="gasto">Maior Gasto</button>
+                    </div>
+                    <div class="container-busca">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="busca-cliente-ranking" placeholder="Buscar cliente no ranking...">
+                    </div>
+                    <table class="tabela-relatorio">
+                        <thead><tr><th>Posição</th><th>Cliente</th><th>Total Gasto</th><th>Nº de Pedidos</th><th>Ações</th></tr></thead>
+                        <tbody id="tabela-ranking-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="rodape-copyright">
+        <div class="rodape-info">
+           <p>&copy; 2026 CASA TAPERA. TODOS OS DIREITOS RESERVADOS | DESENVOLVIDO POR EQUIPE <a href="https://www.instagram.com/s.aib0t/" target="_blank" rel="noopener noreferrer" class="link-desenvolvedor"><span class="nome-desenvolvedor">S.AIB0T</span></a></p>
+        </div>
+    </footer>
+
+    <!-- Modal para exibir os detalhes do cliente -->
+    <div id="modal-cliente-detalhes" class="modal-overlay oculto">
+        <div class="modal-container">
+            <button class="btn-fechar-modal" title="Fechar">&times;</button>
+            <h3 id="modal-titulo">Detalhes do Cliente</h3>
+            <div class="info-cliente-modal">
+                <p><strong>ID do Cliente:</strong> <span id="modal-cliente-id"></span></p>
+                <p><strong>CPF:</strong> <span id="modal-cliente-cpf"></span></p>
+                <p><strong>Telefone:</strong> <span id="modal-cliente-tel"></span></p>
+                <p><strong>E-mail:</strong> <span id="modal-cliente-email"></span></p>
+                <p><strong>Data de Nascimento:</strong> <span id="modal-cliente-nascimento"></span></p>
+                <p><strong>Endereço:</strong> <span id="modal-cliente-endereco"></span></p>
+            </div>
+            <div id="modal-conteudo"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Seletores de Elementos ---
+            const tabelaRankingBody = document.getElementById('tabela-ranking-body');
+            const tabelaTodosBody = document.getElementById('tabela-todos-clientes-body');
+            const filtrosPeriodo = document.getElementById('filtros-periodo');
+            const filtrosOrdenacao = document.getElementById('filtros-ordenacao');
+            const inputBuscaRanking = document.getElementById('busca-cliente-ranking');
+            const inputBuscaTodos = document.getElementById('busca-todos-clientes');
+            const btnVerMaisTodos = document.getElementById('btn-ver-mais-todos');
+            const modal = {
+                overlay: document.getElementById('modal-cliente-detalhes'),
+                titulo: document.getElementById('modal-titulo'),
+                conteudo: document.getElementById('modal-conteudo'),
+                clienteId: document.getElementById('modal-cliente-id'),
+                clienteCpf: document.getElementById('modal-cliente-cpf'),
+                clienteTel: document.getElementById('modal-cliente-tel'),
+                clienteEmail: document.getElementById('modal-cliente-email'),
+                clienteNascimento: document.getElementById('modal-cliente-nascimento'),
+                clienteEndereco: document.getElementById('modal-cliente-endereco'),
+                btnFechar: document.querySelector('#modal-cliente-detalhes .btn-fechar-modal')
+            };
+            const containerAbas = document.querySelector('.container-abas');
+            const conteudosAbas = document.querySelectorAll('.aba-conteudo');
+
+            // --- FUNÇÃO AUXILIAR PARA A LIXEIRA GERAL ---
+            function adicionarALixeira(tipo, dado, origem) {
+                const lixeira = JSON.parse(localStorage.getItem('casaTaperaLixeira')) || [];
+                lixeira.unshift({
+                    id: `trash-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+                    tipo: tipo, 
+                    dado: dado, 
+                    origem: origem, 
+                    dataExclusao: new Date().toISOString()
+                });
+                localStorage.setItem('casaTaperaLixeira', JSON.stringify(lixeira));
+            }
+
+            let dadosCompletosClientesRanking = [];
+            let dadosCompletosClientesTodos = [];
+
+            // --- LÓGICA DAS ABAS ---
+            containerAbas.addEventListener('click', (e) => {
+                if (e.target.classList.contains('btn-aba')) {
+                    const abaAlvo = e.target.dataset.aba;
+                    containerAbas.querySelectorAll('.btn-aba').forEach(btn => btn.classList.remove('active'));
+                    conteudosAbas.forEach(conteudo => conteudo.classList.remove('active'));
+                    e.target.classList.add('active');
+                    document.getElementById(`aba-${abaAlvo}`).classList.add('active');
+                }
+            });
+
+            // --- LÓGICA PARA ABA "TODOS OS CLIENTES" ---
+            function processarDadosTodosClientes() {
+                // Tenta carregar clientes da nova lista de cadastrados
+                const clientesCadastrados = JSON.parse(localStorage.getItem('clientesCadastradosTapera')) || [];
+                const todosPedidos = JSON.parse(localStorage.getItem('pedidosTapera')) || [];
+
+                // Se houver clientes cadastrados, usa essa lista como base
+                if (clientesCadastrados.length > 0) {
+                    return clientesCadastrados.map(cliente => {
+                        // Cruza com pedidos pelo nome (sistema simples) para pegar estatísticas
+                        const pedidosDoCliente = todosPedidos.filter(p => p.nomeCliente && p.nomeCliente.toLowerCase() === cliente.nome.toLowerCase());
+                        
+                        const numPedidos = pedidosDoCliente.length;
+                        const totalGasto = pedidosDoCliente.reduce((acc, p) => acc + (p.valorFinal || 0), 0);
+                        
+                        // Encontra a data do último pedido
+                        let ultimoPedidoData = 'Sem pedidos';
+                        let ultimoPedidoTimestamp = 0;
+                        
+                        if (numPedidos > 0) {
+                            pedidosDoCliente.sort((a, b) => parseInt(b.id.split('-')[1]) - parseInt(a.id.split('-')[1]));
+                            const ultimoTimestamp = parseInt(pedidosDoCliente[0].id.split('-')[1]);
+                            ultimoPedidoData = new Date(ultimoTimestamp).toLocaleDateString('pt-BR');
+                            ultimoPedidoTimestamp = ultimoTimestamp;
+                        }
+
+                        return {
+                            nome: cliente.nome,
+                            totalGasto: totalGasto,
+                            numPedidos: numPedidos,
+                            ultimoPedidoTimestamp: ultimoPedidoTimestamp,
+                            ultimoPedido: ultimoPedidoData
+                        };
+                    }).sort((a, b) => a.nome.localeCompare(b.nome)); // Ordem alfabética
+                }
+
+                // --- FALLBACK: DADOS DE DEMONSTRAÇÃO SE NÃO HOUVER CADASTROS REAIS ---
+                const temPedidosReais = localStorage.getItem('pedidosTapera');
+                if (!temPedidosReais) {
+                    const nomes = ["Ana Silva", "Bruno Costa", "Carla Dias", "Daniel Souza", "Eduarda Lima", "Fábio Pereira", "Gabriela Santos", "Hugo Oliveira", "Isabela Martins", "João Almeida", "Larissa Ferreira", "Marcos Rocha", "Natália Ribeiro", "Otávio Mendes", "Patrícia Nogueira", "Rafael Barbosa", "Sofia Castro", "Thiago Gomes", "Vanessa Azevedo", "William Andrade", "Amanda Correia", "Bento Azevedo", "Clara Fogaça", "Davi Teixeira", "Elisa Monteiro", "Felipe Cardoso", "Giovana Pinto", "Heitor Viana", "Íris Peixoto", "Júlio César Bastos"];
+                    return nomes.map(nome => {
+                        const numPedidos = Math.floor(Math.random() * 25) + 1;
+                        const totalGasto = Array.from({ length: numPedidos }, () => (Math.random() * 80) + 15).reduce((a, b) => a + b, 0);
+                        const ultimoPedidoTimestamp = Date.now() - (Math.random() * 365 * 24 * 60 * 60 * 1000);
+                        return { nome, totalGasto, numPedidos, ultimoPedidoTimestamp, ultimoPedido: new Date(ultimoPedidoTimestamp).toLocaleDateString('pt-BR') };
+                    });
+                }
+
+                // Se tem pedidos reais mas nenhum cliente "Cadastrado" na nova lista, 
+                // deriva a lista dos nomes nos pedidos (comportamento antigo)
+                const clientesAgrupados = {};
+
+                todosPedidos.forEach(pedido => {
+                    const nomeCliente = pedido.nomeCliente || 'Cliente não identificado';
+                    if (nomeCliente === 'Cliente não identificado') return;
+                    const dataPedido = new Date(parseInt(pedido.id.split('-')[1]));
+                    const totalPedido = Object.values(pedido.items).reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                    if (!clientesAgrupados[nomeCliente]) {
+                        clientesAgrupados[nomeCliente] = { nome: nomeCliente, totalGasto: 0, numPedidos: 0, ultimoPedidoTimestamp: 0 };
+                    }
+                    clientesAgrupados[nomeCliente].totalGasto += totalPedido;
+                    clientesAgrupados[nomeCliente].numPedidos++;
+                    if (dataPedido.getTime() > clientesAgrupados[nomeCliente].ultimoPedidoTimestamp) {
+                        clientesAgrupados[nomeCliente].ultimoPedidoTimestamp = dataPedido.getTime();
+                    }
+                });
+
+                return Object.values(clientesAgrupados).map(cliente => ({
+                    ...cliente,
+                    ultimoPedido: new Date(cliente.ultimoPedidoTimestamp).toLocaleDateString('pt-BR')
+                })).sort((a, b) => b.ultimoPedidoTimestamp - a.ultimoPedidoTimestamp);
+            }
+
+            function renderizarTabelaTodos() {
+                const termoBusca = inputBuscaTodos.value.toLowerCase();
+                const clientesFiltrados = dadosCompletosClientesTodos.filter(c => c.nome.toLowerCase().includes(termoBusca));
+
+                tabelaTodosBody.innerHTML = '';
+                if (clientesFiltrados.length === 0) {
+                    tabelaTodosBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #888;">Nenhum cliente encontrado.</td></tr>';
+                    btnVerMaisTodos.style.display = 'none';
+                    return;
+                }
+
+                clientesFiltrados.forEach((cliente, index) => {
+                    const linha = document.createElement('tr');
+                    if (index >= 20) {
+                        linha.classList.add('linha-oculta-todos');
+                        linha.style.display = 'none';
+                    }
+                    linha.innerHTML = `
+                        <td data-label="Cliente">${cliente.nome}</td>
+                        <td data-label="Último Pedido">${cliente.ultimoPedido}</td>
+                        <td data-label="Total Gasto">${cliente.totalGasto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                        <td data-label="Nº de Pedidos">${cliente.numPedidos}</td>
+                        <td data-label="Ações">
+                            <button class="btn-ver-detalhes" data-cliente-nome="${cliente.nome}">Detalhes</button>
+                            <button class="btn-bloquear-cliente" data-cliente-nome="${cliente.nome}" title="Bloquear Cliente"><i class="fas fa-ban"></i></button>
+                            <button class="btn-excluir-cliente" data-cliente-nome="${cliente.nome}" title="Excluir Cadastro"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    `;
+                    tabelaTodosBody.appendChild(linha);
+                });
+
+                btnVerMaisTodos.style.display = clientesFiltrados.length > 20 ? 'inline-block' : 'none';
+                btnVerMaisTodos.dataset.mostrando = 'false';
+                btnVerMaisTodos.innerHTML = '<i class="fas fa-eye"></i> Ver Mais';
+            }
+
+            // --- LÓGICA PARA ABA "RANKING DE CLIENTES" ---
+            function processarDadosRanking(periodo) {
+                const temPedidosReais = localStorage.getItem('pedidosTapera');
+                if (!temPedidosReais) {
+                    const nomes = ["Ana Silva", "Bruno Costa", "Carla Dias", "Daniel Souza", "Eduarda Lima", "Fábio Pereira", "Gabriela Santos", "Hugo Oliveira", "Isabela Martins", "João Almeida"];
+                    return nomes.map(nome => ({ nome, totalGasto: Math.random() * 500 + 50, numPedidos: Math.floor(Math.random() * 10) + 1, pedidos: [] }));
+                }
+
+                const todosPedidos = JSON.parse(localStorage.getItem('pedidosTapera')) || [];
+                const clientesAgrupados = {};
+                const agora = new Date();
+
+                const pedidosFiltrados = todosPedidos.filter(pedido => {
+                    const dataPedido = new Date(parseInt(pedido.id.split('-')[1]));
+                    if (periodo === 'diario') return dataPedido.toDateString() === agora.toDateString();
+                    if (periodo === 'semanal') {
+                        const inicioSemana = new Date(agora);
+                        inicioSemana.setDate(agora.getDate() - agora.getDay());
+                        inicioSemana.setHours(0, 0, 0, 0);
+                        return dataPedido >= inicioSemana;
+                    }
+                    if (periodo === 'mensal') return dataPedido.getMonth() === agora.getMonth() && dataPedido.getFullYear() === agora.getFullYear();
+                    return false;
+                });
+
+                pedidosFiltrados.forEach(pedido => {
+                    const nomeCliente = pedido.nomeCliente || 'Cliente não identificado';
+                    if (nomeCliente === 'Cliente não identificado') return;
+                    const totalPedido = Object.values(pedido.items).reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                    if (!clientesAgrupados[nomeCliente]) clientesAgrupados[nomeCliente] = { nome: nomeCliente, totalGasto: 0, numPedidos: 0 };
+                    clientesAgrupados[nomeCliente].totalGasto += totalPedido;
+                    clientesAgrupados[nomeCliente].numPedidos++;
+                });
+
+                return Object.values(clientesAgrupados);
+            }
+
+            function renderizarTabelaRanking(periodo) {
+                const termoBusca = inputBuscaRanking.value.toLowerCase();
+                const criterioOrdenacao = filtrosOrdenacao.querySelector('.btn-filtro.active').dataset.ordenacao;
+                dadosCompletosClientesRanking = processarDadosRanking(periodo);
+
+                const clientesFiltrados = dadosCompletosClientesRanking
+                    .filter(c => c.nome.toLowerCase().includes(termoBusca))
+                    .sort((a, b) => {
+                        if (criterioOrdenacao === 'pedidos') {
+                            if (b.numPedidos !== a.numPedidos) return b.numPedidos - a.numPedidos;
+                            return b.totalGasto - a.totalGasto; // Desempate por gasto
+                        }
+                        if (b.totalGasto !== a.totalGasto) return b.totalGasto - a.totalGasto;
+                        return b.numPedidos - a.numPedidos; // Desempate por pedidos
+                    });
+
+                tabelaRankingBody.innerHTML = '';
+
+                if (clientesFiltrados.length === 0) {
+                    tabelaRankingBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #888;">Nenhum cliente encontrado para este período.</td></tr>`;
+                    return;
+                }
+
+                const clientesParaExibir = clientesFiltrados.slice(0, 10);
+
+                clientesParaExibir.forEach((cliente, index) => {
+                    const posicao = index + 1;
+                    const linha = document.createElement('tr');
+
+                    let celulaPosicao = `<td>${posicao}º</td>`;
+                    if (posicao === 1) celulaPosicao = `<td><i class="fas fa-trophy" style="color: #ffd700;"></i> ${posicao}º</td>`;
+                    if (posicao === 2) celulaPosicao = `<td><i class="fas fa-trophy" style="color: #c0c0c0;"></i> ${posicao}º</td>`;
+                    if (posicao === 3) celulaPosicao = `<td><i class="fas fa-trophy" style="color: #cd7f32;"></i> ${posicao}º</td>`;
+
+                    linha.innerHTML = `
+                        ${celulaPosicao}
+                        <td data-label="Cliente">${cliente.nome}</td>
+                        <td data-label="Total Gasto">${cliente.totalGasto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                        <td data-label="Nº de Pedidos">${cliente.numPedidos}</td>
+                        <td data-label="Ações">
+                            <button class="btn-ver-pedido" data-cliente-nome="${cliente.nome}">Ver Pedidos</button>
+                            <button class="btn-bloquear-cliente" data-cliente-nome="${cliente.nome}" title="Bloquear Cliente"><i class="fas fa-ban"></i></button>
+                            <button class="btn-excluir-cliente" data-cliente-nome="${cliente.nome}" title="Excluir Cliente"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    `;
+                    tabelaRankingBody.appendChild(linha);
+                });
+            }
+
+            // --- FUNÇÕES DE MÁSCARA PARA CPF E TELEFONE ---
+            function formatarCPF(cpf) {
+                if (!cpf) return 'Não informado';
+                // Remove caracteres não numéricos
+                cpf = cpf.replace(/\D/g, '');
+                // Aplica máscara: xxx.xxx.xxx-xx
+                if (cpf.length === 11) {
+                    return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+                }
+                return cpf;
+            }
+
+            function formatarTelefone(telefone) {
+                if (!telefone) return 'Não informado';
+                // Remove caracteres não numéricos
+                telefone = telefone.replace(/\D/g, '');
+                // Aplica máscara: (xx) xxxxx-xxxx ou (xx) xxxx-xxxx
+                if (telefone.length === 11) {
+                    return telefone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+                } else if (telefone.length === 10) {
+                    return telefone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+                }
+                return telefone;
+            }
+
+            function removerClienteReal(nomeCliente) {
+                if (confirm(`Deseja mover o cadastro de "${nomeCliente}" para a lixeira?`)) {
+                    // 1. Remove da lista global de clientes cadastrados no localStorage
+                    let clientesCadastrados = JSON.parse(localStorage.getItem('clientesCadastradosTapera')) || [];
+                    const clienteExcluido = clientesCadastrados.find(c => c.nome.toLowerCase() === nomeCliente.toLowerCase());
+                    const originalIndex = clientesCadastrados.findIndex(c => c.nome.toLowerCase() === nomeCliente.toLowerCase());
+                    
+                    if (clienteExcluido) {
+                        adicionarALixeira('clientes', { ...clienteExcluido, originalIndex: originalIndex }, 'Clientes Cadastrados');
+                    }
+
+                    const novaLista = clientesCadastrados.filter(c => c.nome.toLowerCase() !== nomeCliente.toLowerCase());
+                    
+                    if (clientesCadastrados.length === novaLista.length) {
+                        alert("Não foi possível excluir: Este cliente não possui um cadastro de perfil ativo ou os dados são apenas demonstrativos.");
+                        return;
+                    }
+
+                    localStorage.setItem('clientesCadastradosTapera', JSON.stringify(novaLista));
+                    alert(`O cadastro de "${nomeCliente}" foi removido com sucesso.`);
+                    
+                    // 2. Atualiza as variáveis de dados e renderiza as tabelas novamente
+                    dadosCompletosClientesTodos = processarDadosTodosClientes();
+                    renderizarTabelaTodos();
+                    renderizarTabelaRanking(filtrosPeriodo.querySelector('.btn-filtro.active').dataset.periodo);
+                }
+            }
+
+            function bloqueClienteReal(nomeCliente) {
+                if (confirm(`Tem certeza que deseja bloquear o cliente "${nomeCliente}"? Isso o removerá da lista e o moverá para a lixeira.`)) {
+                    // 1. Remove da lista global de clientes cadastrados no localStorage
+                    let clientesCadastrados = JSON.parse(localStorage.getItem('clientesCadastradosTapera')) || [];
+                    const clienteBloqueado = clientesCadastrados.find(c => c.nome.toLowerCase() === nomeCliente.toLowerCase());
+                    const originalIndex = clientesCadastrados.findIndex(c => c.nome.toLowerCase() === nomeCliente.toLowerCase());
+                    
+                    if (clienteBloqueado) {
+                        // Adiciona à lixeira com status de bloqueado
+                        adicionarALixeira('clientes', { ...clienteBloqueado, originalIndex: originalIndex, status: 'bloqueado', dataBloqueio: new Date().toISOString() }, 'Clientes Bloqueados');
+                    }
+
+                    const novaLista = clientesCadastrados.filter(c => c.nome.toLowerCase() !== nomeCliente.toLowerCase());
+                    
+                    if (clientesCadastrados.length === novaLista.length) {
+                        alert("Não foi possível bloquear: Este cliente não possui um cadastro de perfil ativo ou os dados são apenas demonstrativos.");
+                        return;
+                    }
+
+                    localStorage.setItem('clientesCadastradosTapera', JSON.stringify(novaLista));
+                    alert(`O cliente "${nomeCliente}" foi bloqueado com sucesso e movido para a lixeira.`);
+                    
+                    // 2. Atualiza as variáveis de dados e renderiza as tabelas novamente
+                    dadosCompletosClientesTodos = processarDadosTodosClientes();
+                    renderizarTabelaTodos();
+                    renderizarTabelaRanking(filtrosPeriodo.querySelector('.btn-filtro.active').dataset.periodo);
+                }
+            }
+
+            function abrirModalCliente(nomeCliente) {
+                // 1. Busca dados cadastrais do cliente (para ID e Aniversário)
+                const clientesCadastrados = JSON.parse(localStorage.getItem('clientesCadastradosTapera')) || [];
+                const cliente = clientesCadastrados.find(c => c.nome === nomeCliente);
+
+                // 2. Popula o cabeçalho e as informações extras do modal
+                modal.titulo.textContent = `Detalhes de: ${nomeCliente}`;
+                const infoContainer = modal.clienteId.parentElement.parentElement;
+
+                if (cliente) {
+                    infoContainer.style.display = 'block';
+                    modal.clienteId.textContent = cliente.id || 'Não disponível';
+                    modal.clienteCpf.textContent = formatarCPF(cliente.cpf || '');
+                    modal.clienteTel.textContent = formatarTelefone(cliente.telefone || '');
+                    modal.clienteEmail.textContent = cliente.email || 'Não informado';
+                    modal.clienteNascimento.textContent = cliente.nascimento ? new Date(cliente.nascimento + 'T00:00:00').toLocaleDateString('pt-BR') : 'Não informada';
+                    modal.clienteEndereco.textContent = cliente.endereco || 'Não informado';
+                } else {
+                    infoContainer.style.display = 'none';
+                }
+
+                // 3. Popula o histórico de pedidos
+                const todosPedidos = JSON.parse(localStorage.getItem('pedidosTapera')) || [];
+                const pedidosDoCliente = todosPedidos
+                    .filter(p => p.nomeCliente === nomeCliente)
+                    .sort((a, b) => parseInt(b.id.split('-')[1]) - parseInt(a.id.split('-')[1]));
+
+                // Se não houver pedidos reais, mostra uma mensagem de resumo com dados de demonstração
+                if (pedidosDoCliente.length === 0) {
+                    const temPedidosReais = localStorage.getItem('pedidosTapera');
+                    if (!temPedidosReais) {
+                        const dadosClienteDemo = dadosCompletosClientesTodos.find(c => c.nome === nomeCliente) || dadosCompletosClientesRanking.find(c => c.nome === nomeCliente);
+                        if (dadosClienteDemo) {
+                             modal.conteudo.innerHTML = `
+                                <div class="lista-pedidos-modal">
+                                    <p style="text-align: center; color: #888; padding: 20px 0;">
+                                        Isto é um histórico de demonstração.<br>
+                                        O cliente <strong>${nomeCliente}</strong> tem <strong>${dadosClienteDemo.numPedidos}</strong> pedido(s) com um total de <strong>${dadosClienteDemo.totalGasto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</strong>.
+                                    </p>
+                                </div>
+                            `;
+                        } else {
+                             modal.conteudo.innerHTML = `<p style="text-align: center; color: #888;">Nenhum pedido encontrado para este cliente.</p>`;
+                        }
+                    } else {
+                        modal.conteudo.innerHTML = `<p style="text-align: center; color: #888;">Nenhum pedido encontrado para este cliente.</p>`;
+                    }
+                } else {
+                    // Se houver pedidos, constrói a lista detalhada
+                    let totalGeralCliente = 0;
+                    let pedidosHtml = '<div class="lista-pedidos-modal"><ul>';
+
+                    pedidosDoCliente.forEach((pedido) => {
+                        const dataPedido = new Date(parseInt(pedido.id.split('-')[1]));
+                        // Lógica robusta para calcular o total do pedido
+                        const totalPedido = pedido.valorFinal || (pedido.items && typeof pedido.items === 'object' ? Object.values(pedido.items).reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 0)), 0) : 0);
+                        totalGeralCliente += totalPedido;
+                        
+                        // Lógica robusta para listar os itens
+                        const itensPedidoHtml = (pedido.items && typeof pedido.items === 'object') ? ('<ul class="lista-itens-interna">' + Object.entries(pedido.items)
+                            .map(([nome, item]) => `<li>- ${item.quantity || 0}x ${nome} <span>${((item.price || 0) * (item.quantity || 0)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span></li>`)
+                            .join('') + '</ul>') : '<p>Detalhes dos itens não disponíveis.</p>';
+
+                        const detalhesId = `detalhes-${pedido.id}`;
+
+                        pedidosHtml += `<li><div class="cabecalho-pedido"><span>Pedido de ${dataPedido.toLocaleDateString('pt-BR')}</span><button class="btn-ver-itens" data-target="${detalhesId}">Ver Itens</button><span class="valor-pedido-modal">${totalPedido.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span></div><div id="${detalhesId}" class="detalhes-itens-pedido" style="display: none;">${itensPedidoHtml}</div></li>`;
+                    });
+
+                    pedidosHtml += `</ul><p class="total-geral">Total Gasto (Geral): ${totalGeralCliente.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p></div>`;
+                    modal.conteudo.innerHTML = pedidosHtml;
+                }
+                
+                // Abre o modal no final, independentemente de ter pedidos ou não.
+                modal.overlay.classList.remove('oculto');
+            }
+
+            // --- Event Listeners ---
+
+            filtrosPeriodo.addEventListener('click', (e) => {
+                if (e.target.classList.contains('btn-filtro')) {
+                    filtrosPeriodo.querySelector('.btn-filtro.active').classList.remove('active');
+                    e.target.classList.add('active');
+                    renderizarTabelaRanking(e.target.dataset.periodo);
+                }
+            });
+
+            filtrosOrdenacao.addEventListener('click', (e) => {
+                if (e.target.classList.contains('btn-filtro')) {
+                    filtrosOrdenacao.querySelector('.btn-filtro.active').classList.remove('active');
+                    e.target.classList.add('active');
+                    const periodoAtivo = filtrosPeriodo.querySelector('.btn-filtro.active').dataset.periodo;
+                    renderizarTabelaRanking(periodoAtivo);
+                }
+            });
+
+            inputBuscaRanking.addEventListener('input', () => {
+                const periodoAtivo = filtrosPeriodo.querySelector('.btn-filtro.active').dataset.periodo;
+                renderizarTabelaRanking(periodoAtivo);
+            });
+
+            inputBuscaTodos.addEventListener('input', renderizarTabelaTodos);
+
+            btnVerMaisTodos.addEventListener('click', () => {
+                const estaMostrandoTudo = btnVerMaisTodos.dataset.mostrando === 'true';
+                tabelaTodosBody.querySelectorAll('.linha-oculta-todos').forEach(linha => {
+                    linha.style.display = estaMostrandoTudo ? 'none' : (window.innerWidth <= 768 ? 'block' : 'table-row');
+                });
+                btnVerMaisTodos.dataset.mostrando = !estaMostrandoTudo;
+                btnVerMaisTodos.innerHTML = estaMostrandoTudo ? '<i class="fas fa-eye"></i> Ver Mais' : '<i class="fas fa-eye-slash"></i> Ocultar';
+            });
+
+            tabelaRankingBody.addEventListener('click', (e) => {
+                const btnVer = e.target.closest('.btn-ver-pedido');
+                const btnBloquear = e.target.closest('.btn-bloquear-cliente');
+                const btnExcluir = e.target.closest('.btn-excluir-cliente');
+                if (btnVer) abrirModalCliente(btnVer.dataset.clienteNome);
+                if (btnBloquear) bloqueClienteReal(btnBloquear.dataset.clienteNome);
+                if (btnExcluir) removerClienteReal(btnExcluir.dataset.clienteNome);
+            });
+
+            tabelaTodosBody.addEventListener('click', (e) => {
+                const btnAcaoModal = e.target.closest('.btn-ver-detalhes, .btn-ver-pedido');
+                const btnBloquear = e.target.closest('.btn-bloquear-cliente');
+                const btnExcluir = e.target.closest('.btn-excluir-cliente');
+                
+                if (btnAcaoModal) {
+                    abrirModalCliente(btnAcaoModal.dataset.clienteNome);
+                }
+                if (btnBloquear) {
+                    bloqueClienteReal(btnBloquear.dataset.clienteNome);
+                }
+                if (btnExcluir) {
+                    removerClienteReal(btnExcluir.dataset.clienteNome);
+                }
+            });
+
+            modal.btnFechar.addEventListener('click', () => {
+                modal.overlay.classList.add('oculto');
+            });
+            modal.overlay.addEventListener('click', (e) => {
+                if (e.target === modal.overlay) {
+                    modal.overlay.classList.add('oculto');
+                }
+            });
+
+            modal.conteudo.addEventListener('click', (e) => {
+                const btnVerItens = e.target.closest('.btn-ver-itens');
+                if (btnVerItens) {
+                    const targetId = btnVerItens.dataset.target;
+                    const detalhesDiv = document.getElementById(targetId);
+                    if (!detalhesDiv) return;
+
+                    const isVisible = detalhesDiv.style.display === 'block';
+                    detalhesDiv.style.display = isVisible ? 'none' : 'block';
+                    btnVerItens.textContent = isVisible ? 'Ver Itens' : 'Ocultar Itens';
+                }
+            });
+
+            // --- Inicialização ---
+            function inicializar() {
+                dadosCompletosClientesTodos = processarDadosTodosClientes();
+                renderizarTabelaTodos();
+                renderizarTabelaRanking('mensal');
+            }
+            inicializar();
+        });
+    </script>
+    <!-- VLibras Widget -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login do Cliente - Casa Tapera</title>
+    <link rel="stylesheet" href="../estilos/Projeto_Tapera.css">
+    <link rel="stylesheet" href="../estilos/LoginCliente.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        .modal-container-doc { position: relative; }
+        .btn-fechar-modal {
+            position: absolute; top: 15px; right: 15px; left: auto; transform: none;
+            background: none; border: none; color: #fff; font-size: 2em; cursor: pointer;
+        }
+            /* Mantém os campos escuros mesmo após preenchidos ou com preenchimento automático */
+            input, select, textarea {
+                background-color: #333 !important;
+                color: #fff !important;
+            }
+            /* Remove o fundo claro que o navegador impõe no preenchimento automático (autofill) */
+            input:-webkit-autofill,
+            input:-webkit-autofill:hover,
+            input:-webkit-autofill:focus {
+                -webkit-text-fill-color: #fff !important;
+                -webkit-box-shadow: 0 0 0px 1000px #333 inset !important;
+                transition: background-color 5000s ease-in-out 0s;
+            }
+    </style>
+</head>
+
+<body>
+    <header class="cabecalho">
+        <img src="../imagens/Mascote-Tapera.2.jpeg" alt="Mascote Tapera" class="mascote-login">
+        <a href="index.html" class="link-logo">
+            <div class="container-logo">
+                <img src="../imagens/Logo_Tapera.jpeg" alt="Logotipo Casa Tapera" class="imagem-logo">
+            </div>
+        </a>
+        <a href="index.html" class="icone-voltar" title="Voltar">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+    </header>
+
+    <main class="conteudo-principal-login">
+        <div class="login-container">
+            <h3>Entrar/Criar Conta</h3>
+            <p class="login-subtitulo">Faça login ou crie sua conta para salvar seus dados e agilizar seus pedidos!</p>
+            
+            <form id="form-login-cliente">
+                <div class="campo-form">
+                    <label for="cliente-nome">Nome Completo</label>
+                    <input type="text" id="cliente-nome" required placeholder="Seu nome completo">
+                </div>
+                <div class="campo-form">
+                    <label for="cliente-telefone">Telefone (WhatsApp)</label>
+                    <input type="tel" id="cliente-telefone" required placeholder="(51) 99999-9999">
+                </div>
+                <div class="campo-form">
+                    <label for="cliente-email">E-mail (Opcional)</label>
+                    <input type="email" id="cliente-email" placeholder="seuemail@exemplo.com">
+                </div>
+                <div class="campo-form">
+                    <label for="cliente-cpf">CPF</label>
+                    <input type="text" id="cliente-cpf" required placeholder="000.000.000-00">
+                    <small id="cpf-error" class="error-message-field"></small>
+                </div>
+                <div class="campo-form">
+                    <label for="cliente-nascimento">Data de Nascimento</label>
+                    <input type="date" id="cliente-nascimento" required max="2026-12-31" placeholder="dd/mm/aaaa">
+                    <small id="nascimento-error" class="error-message-field"></small>
+                </div>
+                <div class="campo-form">
+                    <label for="cliente-senha">Senha</label>
+                    <div class="input-senha-wrapper" style="position: relative; display: flex; align-items: center;">
+                        <input type="password" id="cliente-senha" required placeholder="Crie uma senha forte" style="width: 100%; padding-right: 40px;">
+                        <button type="button" class="btn-toggle-senha" data-target="cliente-senha" style="position: absolute; right: 10px; background: none; border: none; color: #888; cursor: pointer; padding: 5px;">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div id="senha-checklist" class="senha-checklist">
+                        <ul style="list-style: none; padding: 5px 0; margin: 0; font-size: 0.8em; color: #888; display: flex; flex-direction: column; gap: 2px;">
+                            <li id="req-comprimento"><i class="fas fa-times-circle"></i> Pelo menos 8 caracteres</li>
+                            <li id="req-maiuscula"><i class="fas fa-times-circle"></i> Uma letra maiúscula</li>
+                            <li id="req-minuscula"><i class="fas fa-times-circle"></i> Uma letra minúscula</li>
+                            <li id="req-numero"><i class="fas fa-times-circle"></i> Um número</li>
+                            <li id="req-especial"><i class="fas fa-times-circle"></i> Um caractere especial</li>
+                        </ul>
+                    </div>
+                    <small id="senha-error" class="error-message-field"></small>
+                </div>
+                <div class="campo-form">
+                    <label for="cliente-repetir-senha">Repetir Senha</label>
+                    <div class="input-senha-wrapper" style="position: relative; display: flex; align-items: center;">
+                        <input type="password" id="cliente-repetir-senha" required placeholder="Confirme sua senha" style="width: 100%; padding-right: 40px;">
+                        <button type="button" class="btn-toggle-senha" data-target="cliente-repetir-senha" style="position: absolute; right: 10px; background: none; border: none; color: #888; cursor: pointer; padding: 5px;">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <small id="repetir-senha-error" class="error-message-field"></small>
+                </div>
+
+                <hr class="divisor-form">
+
+                <div class="campo-form">
+                    <label for="cliente-cep">CEP</label>
+                    <div class="cep-container">
+                        <input type="text" id="cliente-cep" required placeholder="00000-000">
+                        <i id="cep-spinner" class="fas fa-spinner fa-spin oculto"></i>
+                    </div>
+                    <small id="cep-error" class="error-message-field"></small>
+                </div>
+                <div class="campo-form">
+                    <label for="cliente-rua">Rua / Logradouro</label>
+                    <input type="text" id="cliente-rua" required placeholder="Sua rua ou avenida">
+                </div>
+                <div class="campo-form-duplo">
+                    <div class="campo-form">
+                        <label for="cliente-numero">Número</label>
+                        <input type="text" id="cliente-numero" required placeholder="Nº">
+                    </div>
+                    <div class="campo-form">
+                        <label for="cliente-bairro">Bairro</label>
+                        <input type="text" id="cliente-bairro" required placeholder="Seu bairro">
+                    </div>
+                </div>
+                <div class="campo-form-duplo">
+                    <div class="campo-form campo-cidade">
+                        <label for="cliente-cidade">Cidade</label>
+                        <input type="text" id="cliente-cidade" required placeholder="Sua cidade">
+                    </div>
+                    <div class="campo-form campo-estado">
+                        <label for="cliente-estado">Estado (UF)</label>
+                        <input type="text" id="cliente-estado" required placeholder="UF" maxlength="2">
+                    </div>
+                </div>
+                <div class="campo-form">
+                    <label for="cliente-complemento">Complemento (Opcional)</label>
+                    <input type="text" id="cliente-complemento" placeholder="Apto, bloco, casa, etc.">
+                </div>
+                
+                <div class="termos-container">
+                    <input type="checkbox" id="termos-check" required>
+                    <label for="termos-check">Li e concordo com os <span id="abrir-termos" class="link-modal">Termos de Uso</span> e a <span id="abrir-politica" class="link-modal">Política de Privacidade</span>.</label>
+                </div>
+
+                <p id="form-error-message" class="error-message-form"></p>
+                <button type="submit" class="btn-principal-form">Continuar</button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Modal para Termos e Política -->
+    <div id="modal-documento" class="modal-overlay oculto">
+        <div class="modal-container-doc">
+            <button class="btn-fechar-modal" title="Fechar">&times;</button>
+            <h3 id="modal-doc-titulo"></h3>
+            <div id="modal-doc-conteudo"></div>
+        </div>
+    </div>
+
+    <footer class="rodape-copyright">
+        <p>&copy; 2026 CASA TAPERA. TODOS OS DIREITOS RESERVADOS | DESENVOLVIDO POR EQUIPE
+            <a href="https://www.instagram.com/s.aib0t/" target="_blank" rel="noopener noreferrer"
+                class="link-desenvolvedor"><span class="nome-desenvolvedor">S.AIB0T</span></a>
+        </p>
+    </footer>
+
+    <script src="../animações/LoginCliente.js"></script>
+
+    <!-- VLibras Widget -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+</body>
+
+</html>

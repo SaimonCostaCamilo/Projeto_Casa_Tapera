@@ -1,0 +1,116 @@
+/* Estilos específicos para a página de Cupons de Desconto */
+
+.container-gerenciamento {
+    max-width: 900px;
+    margin: 30px auto 0;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.secao-cupom {
+    background-color: var(--color-dark-gray);
+    padding: 25px;
+    border-radius: 8px;
+}
+
+.secao-cupom h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-yellow);
+    font-size: 2em;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--color-orange);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-cupom {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.campo-grupo {
+    display: flex;
+    gap: 20px;
+}
+
+.campo-form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.campo-form label {
+    margin-bottom: 5px;
+    color: #aaa;
+    font-family: 'Roboto', sans-serif;
+}
+
+.campo-form input,
+.campo-form select {
+    width: 100%;
+    padding: 10px;
+    background-color: #333;
+    border: 1px solid #555;
+    border-radius: 4px;
+    color: var(--color-white);
+    font-family: 'Roboto', sans-serif;
+    font-size: 1em;
+}
+
+.btn-principal {
+    padding: 12px;
+    margin-top: 10px;
+    background-color: var(--color-orange);
+    color: var(--color-black);
+    border: none;
+    border-radius: 5px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.btn-principal:hover { background-color: #ff8533; }
+
+.lista-cupons { display: flex; flex-direction: column; gap: 15px; }
+.sem-cupons-mensagem { color: #888; text-align: center; padding: 20px; }
+
+.cupom-card {
+    background-color: #2a2a2a;
+    padding: 15px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 4px solid var(--color-green);
+}
+
+.info-cupom { display: flex; flex-direction: column; gap: 5px; }
+.codigo-cupom-card { font-family: 'Bebas Neue', sans-serif; font-size: 1.5em; color: var(--color-white); }
+.valor-cupom-card { font-family: 'Roboto', sans-serif; color: var(--color-yellow); font-weight: bold; }
+
+.acoes-cupom { display: flex; gap: 10px; }
+.btn-acao-cupom {
+    background: #444; color: var(--color-white);
+    border: none; border-radius: 5px;
+    padding: 8px 12px; cursor: pointer;
+    transition: background-color 0.2s;
+}
+.btn-acao-cupom:hover { background-color: #555; }
+.btn-acao-cupom.btn-excluir-cupom:hover { background-color: var(--color-red); }
+
+@media (max-width: 600px) {
+    .campo-grupo {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .cupom-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+}

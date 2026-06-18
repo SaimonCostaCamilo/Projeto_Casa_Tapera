@@ -1,0 +1,394 @@
+/* Estilos específicos para a página de Relatório de Clientes */
+.container-gerenciamento {
+    background-color: var(--color-dark-gray);
+    padding: 25px;
+    border-radius: 8px;
+    margin: 30px auto;
+    width: 95%;
+    max-width: 1200px;
+}
+
+.container-gerenciamento h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--color-yellow);
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 2.5em;
+    border-bottom: 2px solid var(--color-orange);
+    padding-bottom: 10px;
+}
+
+/* Estilos para as abas */
+.container-abas {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #444;
+}
+
+.btn-aba {
+    padding: 10px 20px;
+    border: none;
+    background-color: transparent;
+    color: #aaa;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3em;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-bottom: 3px solid transparent;
+    position: relative;
+    top: 2px;
+}
+
+.btn-aba:hover { color: var(--color-white); }
+
+.btn-aba.active {
+    color: var(--color-orange);
+    border-bottom-color: var(--color-orange);
+}
+
+.aba-conteudo { display: none; }
+.aba-conteudo.active { display: block; }
+
+.tabela-relatorio {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.tabela-relatorio th, .tabela-relatorio td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #444;
+    vertical-align: middle;
+}
+
+.tabela-relatorio th {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2em;
+    color: var(--color-orange);
+    letter-spacing: 1px;
+}
+
+/* Alinhamento de colunas específicas */
+.tabela-relatorio th:nth-child(1), /* Posição */
+.tabela-relatorio td:nth-child(1),
+.tabela-relatorio th:nth-child(4), /* Nº Pedidos */
+.tabela-relatorio td:nth-child(4),
+.tabela-relatorio th:nth-child(5), /* Ações */
+.tabela-relatorio td:nth-child(5),
+#aba-todos .tabela-relatorio th:nth-child(2), /* Último Pedido */
+#aba-todos .tabela-relatorio td:nth-child(2) {
+    text-align: center;
+}
+
+.tabela-relatorio th:nth-child(3), /* Total Gasto */
+.tabela-relatorio td:nth-child(3) {
+    text-align: right;
+}
+
+/* Garante que o header de cliente fique à esquerda */
+#aba-ranking .tabela-relatorio th:nth-child(2) {
+    text-align: left;
+}
+
+.btn-ver-detalhes {
+    padding: 6px 12px;
+    background-color: var(--color-dark-gray);
+    color: var(--color-white);
+    border: 1px solid var(--color-yellow);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+}
+
+.btn-ver-detalhes:hover {
+    background-color: var(--color-yellow);
+    color: var(--color-black);
+}
+
+.tabela-relatorio .fa-trophy {
+    color: var(--color-yellow);
+    margin-right: 5px;
+}
+
+.btn-ver-pedido {
+    padding: 6px 12px;
+    background-color: var(--color-dark-gray);
+    color: var(--color-white);
+    border: 1px solid var(--color-orange);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-ver-pedido:hover {
+    background-color: var(--color-orange);
+    color: var(--color-black);
+}
+
+.btn-bloquear-cliente {
+    background: none;
+    border: none;
+    color: var(--color-red);
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.btn-excluir-cliente {
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 5px;
+    transition: color 0.2s, transform 0.2s;
+}
+
+.btn-excluir-cliente:hover {
+    color: var(--color-red);
+    transform: scale(1.2);
+}
+
+.filtros-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.btn-filtro {
+    padding: 8px 16px;
+    border: 2px solid #555;
+    border-radius: 5px;
+    background-color: var(--color-dark-gray);
+    color: var(--color-white);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.9em;
+    text-transform: uppercase;
+}
+
+.btn-filtro:hover { background-color: #333; }
+
+.btn-filtro.active {
+    background-color: var(--color-orange);
+    color: var(--color-black);
+    border-color: var(--color-orange);
+}
+
+.container-busca {
+    position: relative;
+    margin: 0 0 20px 0; /* Alinha o container de busca à esquerda */
+    max-width: 500px;
+}
+
+.container-busca input {
+    width: 100%;
+    padding: 10px 15px 10px 40px;
+    background-color: #333;
+    border: 1px solid #555;
+    border-radius: 5px;
+    color: var(--color-white);
+    font-size: 1em;
+}
+
+.container-busca .fa-search {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+}
+
+/* Estilos para o Modal */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 1002;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.oculto {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.modal-container {
+    background-color: var(--color-dark-gray);
+    padding: 25px 30px; border-radius: 8px;
+    border: 1px solid var(--color-orange);
+    width: 90%; max-width: 650px; position: relative;
+    font-family: 'Roboto', sans-serif;
+    max-height: 85vh; overflow-y: auto;
+    display: flex; flex-direction: column;
+}
+/* Ajuste para a barra de rolagem dentro do modal respeitar as bordas arredondadas */
+.modal-container::-webkit-scrollbar-track {
+    background-color: var(--color-dark-gray);
+    border-radius: 0 8px 8px 0; /* Aplica o raio da borda apenas no canto direito */
+}
+
+
+.btn-fechar-modal {
+    position: absolute; top: 15px; right: 15px; left: auto; transform: none;
+    background: none; border: none; color: var(--color-white);
+    font-size: 1.8em; cursor: pointer; line-height: 1;
+}
+
+#modal-titulo {
+    font-family: 'Bebas Neue', sans-serif; color: var(--color-yellow);
+    font-size: 2em; margin-bottom: 20px; text-align: left;
+}
+
+.info-cliente-modal {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.lista-pedidos-modal ul { list-style: none; padding: 0; }
+
+.lista-pedidos-modal li {
+    background-color: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding: 15px;
+}
+
+.cabecalho-pedido {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Permite que os itens quebrem a linha em telas menores */
+    gap: 10px; /* Adiciona um espaçamento entre os itens */
+    font-weight: bold;
+}
+
+.btn-ver-itens {
+    padding: 5px 10px; font-size: 0.9em;
+    background-color: transparent;
+    color: var(--color-yellow);
+    border: 1px solid var(--color-yellow);
+    border-radius: 8px; /* Bordas mais arredondadas */
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-ver-itens:hover { background-color: var(--color-yellow); color: var(--color-black); }
+
+/* Remove o contorno padrão e o estilo persistente ao clicar no botão */
+.btn-ver-itens:focus {
+    outline: none;
+    background-color: transparent;
+    color: var(--color-yellow);
+}
+.detalhes-itens-pedido {
+    margin-top: 10px; padding-top: 10px;
+    border-top: 1px solid #444;
+    font-size: 0.9em; color: #ccc;
+}
+
+.lista-itens-interna {
+    padding-left: 0; /* Remove o padding padrão da lista */
+    list-style-type: none; /* Remove os marcadores (bullets) */
+}
+
+/* Usa flexbox para alinhar o nome à esquerda e o preço à direita */
+.lista-itens-interna li { display: flex; justify-content: space-between; padding: 2px 0; }
+
+.total-geral {
+    text-align: right; font-weight: bold;
+    font-size: 1.2em; color: var(--color-yellow);
+    margin-top: 20px; padding-top: 10px;
+    border-top: 2px solid var(--color-orange);
+}
+
+.container-ver-mais {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#btn-ver-mais-todos {
+    padding: 10px 25px;
+    background-color: var(--color-dark-gray);
+    color: var(--color-white);
+    border: 2px solid var(--color-orange);
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    display: inline-flex; /* Para alinhar ícone e texto */
+    align-items: center; /* Centraliza verticalmente */
+    gap: 8px; /* Espaçamento entre o ícone e o texto */
+}
+
+/* Estilo para o botão enquanto está sendo clicado/pressionado (active state) */
+#btn-ver-mais-todos:active {
+    background-color: var(--color-orange);
+    color: var(--color-black);
+}
+/* Aplica o hover apenas em dispositivos que suportam hover (ex: desktop com mouse) */
+@media (hover: hover) and (pointer: fine) {
+    #btn-ver-mais-todos:hover { background-color: var(--color-orange); color: var(--color-black); }
+}
+
+/* --- RESPONSIVIDADE DA TABELA --- */
+@media (max-width: 768px) {
+    .tabela-relatorio thead {
+        display: none; /* Esconde o cabeçalho da tabela */
+    }
+    .tabela-relatorio, .tabela-relatorio tbody, .tabela-relatorio tr, .tabela-relatorio td {
+        display: block; /* Transforma a tabela em blocos */
+        width: 100%;
+    }
+    .tabela-relatorio tr {
+        margin-bottom: 15px;
+        background-color: #2a2a2a; /* Fundo de card para cada linha */
+        border-radius: 5px;
+        border-left: 4px solid var(--color-orange);
+    }
+    .tabela-relatorio td {
+        display: flex; /* Usa flexbox para alinhar rótulo e valor */
+        justify-content: space-between; /* Coloca rótulo na esquerda e valor na direita */
+        text-align: right; /* Alinha o valor à direita */
+        position: relative;
+        border-bottom: 1px solid #3a3a3a;
+        padding: 10px 15px; /* Ajusta o padding */
+    }
+    .tabela-relatorio td[data-label="Cliente"] { /* Estilo para o nome do cliente */
+        font-size: 1.2em;
+        font-weight: bold;
+        background-color: #333;
+        padding-top: 12px;
+        padding-bottom: 12px;
+        justify-content: center; /* Centraliza o nome do cliente */
+        color: var(--color-white);
+    }
+    .tabela-relatorio td:last-child {
+        border-bottom: none;
+        justify-content: center; /* Centraliza os botões de ação */
+    }
+    .tabela-relatorio td::before {
+        content: attr(data-label); /* Pega o texto do atributo data-label */
+        text-align: left; /* Alinha o rótulo à esquerda */
+        font-weight: bold;
+        color: #aaa; /* Cor do rótulo */
+        margin-right: auto; /* Empurra o valor para a direita */
+    }
+    .tabela-relatorio td[data-label="Cliente"]::before {
+        display: none; /* Esconde o rótulo "Cliente" pois o nome já é óbvio */
+    }
+}

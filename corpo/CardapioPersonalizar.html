@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalizar Cardápio - Casa Tapera</title>
+    <link rel="stylesheet" href="../estilos/PainelDeControle.css">
+    <link rel="stylesheet" href="../estilos/CardapioPersonalizar.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <!-- Biblioteca para gerar PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        .container-gerenciamento {
+            width: 95%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+        @media (max-width: 480px) {
+            .container-gerenciamento { margin: 15px auto; }
+        }
+
+        /* Estilos para arrastar e reordenar itens */
+        .item-editavel.arrastando {
+            opacity: 0.4;
+            border: 2px dashed var(--color-orange);
+        }
+        .btn-reordenar-item { cursor: grab; color: #888; margin: 0 5px; }
+        .btn-reordenar-item:active { cursor: grabbing; }
+
+        /* Estilo para categorias arrastáveis no modal */
+        .item-categoria-reordenavel.arrastando {
+            opacity: 0.5;
+            border: 1px dashed var(--color-orange);
+        }
+    </style>
+</head>
+<body>
+    <header class="cabecalho-painel">
+        <a href="PainelDeControle.html"><img src="../imagens/Logo_Tapera.jpeg" alt="Logotipo Casa Tapera" class="imagem-logo"></a>
+        <h1>Personalizar Cardápio</h1>
+        <a href="PainelDeControle.html" class="icone-voltar" title="Voltar ao Painel">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+    </header>
+
+    <main class="painel-principal">
+        <div class="container-gerenciamento">
+            <h2>Gerenciador de Itens do Cardápio</h2>
+
+            <div class="container-add-item">
+                <button id="btn-exportar-pdf-topo" class="btn-acao-topo">
+                    <i class="fas fa-file-pdf"></i> Exportar para PDF
+                </button>
+                <button id="btn-gerenciar-categorias"><i class="fas fa-tags"></i> Gerenciar Categorias</button>
+                <button id="btn-add-novo-item"><i class="fas fa-plus"></i> Adicionar Item</button>
+            </div>
+            
+            <div class="grid-edicao-cardapio">
+                <!-- Categoria Hambúrgueres -->
+                <div class="categoria-cardapio">
+                    <div class="categoria-header"><h3>Hambúrgueres</h3></div>
+                    <div class="item-editavel" data-item-id="hamburguer-carne-artesanal" draggable="true">
+                        <span class="nome-item-editavel">Hambúrguer de Carne</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="20.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="hamburguer-frango-artesanal" draggable="true">
+                        <span class="nome-item-editavel">Hambúrguer de Frango</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="22.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="hamburguer-bacon-artesanal" draggable="true">
+                        <span class="nome-item-editavel">Hambúrguer de Bacon</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="25.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="hamburguer-vegano" draggable="true">
+                        <span class="nome-item-editavel">Hambúrguer Vegano</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="25.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categoria Pastéis -->
+                <div class="categoria-cardapio">
+                    <div class="categoria-header"><h3>Pastéis Salgados</h3></div>
+                    <div class="item-editavel" data-item-id="pastel-carne" draggable="true">
+                        <span class="nome-item-editavel">Carne</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="12.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="pastel-frango-catupiry" draggable="true">
+                        <span class="nome-item-editavel">Frango c/ Catupiry</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="12.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="pastel-calabresa" draggable="true">
+                        <span class="nome-item-editavel">Calabresa</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="12.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="pastel-queijo-oregano" draggable="true">
+                        <span class="nome-item-editavel">Queijo c/ Orégano</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="12.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="pastel-queijo" draggable="true">
+                        <span class="nome-item-editavel">Queijo</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="12.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categoria Pastéis Doces -->
+                <div class="categoria-cardapio">
+                    <div class="categoria-header"><h3>Pastéis Doces</h3></div>
+                    <div class="item-editavel" data-item-id="pastel-chocolate" draggable="true">
+                        <span class="nome-item-editavel">Chocolate ao Leite</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="15.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="pastel-romeu-julieta" draggable="true">
+                        <span class="nome-item-editavel">Romeu e Julieta</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="14.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="pastel-creme-ninho" draggable="true">
+                        <span class="nome-item-editavel">Creme Ninho</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="15.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="pastel-stikadinho" draggable="true">
+                        <span class="nome-item-editavel">Stikadinho</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="17.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="pastel-ouro-branco" draggable="true">
+                        <span class="nome-item-editavel">Ouro Branco</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="15.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="pastel-oreo" draggable="true">
+                        <span class="nome-item-editavel">Oreo</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="15.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="pastel-kit-kat" draggable="true">
+                        <span class="nome-item-editavel">Kit-Kat</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="17.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="pastel-sonho-valsa" draggable="true">
+                        <span class="nome-item-editavel">Sonho de Valsa</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="15.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Categoria Acompanhamentos -->
+                <div class="categoria-cardapio">
+                    <div class="categoria-header"><h3>Acompanhamentos</h3></div>
+                    <div class="item-editavel" data-item-id="batata-p" draggable="true">
+                        <span class="nome-item-editavel">Batata P</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="8.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="batata-m" draggable="true">
+                        <span class="nome-item-editavel">Batata M</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="10.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="batata-g" draggable="true">
+                        <span class="nome-item-editavel">Batata G</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="15.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categoria Pães e Cucas -->
+                <div class="categoria-cardapio">
+                    <div class="categoria-header"><h3>Pães e Cucas</h3></div>
+                    <div class="item-editavel" data-item-id="pao-artesanal" draggable="true">
+                        <span class="nome-item-editavel">Pão Artesanal 500g</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="20.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="cuca-goiabada" draggable="true">
+                        <span class="nome-item-editavel">Cuca de Goiabada 500g</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="15.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="cuca-doce-leite" draggable="true">
+                        <span class="nome-item-editavel">Cuca de Doce de Leite 500g</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="17.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categoria Sucos Naturais -->
+                <div class="categoria-cardapio">
+                    <div class="categoria-header"><h3>Sucos Naturais</h3></div>
+                    <div class="item-editavel" data-item-id="suco-morango" draggable="true">
+                        <span class="nome-item-editavel">Suco de Morango</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="8.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="suco-laranja" draggable="true">
+                        <span class="nome-item-editavel">Suco de Laranja</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="6.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="suco-melancia" draggable="true">
+                        <span class="nome-item-editavel">Suco de Melancia</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="7.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="suco-melao" draggable="true">
+                        <span class="nome-item-editavel">Suco de Melão</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="7.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="suco-abacaxi" draggable="true">
+                        <span class="nome-item-editavel">Suco de Abacaxi</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="6.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="suco-goiaba" draggable="true">
+                        <span class="nome-item-editavel">Suco de Goiaba</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="6.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="suco-limao" draggable="true">
+                        <span class="nome-item-editavel">Suco de Limão</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="5.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categoria Monte seu Lanche -->
+                <div class="categoria-cardapio">
+                    <div class="categoria-header"><h3>Monte seu Hambúrguer</h3></div>
+                    <div class="item-editavel" data-item-id="hamburguer-base" draggable="true">
+                        <span class="nome-item-editavel">Preço Base</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="12.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="hamburguer-extra-bife-carne" draggable="true">
+                        <span class="nome-item-editavel">Extra: Bife de Carne</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="5.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="hamburguer-extra-bife-frango" draggable="true">
+                        <span class="nome-item-editavel">Extra: Frango Empanado</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="5.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="hamburguer-extra-mussarela" draggable="true">
+                        <span class="nome-item-editavel">Extra: Queijo Mussarela</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="1.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="hamburguer-extra-alface" draggable="true">
+                        <span class="nome-item-editavel">Extra: Alface</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="1.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="hamburguer-extra-cebola" draggable="true">
+                        <span class="nome-item-editavel">Extra: Cebola</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="1.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="hamburguer-extra-tomate" draggable="true">
+                        <span class="nome-item-editavel">Extra: Tomate</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="1.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="hamburguer-extra-pepino" draggable="true">
+                        <span class="nome-item-editavel">Extra: Pepino</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="1.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="hamburguer-extra-maionese" draggable="true">
+                        <span class="nome-item-editavel">Extra: Maionese</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="1.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="hamburguer-extra-ketchup" draggable="true">
+                        <span class="nome-item-editavel">Extra: Ketchup</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="1.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="hamburguer-extra-molho-alho" draggable="true">
+                        <span class="nome-item-editavel">Extra: Molho de Alho</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="1.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="hamburguer-extra-molho-pimenta" draggable="true">
+                        <span class="nome-item-editavel">Extra: Molho de Pimenta</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="1.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="hamburguer-extra-mostarda" draggable="true">
+                        <span class="nome-item-editavel">Extra: Mostarda</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="1.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categoria Monte seu Pastel -->
+                <div class="categoria-cardapio">
+                    <div class="categoria-header"><h3>Monte seu Pastel</h3></div>
+                    <div class="item-editavel" data-item-id="pastel-base-carne" draggable="true">
+                        <span class="nome-item-editavel">Base: Carne</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="12.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="pastel-base-frango" draggable="true">
+                        <span class="nome-item-editavel">Base: Frango c/ Catupiry</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="12.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="pastel-base-queijo" draggable="true">
+                        <span class="nome-item-editavel">Base: Queijo</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="12.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="pastel-extra-calabresa" draggable="true">
+                        <span class="nome-item-editavel">Extra: Calabresa</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="2.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="pastel-extra-mussarela" draggable="true">
+                        <span class="nome-item-editavel">Extra: Mussarela</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="1.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="pastel-extra-oregano" draggable="true">
+                        <span class="nome-item-editavel">Extra: Orégano</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="1.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="pastel-extra-catupiry" draggable="true">
+                        <span class="nome-item-editavel">Extra: Catupiry</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="1.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="pastel-extra-maionese" draggable="true">
+                        <span class="nome-item-editavel">Extra: Maionese</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="1.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="pastel-extra-ketchup" draggable="true">
+                        <span class="nome-item-editavel">Extra: Ketchup</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="1.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="pastel-extra-molho-alho" draggable="true">
+                        <span class="nome-item-editavel">Extra: Molho de Alho</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="1.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="pastel-extra-molho-pimenta" draggable="true">
+                        <span class="nome-item-editavel">Extra: Molho de Pimenta</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="1.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="pastel-extra-mostarda" draggable="true">
+                        <span class="nome-item-editavel">Extra: Mostarda</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="1.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categoria Bebidas -->
+                <div class="categoria-cardapio">
+                    <div class="categoria-header"><h3>Bebidas</h3></div>
+                    <div class="item-editavel" data-item-id="coca-cola-lata" draggable="true">
+                        <span class="nome-item-editavel">Coca-Cola Lata 350ml</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="7.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="refri-lata" draggable="true">
+                        <span class="nome-item-editavel">Refrigerantes Lata 350ml</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="6.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="agua-com-gas" draggable="true">
+                        <span class="nome-item-editavel">Água c/ Gás</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="3.50" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="item-editavel" data-item-id="agua-sem-gas" draggable="true">
+                        <span class="nome-item-editavel">Água s/ Gás</span>
+                        <div class="acoes-item">
+                            <div class="container-preco"><span class="prefixo-moeda">R$</span><input type="number" step="0.50" class="input-preco" value="3.00" disabled></div>
+                            <button class="btn-acao-item btn-editar-item" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-acao-item btn-salvar-item" title="Salvar"><i class="fas fa-save"></i></button>
+                            <button class="btn-acao-item btn-ocultar-item" title="Ocultar no cardápio"><i class="fas fa-eye"></i></button>
+                            <button class="btn-acao-item btn-reordenar-item" title="Pressione e arraste para mudar o lugar"><i class="fas fa-grip-vertical"></i></button>
+                            <button class="btn-acao-item btn-remover-item" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container-atualizar-geral">
+                <button id="btn-atualizar-index">
+                    <i class="fas fa-sync-alt"></i> Salvar e Atualizar Cardápio Principal
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="rodape-copyright">
+        <div class="rodape-info">
+           <p>&copy; 2026 CASA TAPERA. TODOS OS DIREITOS RESERVADOS | DESENVOLVIDO POR EQUIPE <a href="https://www.instagram.com/s.aib0t/" target="_blank" rel="noopener noreferrer" class="link-desenvolvedor"><span class="nome-desenvolvedor">S.AIB0T</span></a></p>
+        </div>
+    </footer>
+
+    <!-- Modal para Adicionar Novo Item -->
+    <div id="modal-add-item" class="modal-overlay">
+        <div class="modal-container">
+            <button class="btn-fechar-modal" title="Fechar">&times;</button>
+            <h3>Adicionar Novo Item ao Cardápio</h3>
+            <form id="form-novo-item" class="form-novo-item">
+                <label for="novo-item-nome">Nome do Item:</label>
+                <input type="text" id="novo-item-nome" required>
+                
+                <label for="novo-item-preco">Preço (ex: 15.50):</label>
+                <input type="number" step="0.01" id="novo-item-preco" required>
+
+                <label for="novo-item-categoria">Categoria:</label>
+                <select id="novo-item-categoria" required></select>
+                <button type="submit">Adicionar Item</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Criar Nova Categoria -->
+    <div id="modal-gerenciar-categorias" class="modal-overlay">
+        <div class="modal-container">
+            <button class="btn-fechar-modal" title="Fechar">&times;</button>
+            <h3>Gerenciar Categorias</h3>
+            <ul id="lista-categorias-gerenciar">
+                <!-- Populado via JS -->
+            </ul>
+            <div class="form-nova-categoria">
+                <h4>Criar Nova Categoria</h4>
+                <div>
+                    <input type="text" id="input-nova-categoria" placeholder="Nome da nova categoria">
+                    <button id="btn-criar-categoria">Criar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script do Cardápio Personalizado -->
+    <script src="../animações/CardapioPersonalizar.js"></script>
+    <!-- VLibras Widget -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+
+    <script>
+        // Monitora quando o cardápio é salvo e notifica a página index.html
+        const btnSalvarPrincipal = document.getElementById('btn-atualizar-index');
+        if (btnSalvarPrincipal) {
+            btnSalvarPrincipal.addEventListener('click', () => {
+                // Aguarda o tempo da animação do botão para garantir que localStorage foi atualizado
+                setTimeout(() => {
+                    // 1. Dispara evento para a mesma aba
+                    document.dispatchEvent(new CustomEvent('cardapioAtualizado'));
+                    
+                    // 2. Dispara evento de storage para outras abas
+                    window.dispatchEvent(new StorageEvent('storage', {
+                        key: 'cardapioTaperaPrecos',
+                        newValue: localStorage.getItem('cardapioTaperaPrecos'),
+                        oldValue: null,
+                        url: window.location.href
+                    }));
+                    
+                    console.log('✅ Cardápio salvo e sincronizado com sucesso!');
+                }, 1500);
+            });
+        }
+    </script>
+
+</body>
+</html>

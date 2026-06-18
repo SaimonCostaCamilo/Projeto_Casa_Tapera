@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Horários - Casa Tapera</title>
+    <link rel="stylesheet" href="../estilos/PainelDeControle.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../estilos/HorariosControle.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        .container-gerenciamento {
+            width: 95%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+    </style>
+</head>
+<body>
+    <header class="cabecalho-painel">
+        <a href="PainelDeControle.html"><img src="../imagens/Logo_Tapera.jpeg" alt="Logotipo Casa Tapera" class="imagem-logo"></a>
+        <h1>Horários de Funcionamento</h1>
+        <a href="PainelDeControle.html" class="icone-voltar" title="Voltar ao Painel">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+    </header>
+
+    <main class="painel-principal">
+        <div class="container-gerenciamento">
+            <h2>Editar Horários</h2>
+            <ul id="lista-horarios-edicao" class="lista-horarios-edicao">
+                <!-- O conteúdo será gerado pelo JavaScript -->
+            </ul>
+            <div class="container-salvar">
+                <button id="btn-salvar-horarios"><i class="fas fa-save"></i> Salvar Alterações</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Seletor de Horário Customizado -->
+    <div id="time-picker-custom">
+        <div class="time-picker-header">
+            <span>Hora</span>
+            <span>Minuto</span>
+        </div>
+        <div class="time-picker-body">
+            <div id="coluna-horas" class="time-picker-coluna"></div>
+            <div class="time-picker-separator">:</div>
+            <div id="coluna-minutos" class="time-picker-coluna"></div>
+        </div>
+        <div class="time-picker-footer">
+            <button id="btn-confirmar-horario">Confirmar</button>
+        </div>
+    </div>
+
+
+    <footer class="rodape-copyright">
+        <div class="rodape-info">
+           <p>&copy; 2026 CASA TAPERA. TODOS OS DIREITOS RESERVADOS | DESENVOLVIDO POR EQUIPE <a href="https://www.instagram.com/s.aib0t/" target="_blank" rel="noopener noreferrer" class="link-desenvolvedor"><span class="nome-desenvolvedor">S.AIB0T</span></a></p>
+        </div>
+    </footer>
+
+    <script src="../animações/HorariosControle.js"></script>
+    <!-- VLibras Widget -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+</body>
+</html>

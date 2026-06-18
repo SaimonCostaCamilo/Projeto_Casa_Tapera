@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico de Clientes - Casa Tapera</title>
+    <link rel="stylesheet" href="../estilos/PainelDeControle.css">
+    <link rel="stylesheet" href="../estilos/HistoricoClientes.css"> <!-- Mantido para estilos da tabela e busca -->
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+</head>
+<body>
+    <header class="cabecalho-painel">
+        <a href="PainelDeControle.html"><img src="../imagens/Logo_Tapera.jpeg" alt="Logotipo Casa Tapera" class="imagem-logo"></a>
+        <h1>Meus Clientes</h1>
+        <a href="PainelDeControle.html" class="icone-voltar" title="Voltar ao Painel">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+    </header>
+
+    <main class="painel-principal">
+        <div class="container-gerenciamento">
+            <h2>Todos os Clientes</h2>
+            <div class="container-busca">
+                <i class="fas fa-search"></i>
+                <input type="text" id="busca-cliente" placeholder="Buscar cliente pelo nome...">
+            </div>
+            <table class="tabela-relatorio">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Último Pedido</th>
+                        <th>Total Gasto</th>
+                        <th>Nº de Pedidos</th> 
+                    </tr>
+                </thead>
+                <tbody id="tabela-historico-body"></tbody>
+            </table>
+            <div class="container-ver-mais">
+                <button id="btn-ver-mais"><i class="fas fa-eye"></i> Ver Mais</button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="rodape-copyright">
+        <div class="rodape-info">
+        <p>&copy; 2026 CASA TAPERA. TODOS OS DIREITOS RESERVADOS | DESENVOLVIDO POR EQUIPE <a href="https://www.instagram.com/s.aib0t/" target="_blank" rel="noopener noreferrer" class="link-desenvolvedor"><span class="nome-desenvolvedor">S.AIB0T</span></a></p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabelaBody = document.getElementById('tabela-historico-body');
+            const btnVerMais = document.getElementById('btn-ver-mais');
+            const inputBusca = document.getElementById('busca-cliente');
+
+            function processarDadosClientes() {
+                // --- LÓGICA DE DADOS DEMONSTRATIVOS ---
+                const temPedidosReais = localStorage.getItem('pedidosTapera');
+                if (!temPedidosReais) {
+                    console.log("Nenhum pedido real encontrado. Usando dados de demonstração.");
+                    const nomes = [
+                        "Ana Silva", "Bruno Costa", "Carla Dias", "Daniel Souza", "Eduarda Lima", "Fábio Pereira", "Gabriela Santos", "Hugo Oliveira", "Isabela Martins", "João Almeida", 
+                        "Larissa Ferreira", "Marcos Rocha", "Natália Ribeiro", "Otávio Mendes", "Patrícia Nogueira", "Rafael Barbosa", "Sofia Castro", "Thiago Gomes", "Vanessa Azevedo", "William Andrade",
+                        "Amanda Correia", "Bento Azevedo", "Clara Fogaça", "Davi Teixeira", "Elisa Monteiro", "Felipe Cardoso", "Giovana Pinto", "Heitor Viana", "Íris Peixoto", "Júlio César Bastos",
+                        "Karen Matos", "Leonardo Dantas", "Manuela Queiroz", "Noah Aragão", "Olívia Campos", "Pedro Henrique Sales", "Quintino Arantes", "Raquel Siqueira", "Samuel Uchoa", "Tatiana Valente",
+                        "Ulisses Brandão", "Valentina Xavier", "Wagner Zanetti", "Yasmin Castilho", "Zeca Drummond", "Aurora Neves", "Benjamin Rangel", "Cecília Pires", "Dante Tavares", "Esther Gusmão"
+                    ];
+
+                    return nomes.map(nome => {
+                        const numPedidos = Math.floor(Math.random() * 25) + 1; // Entre 1 e 25 pedidos
+                        let totalGasto = 0;
+                        for (let i = 0; i < numPedidos; i++) {
+                            totalGasto += (Math.random() * 80) + 15; // Gasto aleatório entre R$15 e R$95 por pedido
+                        }
+                        // Data aleatória no último ano
+                        const ultimoPedidoTimestamp = Date.now() - (Math.random() * 365 * 24 * 60 * 60 * 1000);
+
+                        return {
+                            nome: nome,
+                            totalGasto: totalGasto,
+                            numPedidos: numPedidos,
+                            ultimoPedidoTimestamp: ultimoPedidoTimestamp,
+                            ultimoPedido: new Date(ultimoPedidoTimestamp).toLocaleDateString('pt-BR')
+                        };
+                    }).sort((a, b) => b.ultimoPedidoTimestamp - a.ultimoPedidoTimestamp);
+                }
+                // --- FIM DA LÓGICA DE DADOS DEMONSTRATIVOS ---
+
+                // A lógica original para dados reais continua abaixo
+                const todosPedidos = JSON.parse(localStorage.getItem('pedidosTapera')) || [];
+                const clientesAgrupados = {};
+
+                todosPedidos.forEach(pedido => {
+                    const nomeCliente = pedido.nomeCliente || 'Cliente não identificado';
+                    const dataPedido = new Date(parseInt(pedido.id.split('-')[1]));
+                    let totalPedido = 0;
+                    for (const itemName in pedido.items) {
+                        totalPedido += pedido.items[itemName].price * pedido.items[itemName].quantity;
+                    }
+
+                    if (!clientesAgrupados[nomeCliente]) {
+                        clientesAgrupados[nomeCliente] = {
+                            nome: nomeCliente,
+                            totalGasto: 0,
+                            numPedidos: 0,
+                            ultimoPedidoTimestamp: 0
+                        };
+                    }
+
+                    clientesAgrupados[nomeCliente].totalGasto += totalPedido;
+                    clientesAgrupados[nomeCliente].numPedidos++;
+                    if (dataPedido.getTime() > clientesAgrupados[nomeCliente].ultimoPedidoTimestamp) {
+                        clientesAgrupados[nomeCliente].ultimoPedidoTimestamp = dataPedido.getTime();
+                    }
+                });
+
+                return Object.values(clientesAgrupados).map(cliente => ({
+                    ...cliente,
+                    ultimoPedido: new Date(cliente.ultimoPedidoTimestamp).toLocaleDateString('pt-BR')
+                })).sort((a, b) => b.ultimoPedidoTimestamp - a.ultimoPedidoTimestamp);
+            }
+
+            const todosClientes = processarDadosClientes();
+
+            function renderizarTabela() {
+                tabelaBody.innerHTML = '';
+                if (todosClientes.length === 0) {
+                    tabelaBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #888;">Nenhum cliente encontrado no histórico de pedidos.</td></tr>';
+                    btnVerMais.style.display = 'none';
+                    return;
+                }
+
+                todosClientes.forEach((cliente, index) => {
+                    const linha = document.createElement('tr');
+                    if (index >= 20) { // Aumentado para mostrar 20 clientes inicialmente
+                        linha.classList.add('linha-oculta');
+                        linha.style.display = 'none';
+                    }
+                    linha.innerHTML = `
+                        <td data-label="Cliente">${cliente.nome}</td>
+                        <td data-label="Último Pedido">${cliente.ultimoPedido}</td>
+                        <td data-label="Total Gasto">${cliente.totalGasto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                        <td data-label="Nº de Pedidos">${cliente.numPedidos}</td>
+                    `;
+                    tabelaBody.appendChild(linha);
+                });
+
+                // Esconde o botão "Ver Mais" se houver 20 ou menos clientes
+                if (todosClientes.length <= 20) {
+                    btnVerMais.style.display = 'none';
+                }
+            }
+
+            btnVerMais.addEventListener('click', () => {
+                const estaMostrandoTudo = btnVerMais.dataset.mostrando === 'true';
+
+                tabelaBody.querySelectorAll('.linha-oculta').forEach(linha => {
+                    // Se estiver mostrando tudo, esconde. Se não, mostra.
+                    if (estaMostrandoTudo) {
+                        linha.style.display = 'none';
+                    } else {
+                        // Verifica a largura da tela para aplicar o display correto
+                        linha.style.display = window.innerWidth <= 768 ? 'block' : 'table-row';
+                    }
+                });
+
+                // Alterna o estado e o texto do botão
+                btnVerMais.dataset.mostrando = !estaMostrandoTudo;
+                btnVerMais.innerHTML = estaMostrandoTudo 
+                    ? '<i class="fas fa-eye"></i> Ver Mais' 
+                    : '<i class="fas fa-eye-slash"></i> Ocultar';
+            });
+
+            inputBusca.addEventListener('input', () => {
+                const termoBusca = inputBusca.value.toLowerCase();
+                const linhas = tabelaBody.querySelectorAll('tr');
+                
+                linhas.forEach(linha => {
+                    const nomeCliente = linha.cells[0]?.textContent.toLowerCase() || '';
+                    if (nomeCliente.includes(termoBusca)) {
+                        linha.style.display = ''; // Mostra a linha se corresponder
+                    } else {
+                        linha.style.display = 'none'; // Esconde se não corresponder
+                    }
+                });
+                // Esconde o botão "Ver Mais" durante a busca
+                btnVerMais.style.display = termoBusca ? 'none' : 'block';
+            });
+
+            renderizarTabela();
+        });
+    </script>
+    <!-- VLibras Widget -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+</body>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+</body>

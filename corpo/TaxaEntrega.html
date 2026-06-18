@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cálculo de Taxa de Entrega - Casa Tapera</title>
+    <link rel="stylesheet" href="../estilos/PainelDeControle.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Leaflet (biblioteca do mapa) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <!-- Plugin de Roteamento (traçar rota pelas ruas) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <link rel="stylesheet" href="../estilos/TaxaEntrega.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        .container-gerenciamento {
+            width: 95%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+    </style>
+</head>
+<body>
+    <header class="cabecalho-painel">
+        <a href="PainelDeControle.html"><img src="../imagens/Logo_Tapera.jpeg" alt="Logotipo Casa Tapera" class="imagem-logo"></a>
+        <h1>Taxa de Entrega por Distância</h1>
+        <a href="PainelDeControle.html" class="icone-voltar" title="Voltar ao Painel">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+    </header>
+
+    <main class="painel-principal">
+        <div class="container-gerenciamento">
+            <h2>Calculadora de Taxa de Entrega</h2>
+            <p class="instrucoes">Digite o endereço na barra de busca ou clique no mapa para definir o destino.</p>
+            <div class="container-busca-mapa">
+                <i class="fas fa-search"></i>
+                <input type="text" id="busca-endereco-input" placeholder="Buscar endereço do cliente...">
+            </div>
+            <div class="map-wrapper">
+                <div id="mapa-entrega"></div>
+                <button id="btn-limpar-mapa"><i class="fas fa-eraser"></i> Limpar Mapa</button>
+            </div>
+            <div class="container-calculo">
+                <div class="campo-calculo">
+                    <label for="valor-km">Valor por Quilômetro</label>
+                    <div class="input-com-prefixo">
+                        <span>R$</span>
+                        <input type="number" id="valor-km" value="2.50" step="0.10">
+                        <button id="btn-salvar-km" class="btn-salvar-inline" title="Salvar Valor Padrão"><i class="fas fa-save"></i></button>
+                    </div>
+                </div>
+                <div class="campo-calculo">
+                    <label>Distância Calculada</label>
+                    <input type="text" id="distancia-calculada" value="0 km" readonly>
+                </div>
+                <div class="resultado-calculo">
+                    <h3 class="titulo-resultado">Taxa de Entrega Estimada</h3>
+                    <p id="taxa-entrega-final" class="valor-resultado">R$ 0,00</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="rodape-copyright">
+        <div class="rodape-info">
+           <p>&copy; 2026 CASA TAPERA. TODOS OS DIREITOS RESERVADOS | DESENVOLVIDO POR EQUIPE <a href="https://www.instagram.com/s.aib0t/" target="_blank" rel="noopener noreferrer" class="link-desenvolvedor"><span class="nome-desenvolvedor">S.AIB0T</span></a></p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Coordenadas da Casa Tapera
+            const coordsCasaTapera = [-30.1413, -51.1851]; // Posição ajustada para a entrada da Rua Tapera
+            const mapa = L.map('mapa-entrega').setView(coordsCasaTapera, 15); // Centraliza na loja com mais zoom
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(mapa);
+
+            // Define o ponto de partida fixo como a loja
+            const pontoPartida = L.marker(coordsCasaTapera, { 
+                // draggable: false, // O ponto da loja é fixo
+                icon: L.icon({ // Ícone customizado para a loja
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                    iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+                })
+            }).addTo(mapa).bindPopup('<b>Casa Tapera</b><br>Estr. Jorge Pereira Nunes, 2411').openPopup();
+
+            let routingControl = null; // Variável para controlar a rota
+            let pontoDestinoMarker = null; // Variável para o marcador de destino azul
+
+            const valorKmInput = document.getElementById('valor-km');
+            const distanciaDisplay = document.getElementById('distancia-calculada');
+            const taxaDisplay = document.getElementById('taxa-entrega-final');
+            const buscaInput = document.getElementById('busca-endereco-input');
+            const btnLimparMapa = document.getElementById('btn-limpar-mapa');
+            const buscaIcone = document.querySelector('.container-busca-mapa .fa-search');
+            const btnSalvarKm = document.getElementById('btn-salvar-km');
+            function calcularTaxa() {
+                // A função agora será chamada pelo evento de rota encontrada
+                // e os valores serão atualizados lá.
+            }
+
+            // Função para mover o marcador de destino
+            function moverMarcadorDestino(latlng) {
+                // Adiciona ou move o marcador de destino azul
+                if (pontoDestinoMarker) {
+                    pontoDestinoMarker.setLatLng(latlng);
+                } else {
+                    pontoDestinoMarker = L.marker(latlng, {
+                        icon: L.icon({ // Ícone customizado azul para o destino
+                            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+                            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                            iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+                        })
+                    }).addTo(mapa).bindPopup('<b>Destino do Cliente</b>');
+                }
+
+                // Lógica da rota
+                if (routingControl) {
+                    // Se já existe uma rota, apenas atualiza o ponto final
+                    routingControl.spliceWaypoints(1, 1, latlng);
+                } else {
+                    // Cria a rota pela primeira vez
+                    routingControl = L.Routing.control({
+                        waypoints: [
+                            L.latLng(coordsCasaTapera), // Ponto de partida fixo
+                            latlng // Ponto de destino
+                        ],
+                        routeWhileDragging: true,
+                        createMarker: function() { return null; }, // Não cria marcadores padrão
+                        lineOptions: {
+                            styles: [{color: 'var(--color-orange)', opacity: 0.8, weight: 5}]
+                        }
+                    }).on('routesfound', function(e) {
+                        const routes = e.routes;
+                        const summary = routes[0].summary;
+                        // summary.totalDistance está em metros
+                        const distanciaKm = summary.totalDistance / 1000;
+                        const valorPorKm = parseFloat(valorKmInput.value) || 0;
+                        const taxaFinal = distanciaKm * valorPorKm;
+
+                        distanciaDisplay.value = `${distanciaKm.toFixed(2)} km`.replace('.', ',');
+                        taxaDisplay.textContent = taxaFinal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                    }).addTo(mapa);
+                }
+                // Anima o mapa para o novo ponto
+                mapa.flyTo(latlng, 16);
+            }
+
+            // Função para limpar o mapa e recomeçar
+            function limparMapa() {
+                if (routingControl) {
+                    mapa.removeControl(routingControl);
+                    routingControl = null;
+                }
+                if (pontoDestinoMarker) {
+                    mapa.removeLayer(pontoDestinoMarker);
+                    pontoDestinoMarker = null;
+                }
+                distanciaDisplay.value = '0 km';
+                taxaDisplay.textContent = 'R$ 0,00';
+                mapa.flyTo(coordsCasaTapera, 15); // Volta o foco para a loja
+            }
+
+            mapa.on('click', (e) => {
+                moverMarcadorDestino(e.latlng);
+            });
+
+            // --- LÓGICA PARA SALVAR O VALOR POR KM ---
+            const CHAVE_VALOR_KM = 'casaTaperaValorKm';
+
+            // Carrega o valor salvo ao iniciar a página
+            const valorSalvo = localStorage.getItem(CHAVE_VALOR_KM);
+            if (valorSalvo) {
+                valorKmInput.value = valorSalvo;
+            }
+
+            // Evento para salvar o valor por KM ao clicar no botão
+            btnSalvarKm.addEventListener('click', () => {
+                localStorage.setItem(CHAVE_VALOR_KM, valorKmInput.value);
+                alert('Valor por KM salvo como padrão!');
+            });
+
+            // Evento para recalcular a taxa ao digitar no campo
+            valorKmInput.addEventListener('input', () => {
+                calcularTaxa();
+            });
+
+            // Adiciona o evento de clique ao botão de limpar
+            btnLimparMapa.addEventListener('click', limparMapa);
+
+            // --- LÓGICA DE BUSCA DE ENDEREÇO ---
+            // Função que realiza a busca usando a API do Nominatim (OpenStreetMap)
+            async function buscarEndereco(query) {
+                const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
+                try {
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    if (data && data.length > 0) {
+                        const bestResult = data[0];
+                        const latlng = L.latLng(bestResult.lat, bestResult.lon);
+                        moverMarcadorDestino(latlng);
+                    } else {
+                        alert('Endereço não encontrado. Tente ser mais específico ou clique no mapa.');
+                    }
+                } catch (error) {
+                    console.error('Erro ao buscar endereço:', error);
+                    alert('Ocorreu um erro ao tentar buscar o endereço. Verifique sua conexão.');
+                }
+            }
+
+            // Adiciona o evento de "Enter" para a barra de busca
+            buscaInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    buscarEndereco(buscaInput.value);
+                }
+            });
+
+            // Adiciona o evento de clique para o ícone de lupa (para mobile)
+            buscaIcone.addEventListener('click', function() {
+                buscarEndereco(buscaInput.value);
+            });
+        });
+    </script>
+    <!-- VLibras Widget -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+</body>
+</html>

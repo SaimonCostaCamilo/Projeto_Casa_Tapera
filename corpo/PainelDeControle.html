@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Controle - Casa Tapera</title>
+    <link rel="stylesheet" href="../estilos/PainelDeControle.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        .grid-painel, .container-menu-instadelivery {
+            width: 95%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        #btn-limpar-tudo.btn-perigo {
+            background-color: var(--color-dark-gray);
+            border: 2px solid var(--color-orange);
+            color: var(--color-white);
+        }
+
+        #btn-limpar-tudo.btn-perigo:hover {
+            background-color: var(--color-red);
+            border-color: var(--color-red);
+            color: var(--color-white);
+        }
+
+        /* CSS para editar cartões de pedido */
+        .card-pedido.editing-comanda {
+            border-left-color: var(--color-yellow);
+            background-color: #3a3a3a;
+        }
+        .item-comanda-editavel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 0;
+            list-style: none;
+        }
+        .controles-item-comanda {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-qtd-comanda, .btn-remover-item-comanda {
+            background: none;
+            border: none;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.2s;
+        }
+        .btn-qtd-comanda:hover {
+            color: var(--color-yellow);
+            transform: scale(1.1);
+        }
+        .btn-remover-item-comanda:hover {
+            color: var(--color-red);
+            transform: scale(1.1);
+        }
+
+        /* CSS para o Modal de Adicionar Item */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1002; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.visivel {
+            display: flex;
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-container { position: relative; }
+        .modal-container .btn-fechar-modal {
+            position: absolute; top: 15px; right: 15px; left: auto; transform: none;
+            background: none; border: none; color: var(--color-white); font-size: 1.8em; cursor: pointer;
+        }
+        .categoria-modal h4 {
+            font-family: 'Bebas Neue', sans-serif;
+            color: var(--color-orange);
+            font-size: 1.5em;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 5px;
+        }
+        .itens-categoria-modal {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        .btn-item-cardapio {
+            background-color: #2a2a2a; border: 1px solid #444; color: var(--color-white);
+            padding: 10px; border-radius: 5px; text-align: left; cursor: pointer;
+            transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;
+        }
+        .btn-item-cardapio:hover { background-color: #333; border-color: var(--color-orange); }
+        .nome-item-modal { font-weight: bold; }
+        .preco-item-modal { color: var(--color-yellow); }
+    </style>
+</head>
+<body>
+    <script>
+        if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = 'Login.html';
+        }
+    </script>
+
+    <header class="cabecalho-painel">
+        <img src="../imagens/Mascote-Tapera.2.jpeg" alt="Mascote Tapera" class="mascote-header">
+        <img src="../imagens/Logo_Tapera.jpeg" alt="Logotipo Casa Tapera" class="imagem-logo"></a>
+        <h1>Painel de Controle</h1>
+        <button id="btn-configuracoes" class="icone-configuracoes" title="Configurações">
+            <i class="fas fa-cog"></i>
+        </button>
+    </header>
+
+    <div id="barra-lateral-configuracoes" class="barra-lateral-configuracoes">
+        <div class="conteudo-barra-lateral">
+            <div class="perfil-barra-lateral">
+                <img src="../imagens/Imagem-Logo-Madeira.jpeg" alt="Logo da Conta" class="imagem-perfil-barra-lateral">
+                <span>CASA TAPERA</span>
+            </div>
+
+            <div class="cabecalho-barra-lateral">
+                <h3>Configurações</h3>
+                <button id="btn-fechar-barra-lateral" class="btn-fechar" title="Fechar">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
+            
+            <a href="Suporte.html" class="link-barra-lateral"><i class="fas fa-headset"></i> Suporte</a>
+            <a href="SugestoesIA.html" class="link-barra-lateral"><i class="fas fa-lightbulb"></i> Sugestões</a>
+            <a href="index.html?preview=admin" class="link-barra-lateral">
+                <span class="fa-stack" style="width: 20px; height: 20px; margin-right: 15px; font-size: 0.8em; display: inline-flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-book-open fa-stack-2x"></i>
+                    <i class="fas fa-eye fa-stack-1x" style="color: #1a1a1a; font-size: 0.7em; margin-left: 2px;"></i>
+                </span>
+                Visualizar Cardápio
+            </a>
+            <a href="#" class="link-barra-lateral"><i class="fas fa-handshake"></i> Parceiros</a>
+            <a href="Lixeira.html" class="link-barra-lateral"><i class="fas fa-trash-can"></i> Lixeira</a>
+        </div>
+        <div class="rodape-barra-lateral">
+            <a href="#" id="btn-logout" class="link-barra-lateral"><i class="fas fa-door-open"></i> Sair do Painel</a>
+        </div>
+    </div>
+
+    <main class="painel-principal">
+        
+        <div class="container-menu-instadelivery">
+            <div class="bloco-menu">
+                <span class="titulo-bloco">GESTÃO</span>
+                <div class="botoes-bloco">
+                    <div class="dropdown" id="cardapio-dropdown">
+                        <button class="btn-menu dropdown-toggle"><i class="fas fa-book-open"></i><span>Menu</span></button>
+                        <div class="dropdown-menu">
+                            <a href="CardapioPersonalizar.html"><i class="fas fa-edit"></i> Personalizar Cardápio</a>
+                            <a href="EstoqueControle.html"><i class="fas fa-boxes"></i> Controle de Estoque</a>
+                        </div>
+                    </div>
+                    <div class="dropdown" id="marketing-dropdown">
+                        <button class="btn-menu dropdown-toggle"><i class="fas fa-bullhorn"></i><span>Marketing</span></button>
+                        <div class="dropdown-menu">
+                            <a href="CuponsDesconto.html"><i class="fas fa-tags"></i> Cupons/links desconto</a>
+                            <a href="HistoricoClientes.html"><i class="fas fa-chart-bar"></i> Histórico de Clientes</a>
+                            <a href="AutomacoesMarketing.html"><i class="fas fa-robot"></i> Automações</a>
+                            <a href="SorteioMarketing.html"><i class="fas fa-dice"></i> Sorteio de Clientes</a>
+                        </div>
+                    </div>
+                    <div class="dropdown" id="config-op-dropdown">
+                        <button class="btn-menu dropdown-toggle"><i class="fas fa-cogs"></i><span>Operacionais</span></button>
+                        <div class="dropdown-menu">
+                            <a href="TaxaEntrega.html"><i class="fas fa-route"></i> Taxa de Entrega</a>
+                            <a href="HorariosControle.html"><i class="fas fa-clock"></i> Horários</a>
+                            <a href="LojaIfood.html"><i class="fas fa-utensils"></i> Loja iFood</a>
+                            <a href="MesaComanda.html"><i class="fas fa-th-large"></i> Mapa de Mesas</a>
+                        </div>
+                    </div>
+                    <div class="dropdown" id="financeiro-dropdown">
+                        <button class="btn-menu dropdown-toggle"><i class="fas fa-dollar-sign"></i><span>Financeiro</span></button>
+                        <div class="dropdown-menu">
+                            <a href="CaixaControle.html" class="highlight-link"><i class="fas fa-cash-register"></i> Painel de Caixa</a>
+                            <a href="ContasGestao.html"><i class="fas fa-wallet"></i> Contas e Gestão</a>
+                            <a href="EmissaoNotaFiscal.html"><i class="fas fa-file-invoice"></i> Emitir Nota Fiscal</a>
+                        </div>
+                    </div>
+                    <div class="dropdown" id="relatorios-dropdown">
+                        <button class="btn-menu dropdown-toggle"><i class="fas fa-chart-pie"></i><span>Relatórios</span></button>
+                        <div class="dropdown-menu">
+                            <a href="FaturamentoRelatorio.html"><i class="fas fa-chart-line"></i> Faturamento</a>
+                            <a href="MeusClientesRelatorio.html"><i class="fas fa-users"></i> Clientes Cadastrados</a>
+                            <a href="ItensMaisVendidosRelatorio.html"><i class="fas fa-star"></i> Itens Mais Vendidos</a>
+                        </div>
+                    </div>
+                    <div class="dropdown" id="close-options-dropdown">
+                        <button class="btn-menu dropdown-toggle"><i class="fas fa-store-slash"></i><span>Status Loja</span></button>
+                        <div class="dropdown-menu">
+                            <a href="#" data-action="open-all"><i class="fas fa-door-open"></i> Abrir Loja</a>
+                            <a href="#" data-action="close-delivery"><i class="fas fa-truck-loading"></i> Fechar Apenas Delivery</a>
+                            <a href="#" data-action="close-table"><i class="fas fa-chair"></i> Fechar Apenas Mesas</a>
+                            <a href="#" data-action="schedule-close"><i class="fas fa-clock"></i> Agendar Fechamento</a>
+                            <a href="#" data-action="close-all"><i class="fas fa-power-off"></i> Fechar Loja (Tudo)</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controles-painel">
+            <button id="btn-recarregar"><i class="fas fa-sync-alt"></i> Atualizar Pedidos</button>
+            <button id="btn-limpar-tudo" class="btn-perigo">
+                <i class="fa-solid fa-trash-can"></i>
+                <i class="fa-solid fa-trash-can-arrow-up"></i>
+                 Limpar Todos os Pedidos</button>
+        </div>
+        <div class="grid-painel">
+            <div class="coluna-painel" id="coluna-novos">
+                <h2><i class="fas fa-bell"></i> Novos Pedidos</h2>
+                <div class="lista-pedidos" id="lista-novos-pedidos">
+                    </div>
+            </div>
+
+            <div class="coluna-painel" id="coluna-preparo">
+                <h2><i class="fas fa-utensils"></i> Em Preparo</h2>
+                <div class="lista-pedidos" id="lista-em-preparo">
+                    </div>
+            </div>
+
+            <div class="coluna-painel" id="coluna-finalizados">
+                <h2><i class="fas fa-check-circle"></i> Finalizados</h2>
+                <div class="lista-pedidos" id="lista-finalizados">
+                    </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal para Adicionar Item à Comanda -->
+    <div id="modal-add-item-painel" class="modal-overlay">
+        <div class="modal-container">
+            <button class="btn-fechar-modal" title="Fechar">&times;</button>
+            <h3><i class="fas fa-plus-circle"></i> Adicionar Item ao Pedido</h3>
+            <div id="cardapio-para-adicionar-painel" class="cardapio-modal-content">
+                <!-- Conteúdo do cardápio gerado pelo JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Pré-impressão de Pedido -->
+    <div id="modal-imprimir-pedido" class="modal-overlay oculto">
+        <div class="modal-container">
+            <button id="btn-fechar-modal-imprimir" class="btn-fechar-modal" title="Fechar">&times;</button>
+            <button id="btn-imprimir-pedido" class="btn-imprimir-modal">Imprimir</button>
+            <h3 id="titulo-modal-impressao">Pré-visualizar Pedido</h3>
+            <div id="conteudo-modal-impressao" class="conteudo-modal-impressao">Conteúdo do pedido para impressão...</div>
+        </div>
+    </div>
+
+    <footer class="rodape-copyright">
+        <div class="rodape-info">
+           <p>&copy; 2026 CASA TAPERA. TODOS OS DIREITOS RESERVADOS | DESENVOLVIDO POR EQUIPE <a href="https://www.instagram.com/s.aib0t/" target="_blank" rel="noopener noreferrer" class="link-desenvolvedor"><span class="nome-desenvolvedor">S.AIB0T</span></a></p>
+        </div>
+    </footer>
+
+    <audio id="som-notificacao" src="notification.mp3" preload="auto"></audio>
+
+    <!-- Modal Agendar Fechamento -->
+    <div id="modal-agendar-fechamento" class="modal-overlay">
+        <div class="modal-container">
+            <button class="btn-fechar-modal" id="btn-fechar-modal-agendamento">&times;</button>
+            <h3>Agendar Fechamentos</h3>
+
+            <div class="agendamentos-existentes">
+                <h4>Agendamentos Ativos</h4>
+                <ul id="lista-agendamentos-ativos">
+                    <!-- Preenchido via JS -->
+                </ul>
+            </div>
+
+            <p>Adicionar novo agendamento:</p>
+            <div class="dias-semana-container">
+                <label><input type="checkbox" name="dia-semana" value="0"><span>Dom</span></label>
+                <label><input type="checkbox" name="dia-semana" value="1"><span>Seg</span></label>
+                <label><input type="checkbox" name="dia-semana" value="2"><span>Ter</span></label>
+                <label><input type="checkbox" name="dia-semana" value="3"><span>Qua</span></label>
+                <label><input type="checkbox" name="dia-semana" value="4"><span>Qui</span></label>
+                <label><input type="checkbox" name="dia-semana" value="5"><span>Sex</span></label>
+                <label><input type="checkbox" name="dia-semana" value="6"><span>Sáb</span></label>
+            </div>
+            <div class="custom-time-input" id="trigger-horario-fechamento">
+                <span id="display-horario">--:--</span>
+                <i class="fas fa-clock"></i>
+            </div>
+            <input type="hidden" id="input-horario-fechamento">
+            <div class="repetir-agendamento-container">
+                <input type="checkbox" id="repetir-agendamento">
+                <label for="repetir-agendamento">Repetir semanalmente</label>
+            </div>
+            <div class="modal-actions">
+                <button id="btn-confirmar-agendamento" class="btn-confirmar">Agendar</button>
+                <button id="btn-cancelar-agendamento" class="btn-cancelar">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Customizado de Seleção de Horário -->
+    <div id="modal-custom-time-picker" class="modal-overlay" style="z-index: 2100;">
+        <div class="modal-container" style="max-width: 320px;">
+            <h3>Selecionar Horário</h3>
+            <div class="picker-wrapper">
+                <div class="picker-column" id="picker-horas"></div>
+                <div class="picker-separator">:</div>
+                <div class="picker-column" id="picker-minutos"></div>
+            </div>
+            <div class="modal-actions">
+                <button id="btn-confirmar-picker" class="btn-confirmar">Confirmar</button>
+                <button id="btn-cancelar-picker" class="btn-cancelar">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../animações/PainelDeControle.js"></script>
+    <!-- VLibras Widget -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+</body>
+</html>

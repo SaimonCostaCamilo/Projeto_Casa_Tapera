@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de QR Codes - Casa Tapera</title>
+    <link rel="stylesheet" href="../estilos/PainelDeControle.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <!-- Biblioteca QR Code -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        .container-gerenciamento {
+            max-width: 1200px;
+            margin: 30px auto 0;
+            background-color: #1a1a1a;
+            padding: 25px;
+            border-radius: 8px;
+        }
+        .header-qr-page {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 15px;
+        }
+        .header-qr-page h2 {
+            margin: 0;
+            color: #ffc600;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2em;
+        }
+        .btn-novo-qr {
+            background-color: #f06400;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .btn-novo-qr:hover { transform: scale(1.05); background-color: #ff8533; }
+        .grid-qr-codes-principal {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 25px;
+        }
+        .card-qr-item {
+            background-color: #2a2a2a;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid #444;
+            transition: border-color 0.3s;
+        }
+        .card-qr-item:hover { border-color: #f06400; }
+        .card-qr-item h4 {
+            font-family: 'Bebas Neue', sans-serif;
+            color: white;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+        .qr-canvas-container {
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .btn-download-qr {
+            background-color: #333;
+            color: white;
+            border: 1px solid #555;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.2s;
+        }
+        .btn-download-qr:hover { background-color: #444; }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none; justify-content: center; align-items: center;
+            z-index: 1002; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.visivel { display: flex; opacity: 1; pointer-events: auto; }
+        .modal-container {
+            background-color: #1a1a1a;
+            padding: 30px; border-radius: 8px;
+            border: 1px solid #f06400;
+            width: 90%; max-width: 500px; position: relative;
+            color: white;
+        }
+        .btn-fechar-modal {
+            position: absolute; top: 15px; right: 15px; left: auto; transform: none;
+            background: none; border: none; color: white;
+            font-size: 1.8em; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header class="cabecalho-painel">
+        <a href="PainelDeControle.html"><img src="../imagens/Logo_Tapera.jpeg" alt="Logotipo Casa Tapera" class="imagem-logo"></a>
+        <h1>Gerenciador de QR Codes</h1>
+        <a href="PainelDeControle.html" class="icone-voltar" title="Voltar ao Painel"><i class="fas fa-arrow-left"></i></a>
+    </header>
+
+    <main class="painel-principal">
+        <div class="container-gerenciamento">
+            <div class="header-qr-page">
+                <h2>QR Codes das Mesas</h2>
+            </div>
+            <div id="grid-qr-codes-principal" class="grid-qr-codes-principal"></div>
+        </div>
+    </main>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const gridPrincipal = document.getElementById('grid-qr-codes-principal');
+            const baseUrl = window.location.href.replace('GerenciadorQR.html', 'index.html');
+
+            function gerarQR(elemento, texto) {
+                elemento.innerHTML = '';
+                new QRCode(elemento, { text: texto, width: 150, height: 150, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H });
+            }
+
+            function criarCardQR(numeroMesa, timestamp = null) {
+                const div = document.createElement('div');
+                div.className = 'card-qr-item';
+                div.id = `card-mesa-${numeroMesa}`;
+                const urlFinal = timestamp ? `${baseUrl}?mesa=${numeroMesa}&v=${timestamp}` : `${baseUrl}?mesa=${numeroMesa}`;
+                div.innerHTML = `<h4>Mesa ${numeroMesa}</h4><div id="qr-canvas-${numeroMesa}" class="qr-canvas-container"></div>
+                <div style="display: flex; flex-direction: column; gap: 5px; width: 100%;">
+                    <button class="btn-download-qr" onclick="baixarQR('qr-canvas-${numeroMesa}', 'Mesa_${numeroMesa}')" style="width: 100%;"><i class="fas fa-download"></i> Baixar PNG</button>
+                </div>`;
+                gridPrincipal.appendChild(div);
+                gerarQR(document.getElementById(`qr-canvas-${numeroMesa}`), urlFinal);
+            }
+
+            // Carrega as mesas do localStorage
+            const STORAGE_KEY_MESAS = 'casaTaperaMesasData';
+            let dadosMesas = JSON.parse(localStorage.getItem(STORAGE_KEY_MESAS));
+            
+            if (dadosMesas) {
+                const idsOrdenados = Object.keys(dadosMesas).map(Number).sort((a, b) => a - b);
+                idsOrdenados.forEach(id => criarCardQR(id));
+            } else {
+                // Fallback se não houver dados (cria 10 padrão visualmente)
+                for (let i = 1; i <= 10; i++) criarCardQR(i);
+            }
+
+            window.baixarQR = function(elementId, filename) {
+                const img = document.getElementById(elementId).querySelector('img');
+                if (img && img.src) {
+                    const link = document.createElement('a');
+                    link.href = img.src; link.download = `QRCode_${filename}.png`;
+                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                }
+            };
+        });
+    </script>
+    <!-- VLibras Widget -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+</body>
+</html>

@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Conta - Casa Tapera</title>
+    <link rel="stylesheet" href="../estilos/Projeto_Tapera.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .icone-voltar {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            color: var(--color-white);
+            font-size: 2.2em;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            z-index: 10;
+        }
+        .icone-voltar:hover {
+            color: var(--color-orange);
+            transform: scale(1.2);
+        }
+        .container-conta {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: var(--color-dark-gray);
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid var(--color-orange);
+            text-align: center;
+        }
+        .container-conta h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            color: var(--color-yellow);
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+        .foto-perfil-edit {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background-color: #333;
+            margin: 0 auto 20px;
+            border: 3px solid var(--color-orange);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .foto-perfil-edit img {
+            position: absolute;
+            cursor: move;
+            user-select: none;
+        }
+        .foto-perfil-edit i {
+            font-size: 4em;
+            color: #555;
+        }
+        .btn-acao-foto {
+            display: inline-block;
+            background-color: var(--color-orange);
+            color: var(--color-black);
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-bottom: 20px;
+            border: none;
+            vertical-align: middle;
+        }
+        .btn-upload-foto:hover { background-color: #ff8533; }
+        .btn-remover-foto {
+            background-color: #333;
+            color: #ff4444;
+            border: 1px solid #444;
+            margin-left: 10px;
+        }
+        .btn-remover-foto:hover {
+            background-color: #ff4444;
+            color: white;
+        }
+        input[type="file"] { display: none; }
+        .zoom-container {
+            margin: 0 auto 20px;
+            max-width: 250px;
+        }
+        .zoom-container p { font-size: 0.85em; color: #888; margin-bottom: 5px; }
+        #zoom-slider {
+            width: 100%;
+            accent-color: var(--color-orange);
+            cursor: pointer;
+        }
+        .btn-salvar-conta {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--color-yellow);
+            color: var(--color-black);
+            border: none;
+            border-radius: 5px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5em;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.2s;
+        }
+        .btn-excluir-permanente {
+            background-color: transparent;
+            color: #ff4444;
+            border: 1px solid #ff4444;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 0.9em;
+            cursor: pointer;
+            margin: 30px auto 0;
+            transition: all 0.2s;
+            display: block;
+        }
+        .btn-excluir-permanente:hover {
+            background-color: #ff4444;
+            color: white;
+        }
+        .btn-salvar-conta:hover { background-color: #ffc600cc; }
+        .info-usuario { text-align: left; margin-top: 20px; font-family: 'Roboto', sans-serif; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .campo-info { display: flex; flex-direction: column; }
+        .campo-info label { color: var(--color-orange); font-weight: bold; font-size: 0.85em; margin-bottom: 4px; }
+        .campo-info input { 
+            background-color: #222; 
+            border: 1px solid #444; 
+            color: white; 
+            padding: 8px; 
+            border-radius: 4px; 
+            font-size: 0.95em;
+        }
+        .campo-info input:focus { border-color: var(--color-yellow); outline: none; }
+        .secao-titulo-conta {
+            grid-column: 1 / -1;
+            color: var(--color-yellow);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.4em;
+            border-bottom: 1px solid #444;
+            padding-bottom: 5px;
+            margin-top: 10px;
+        }
+        main.conteudo-principal {
+            flex: 1;
+        }
+        /* Estilos do Rodapé */
+        .rodape-copyright {
+            position: static; /* Sobrescreve o position: absolute do Projeto_Tapera.css */
+            width: 100%;
+            text-align: left;
+            margin-top: 60px;
+            padding: 20px;
+            border-top: 2px solid var(--color-orange);
+            color: var(--color-white);
+        }
+        .rodape-copyright p {
+            margin: 2px 0;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #7c7676;
+        }
+        .link-desenvolvedor { text-decoration: none; color: inherit; }
+        .nome-desenvolvedor {
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        .nome-desenvolvedor:hover { color: var(--color-orange); transform: scale(1.1); }
+        @media (max-width: 600px) { 
+            .info-usuario { grid-template-columns: 1fr; } 
+            .rodape-copyright { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="cabecalho">
+        <a href="index.html" class="link-logo">
+            <div class="container-logo">
+                <img src="../imagens/Logo_Tapera.jpeg" alt="Logotipo Casa Tapera" class="imagem-logo">
+            </div>
+        </a>
+        <a href="index.html" class="icone-voltar" title="Voltar"><i class="fas fa-arrow-left"></i></a>
+    </header>
+
+    <main class="conteudo-principal">
+        <div class="container-conta">
+            <h2>Minha Conta</h2>
+            <div class="foto-perfil-edit" id="preview-container">
+                <i class="fas fa-user" id="placeholder-icon"></i>
+                <img src="" id="foto-preview" class="oculto" draggable="false">
+            </div>
+            <div class="botoes-midia">
+                <label for="input-foto" class="btn-acao-foto btn-upload-foto"><i class="fas fa-camera"></i> Alterar Foto de perfil</label>
+                <button id="btn-remover-foto" class="btn-acao-foto btn-remover-foto" title="Remover Foto"><i class="fas fa-trash-alt"></i></button>
+            </div>
+            <input type="file" id="input-foto" accept="image/*">
+            <div id="zoom-control" class="zoom-container oculto">
+                <p>Arraste para posicionar e use o zoom abaixo:</p>
+                <input type="range" id="zoom-slider" min="1" max="3" step="0.01" value="1">
+            </div>
+            <div class="info-usuario">
+                <div class="secao-titulo-conta">Dados Pessoais</div>
+                <div class="campo-info" style="grid-column: 1 / -1;">
+                    <label>Nome Completo:</label>
+                    <input type="text" id="user-nome">
+                </div>
+                <div class="campo-info">
+                    <label>Telefone (WhatsApp):</label>
+                    <input type="tel" id="user-tel">
+                </div>
+                <div class="campo-info">
+                    <label>E-mail:</label>
+                    <input type="email" id="user-email">
+                </div>
+                <div class="campo-info">
+                    <label>CPF:</label>
+                    <input type="text" id="user-cpf" disabled title="O CPF não pode ser alterado">
+                </div>
+                <div class="campo-info">
+                    <label>Data de Nascimento:</label>
+                    <input type="date" id="user-nascimento">
+                </div>
+
+                <div class="secao-titulo-conta">Endereço de Entrega</div>
+                <div class="campo-info">
+                    <label>CEP:</label>
+                    <input type="text" id="user-cep">
+                </div>
+                <div class="campo-info" style="grid-column: 1 / -1;">
+                    <label>Rua / Logradouro:</label>
+                    <input type="text" id="user-rua">
+                </div>
+                <div class="campo-info">
+                    <label>Número:</label>
+                    <input type="text" id="user-numero">
+                </div>
+                <div class="campo-info">
+                    <label>Bairro:</label>
+                    <input type="text" id="user-bairro">
+                </div>
+                <div class="campo-info">
+                    <label>Cidade:</label>
+                    <input type="text" id="user-cidade">
+                </div>
+                <div class="campo-info">
+                    <label>Estado (UF):</label>
+                    <input type="text" id="user-estado" maxlength="2">
+                </div>
+                <div class="campo-info" style="grid-column: 1 / -1;">
+                    <label>Complemento (Opcional):</label>
+                    <input type="text" id="user-complemento">
+                </div>
+            </div>
+            <button class="btn-salvar-conta" id="btn-salvar">Salvar Alterações</button>
+            <button class="btn-excluir-permanente" id="btn-excluir-conta">Excluir Minha Conta Permanentemente</button>
+        </div>
+    </main>
+
+    <footer class="rodape-copyright">
+        <p>&copy; 2026 CASA TAPERA. TODOS OS DIREITOS RESERVADOS | DESENVOLVIDO POR EQUIPE <a href="https://www.instagram.com/s.aib0t/" target="_blank" rel="noopener noreferrer" class="link-desenvolvedor"><span class="nome-desenvolvedor">S.AIB0T</span></a></p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cliente = JSON.parse(localStorage.getItem('clienteTapera'));
+            if (!cliente) { window.location.href = 'LoginCliente.html'; return; }
+            
+            const previewImg = document.getElementById('foto-preview');
+            const placeholderIcon = document.getElementById('placeholder-icon');
+            const btnRemover = document.getElementById('btn-remover-foto');
+            const zoomControl = document.getElementById('zoom-control');
+            const zoomSlider = document.getElementById('zoom-slider');
+            const previewContainer = document.getElementById('preview-container');
+            const telInput = document.getElementById('user-tel');
+            const emailInput = document.getElementById('user-email');
+            const cpfInput = document.getElementById('user-cpf');
+            const cepInput = document.getElementById('user-cep');
+
+            // Preenche os campos com os dados do localStorage
+            document.getElementById('user-nome').value = cliente.nome || '';
+            telInput.value = cliente.telefone || '';
+            emailInput.value = cliente.email || '';
+            cpfInput.value = cliente.cpf || '';
+            document.getElementById('user-nascimento').value = cliente.nascimento || '';
+            cepInput.value = cliente.cep || '';
+            document.getElementById('user-rua').value = cliente.rua || '';
+            document.getElementById('user-numero').value = cliente.numero || '';
+            document.getElementById('user-bairro').value = cliente.bairro || '';
+            document.getElementById('user-cidade').value = cliente.cidade || '';
+            document.getElementById('user-estado').value = cliente.estado || '';
+            document.getElementById('user-complemento').value = cliente.complemento || '';
+
+            // --- LÓGICA DE MÁSCARAS ---
+            const aplicarMascaraTelefone = (value) => {
+                value = value.replace(/\D/g, '');
+                if (value.length > 11) value = value.slice(0, 11);
+                value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+                value = value.replace(/(\d)(\d{4})$/, '$1-$2');
+                return value;
+            };
+
+            const aplicarMascaraCPF = (value) => {
+                value = value.replace(/\D/g, '');
+                if (value.length > 11) value = value.slice(0, 11);
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                return value;
+            };
+
+            const aplicarMascaraCEP = (value) => {
+                value = value.replace(/\D/g, '');
+                if (value.length > 8) value = value.slice(0, 8);
+                value = value.replace(/^(\d{5})(\d)/, '$1-$2');
+                return value;
+            };
+
+            // Aplica as máscaras nos valores carregados
+            if (telInput.value) telInput.value = aplicarMascaraTelefone(telInput.value);
+            if (cpfInput.value) cpfInput.value = aplicarMascaraCPF(cpfInput.value);
+            if (cepInput.value) cepInput.value = aplicarMascaraCEP(cepInput.value);
+
+            // Garante que o CPF desabilitado também receba a máscara visual correta ao carregar
+            const cpfRaw = cliente.cpf || '';
+            if (cpfRaw) cpfInput.value = aplicarMascaraCPF(cpfRaw);
+
+            // Adiciona listeners para formatação em tempo real
+            telInput.addEventListener('input', (e) => e.target.value = aplicarMascaraTelefone(e.target.value));
+            cepInput.addEventListener('input', (e) => e.target.value = aplicarMascaraCEP(e.target.value));
+            emailInput.addEventListener('input', (e) => e.target.value = e.target.value.toLowerCase().trim());
+            
+            // O CPF está disabled no HTML, mas garantimos a máscara se for habilitado futuramente
+            cpfInput.addEventListener('input', (e) => e.target.value = aplicarMascaraCPF(e.target.value));
+
+            // Estados da imagem
+            let isDragging = false;
+            let startX, startY;
+            let currentX = 0, currentY = 0;
+            let currentScale = 1;
+
+            if (cliente.foto) {
+                previewImg.src = cliente.foto;
+                previewImg.classList.remove('oculto');
+                placeholderIcon.classList.add('oculto');
+                zoomControl.classList.remove('oculto');
+            }
+
+            function resetPosition() {
+                currentX = 0; currentY = 0; currentScale = 1;
+                zoomSlider.value = 1;
+                updateTransform();
+            }
+
+            function updateTransform() {
+                previewImg.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentScale})`;
+            }
+
+            document.getElementById('input-foto').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        previewImg.src = event.target.result;
+                        previewImg.classList.remove('oculto');
+                        placeholderIcon.classList.add('oculto');
+                        zoomControl.classList.remove('oculto');
+                        
+                        previewImg.onload = () => {
+                            // Ajusta tamanho inicial para cobrir o container
+                            const aspect = previewImg.naturalWidth / previewImg.naturalHeight;
+                            if (aspect > 1) {
+                                previewImg.style.height = '100%'; previewImg.style.width = 'auto';
+                            } else {
+                                previewImg.style.width = '100%'; previewImg.style.height = 'auto';
+                            }
+                            resetPosition();
+                        };
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Lógica de Arrastar
+            previewContainer.addEventListener('mousedown', (e) => {
+                if (previewImg.classList.contains('oculto')) return;
+                isDragging = true;
+                startX = e.clientX - currentX;
+                startY = e.clientY - currentY;
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                currentX = e.clientX - startX;
+                currentY = e.clientY - startY;
+                updateTransform();
+            });
+
+            window.addEventListener('mouseup', () => isDragging = false);
+
+            // Lógica de Zoom
+            zoomSlider.addEventListener('input', () => {
+                currentScale = zoomSlider.value;
+                updateTransform();
+            });
+
+            // Remover Foto
+            btnRemover.addEventListener('click', () => {
+                if (confirm('Deseja remover sua foto de perfil?')) {
+                    previewImg.src = '';
+                    previewImg.classList.add('oculto');
+                    placeholderIcon.classList.remove('oculto');
+                    zoomControl.classList.add('oculto');
+                    cliente.foto = null;
+                }
+            });
+
+            document.getElementById('btn-salvar').addEventListener('click', () => {
+                // Atualiza dados textuais no objeto cliente
+                cliente.nome = document.getElementById('user-nome').value.trim();
+                cliente.telefone = document.getElementById('user-tel').value.trim();
+                cliente.email = document.getElementById('user-email').value.trim();
+                cliente.nascimento = document.getElementById('user-nascimento').value;
+                cliente.cep = document.getElementById('user-cep').value.trim();
+                cliente.rua = document.getElementById('user-rua').value.trim();
+                cliente.numero = document.getElementById('user-numero').value.trim();
+                cliente.bairro = document.getElementById('user-bairro').value.trim();
+                cliente.cidade = document.getElementById('user-cidade').value.trim();
+                cliente.estado = document.getElementById('user-estado').value.trim().toUpperCase();
+                cliente.complemento = document.getElementById('user-complemento').value.trim();
+
+                // Atualiza o campo endereco legado para compatibilidade com o carrinho
+                cliente.endereco = `${cliente.rua}, ${cliente.numero} - ${cliente.bairro}, ${cliente.cidade} - ${cliente.estado}`;
+
+                if (!previewImg.classList.contains('oculto')) {
+                    // "Baka" o crop em um canvas para salvar a imagem final editada
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 300; canvas.height = 300;
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Desenha o que está visível no container circular
+                    const rect = previewImg.getBoundingClientRect();
+                    const containerRect = previewContainer.getBoundingClientRect();
+                    
+                    const drawX = (rect.left - containerRect.left) * (300 / 150);
+                    const drawY = (rect.top - containerRect.top) * (300 / 150);
+                    const drawW = rect.width * (300 / 150);
+                    const drawH = rect.height * (300 / 150);
+
+                    ctx.drawImage(previewImg, drawX, drawY, drawW, drawH);
+                    cliente.foto = canvas.toDataURL('image/jpeg', 0.8);
+                } else {
+                    cliente.foto = null;
+                }
+
+                localStorage.setItem('clienteTapera', JSON.stringify(cliente));
+
+                // Sincroniza com a lista global de clientes cadastrados
+                const clientesCadastrados = JSON.parse(localStorage.getItem('clientesCadastradosTapera')) || [];
+                const index = clientesCadastrados.findIndex(c => {
+                    const cpfSalvoRaw = (c.cpf || "").replace(/\D/g, "");
+                    const cpfNovoRaw = (cliente.cpf || "").replace(/\D/g, "");
+                    return c.id === cliente.id || (cpfNovoRaw && cpfSalvoRaw === cpfNovoRaw);
+                });
+                if (index !== -1) {
+                    clientesCadastrados[index] = { ...cliente };
+                    localStorage.setItem('clientesCadastradosTapera', JSON.stringify(clientesCadastrados));
+                }
+
+                alert('Alterações salvas!');
+                window.location.href = 'index.html';
+            });
+
+            document.getElementById('btn-excluir-conta').addEventListener('click', () => {
+                if (confirm('ATENÇÃO: Você tem certeza que deseja excluir sua conta permanentemente? Todos os seus dados salvos e histórico serão perdidos.')) {
+                    if (confirm('Esta ação é irreversível e você será deslogado imediatamente. Deseja mesmo continuar?')) {
+                        // 1. Remove da lista global de clientes cadastrados
+                        const clientesCadastrados = JSON.parse(localStorage.getItem('clientesCadastradosTapera')) || [];
+                        const novosClientes = clientesCadastrados.filter(c => 
+                            (cliente.id && c.id !== cliente.id) || (cliente.cpf && c.cpf !== cliente.cpf)
+                        );
+                        localStorage.setItem('clientesCadastradosTapera', JSON.stringify(novosClientes));
+
+                        // 2. Remove o login atual do navegador
+                        localStorage.removeItem('clienteTapera');
+
+                        alert('Sua conta foi excluída com sucesso.');
+                        window.location.href = 'index.html';
+                    }
+                }
+            });
+        });
+    </script>
+    <!-- VLibras Widget -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+</body>
+</html>

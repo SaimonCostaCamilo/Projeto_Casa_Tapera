@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste - Sincronização de Cardápio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #1a1a1a;
+            color: #fff;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #222;
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #f06400;
+        }
+        
+        h1 {
+            color: #ffc600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .teste-item {
+            background: #333;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border-left: 4px solid #f06400;
+        }
+        
+        .teste-titulo {
+            font-weight: bold;
+            color: #f06400;
+            margin-bottom: 10px;
+        }
+        
+        .teste-resultado {
+            padding: 10px;
+            background: #444;
+            border-radius: 3px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .resultado-ok {
+            color: #4caf50;
+            border: 1px solid #4caf50;
+        }
+        
+        .resultado-erro {
+            color: #f44336;
+            border: 1px solid #f44336;
+        }
+        
+        .resultado-info {
+            color: #2196f3;
+            border: 1px solid #2196f3;
+        }
+        
+        button {
+            background-color: #f06400;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #ff8533;
+        }
+        
+        .botoes {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 5px;
+        }
+        
+        .status-ativo {
+            background-color: #4caf50;
+            color: white;
+        }
+        
+        .status-inativo {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        .lista-items {
+            background: #444;
+            padding: 10px;
+            border-radius: 3px;
+            margin: 10px 0;
+        }
+        
+        .lista-items li {
+            margin: 5px 0;
+            padding: 5px;
+            background: #555;
+            list-style-position: inside;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 TESTE DE SINCRONIZAÇÃO DE CARDÁPIO</h1>
+        
+        <div class="teste-item">
+            <div class="teste-titulo">1️⃣ Status do Sistema</div>
+            <div id="status-sistema" class="teste-resultado resultado-info"></div>
+            <button onclick="verificarStatus()">Verificar Status</button>
+        </div>
+        
+        <div class="teste-item">
+            <div class="teste-titulo">2️⃣ Dados do localStorage</div>
+            <div id="dados-localstorage" class="teste-resultado resultado-info"></div>
+            <button onclick="verificarLocalStorage()">Verificar localStorage</button>
+        </div>
+        
+        <div class="teste-item">
+            <div class="teste-titulo">3️⃣ Itens do Cardápio</div>
+            <div id="itens-cardapio" class="teste-resultado resultado-info"></div>
+            <button onclick="listarItens()">Listar Itens</button>
+        </div>
+        
+        <div class="teste-item">
+            <div class="teste-titulo">4️⃣ Categorias</div>
+            <div id="categorias" class="teste-resultado resultado-info"></div>
+            <button onclick="listarCategorias()">Listar Categorias</button>
+        </div>
+        
+        <div class="teste-item">
+            <div class="teste-titulo">5️⃣ Teste de Atualização</div>
+            <div id="teste-atualizacao" class="teste-resultado resultado-info"></div>
+            <button onclick="testarAtualizacao()">Testar Atualização</button>
+            <button onclick="desfazerTeste()">Desfazer Teste</button>
+        </div>
+        
+        <div class="teste-item">
+            <div class="teste-titulo">6️⃣ Teste de Evento (abra o console F12)</div>
+            <div id="teste-evento" class="teste-resultado resultado-info"></div>
+            <button onclick="testarEvento()">Testar Evento</button>
+        </div>
+        
+        <div class="teste-item">
+            <div class="teste-titulo">7️⃣ Backup e Restauração</div>
+            <div id="backup-info" class="teste-resultado resultado-info"></div>
+            <button onclick="fazerBackup()">Fazer Backup</button>
+            <button onclick="limparDados()">Limpar Dados</button>
+            <button onclick="resetarPadrao()">Resetar Padrão</button>
+        </div>
+        
+        <div class="teste-item">
+            <div class="teste-titulo">🔗 Links Rápidos</div>
+            <div class="botoes">
+                <button onclick="abrirIndex()">Abrir Index</button>
+                <button onclick="abrirPersonalizar()">Abrir Personalizar</button>
+                <button onclick="limparConsole()">Limpar Console</button>
+                <button onclick="recarregarPagina()">Recarregar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts de sincronização -->
+    <script src="../animações/cardapioSync.js"></script>
+    
+    <script>
+        // Aguarda CardapioSync carregar
+        let tentativas = 0;
+        const aguardarCardapioSync = setInterval(() => {
+            if (typeof CardapioSync !== 'undefined') {
+                clearInterval(aguardarCardapioSync);
+                console.log('✅ CardapioSync carregado com sucesso!');
+                verificarStatus();
+            } else if (tentativas++ > 10) {
+                clearInterval(aguardarCardapioSync);
+                console.error('❌ CardapioSync não carregou');
+            }
+        }, 100);
+
+        function verificarStatus() {
+            const resultado = document.getElementById('status-sistema');
+            let html = '';
+
+            try {
+                const temCardapioSync = typeof CardapioSync !== 'undefined';
+                const temLocalStorage = typeof localStorage !== 'undefined';
+                const precos = localStorage.getItem('cardapioTaperaPrecos');
+                const categorias = localStorage.getItem('cardapioTaperaCategorias');
+
+                html += `
+                    <strong>Estado do Sistema:</strong><br>
+                    CardapioSync: <span class="status-badge ${temCardapioSync ? 'status-ativo' : 'status-inativo'}">
+                        ${temCardapioSync ? '✅ Ativo' : '❌ Inativo'}
+                    </span><br>
+                    localStorage: <span class="status-badge ${temLocalStorage ? 'status-ativo' : 'status-inativo'}">
+                        ${temLocalStorage ? '✅ Ativo' : '❌ Inativo'}
+                    </span><br>
+                    Dados Salvos: <span class="status-badge ${precos && categorias ? 'status-ativo' : 'status-inativo'}">
+                        ${precos && categorias ? '✅ Sim' : '❌ Não'}
+                    </span>
+                `;
+
+                resultado.innerHTML = html;
+                resultado.classList.remove('resultado-erro');
+                resultado.classList.add('resultado-ok');
+            } catch (e) {
+                resultado.innerHTML = `❌ Erro: ${e.message}`;
+                resultado.classList.remove('resultado-ok');
+                resultado.classList.add('resultado-erro');
+            }
+        }
+
+        function verificarLocalStorage() {
+            const resultado = document.getElementById('dados-localstorage');
+            try {
+                const precos = JSON.parse(localStorage.getItem('cardapioTaperaPrecos') || '{}');
+                const categorias = JSON.parse(localStorage.getItem('cardapioTaperaCategorias') || '[]');
+
+                let html = `
+                    <strong>localStorage Keys:</strong><br>
+                    cardapioTaperaPrecos: ${Object.keys(precos).length} itens<br>
+                    cardapioTaperaCategorias: ${categorias.length} categorias<br>
+                    <strong>Espaço usado:</strong> ~${JSON.stringify(precos).length} bytes
+                `;
+
+                resultado.innerHTML = html;
+                resultado.classList.add('resultado-ok');
+            } catch (e) {
+                resultado.innerHTML = `❌ Erro: ${e.message}`;
+                resultado.classList.add('resultado-erro');
+            }
+        }
+
+        function listarItens() {
+            const resultado = document.getElementById('itens-cardapio');
+            try {
+                const itens = CardapioSync.obterTodosItens();
+                const itemsArray = Object.entries(itens).slice(0, 5); // Primeiros 5
+
+                let html = `<strong>Primeiros 5 itens:</strong><ul class="lista-items">`;
+                itemsArray.forEach(([id, item]) => {
+                    html += `<li><strong>${item.nome}</strong> - R$ ${item.preco.toFixed(2)} (${item.categoria})</li>`;
+                });
+                html += `</ul><em>Total: ${Object.keys(itens).length} itens</em>`;
+
+                resultado.innerHTML = html;
+                resultado.classList.add('resultado-ok');
+            } catch (e) {
+                resultado.innerHTML = `❌ Erro: ${e.message}`;
+                resultado.classList.add('resultado-erro');
+            }
+        }
+
+        function listarCategorias() {
+            const resultado = document.getElementById('categorias');
+            try {
+                const categorias = CardapioSync.obterCategorias();
+
+                let html = `<strong>Categorias:</strong><ul class="lista-items">`;
+                categorias.forEach(cat => {
+                    html += `<li>${cat}</li>`;
+                });
+                html += `</ul>`;
+
+                resultado.innerHTML = html;
+                resultado.classList.add('resultado-ok');
+            } catch (e) {
+                resultado.innerHTML = `❌ Erro: ${e.message}`;
+                resultado.classList.add('resultado-erro');
+            }
+        }
+
+        let precoOriginal;
+
+        function testarAtualizacao() {
+            const resultado = document.getElementById('teste-atualizacao');
+            try {
+                // Testa atualizar o primeiro hambúrguer
+                const itens = CardapioSync.obterTodosItens();
+                const itemId = Object.keys(itens)[0];
+                const itemOriginal = itens[itemId];
+
+                precoOriginal = itemOriginal.preco;
+                const novoPreco = 99.99;
+
+                CardapioSync.atualizarPreco(itemId, novoPreco);
+
+                const itemAtualizado = CardapioSync.obterTodosItens()[itemId];
+
+                if (itemAtualizado.preco === novoPreco) {
+                    resultado.innerHTML = `
+                        ✅ Teste bem-sucedido!<br>
+                        Item: ${itemAtualizado.nome}<br>
+                        Preço anterior: R$ ${precoOriginal.toFixed(2)}<br>
+                        Novo preço: R$ ${novoPreco.toFixed(2)}
+                    `;
+                    resultado.classList.add('resultado-ok');
+                } else {
+                    resultado.innerHTML = `❌ Atualização falhou`;
+                    resultado.classList.add('resultado-erro');
+                }
+            } catch (e) {
+                resultado.innerHTML = `❌ Erro: ${e.message}`;
+                resultado.classList.add('resultado-erro');
+            }
+        }
+
+        function desfazerTeste() {
+            const resultado = document.getElementById('teste-atualizacao');
+            try {
+                if (precoOriginal !== undefined) {
+                    const itens = CardapioSync.obterTodosItens();
+                    const itemId = Object.keys(itens)[0];
+
+                    CardapioSync.atualizarPreco(itemId, precoOriginal);
+
+                    resultado.innerHTML = `✅ Teste desfeito! Preço restaurado para R$ ${precoOriginal.toFixed(2)}`;
+                    resultado.classList.remove('resultado-erro');
+                    resultado.classList.add('resultado-ok');
+                }
+            } catch (e) {
+                resultado.innerHTML = `❌ Erro: ${e.message}`;
+            }
+        }
+
+        function testarEvento() {
+            const resultado = document.getElementById('teste-evento');
+            resultado.innerHTML = '⏳ Aguardando evento...';
+
+            // Ouve o evento
+            const handler = (e) => {
+                resultado.innerHTML = `
+                    ✅ Evento disparado!<br>
+                    Tipo: cardapioAtualizado<br>
+                    Detalhes: ${JSON.stringify(e.detail, null, 2)}
+                `;
+                resultado.classList.add('resultado-ok');
+                document.removeEventListener('cardapioAtualizado', handler);
+            };
+
+            document.addEventListener('cardapioAtualizado', handler);
+
+            // Dispara o evento
+            setTimeout(() => {
+                const itens = CardapioSync.obterTodosItens();
+                const itemId = Object.keys(itens)[0];
+                CardapioSync.atualizarPreco(itemId, 44.44);
+
+                setTimeout(() => {
+                    CardapioSync.atualizarPreco(itemId, itens[itemId].preco);
+                    document.removeEventListener('cardapioAtualizado', handler);
+                }, 500);
+            }, 100);
+        }
+
+        function fazerBackup() {
+            const resultado = document.getElementById('backup-info');
+            try {
+                const dados = CardapioSync.exportarDados();
+                const json = JSON.stringify(dados, null, 2);
+
+                // Cria um blob e download
+                const elemento = document.createElement('a');
+                elemento.setAttribute('href', 'data:text/plain;charset=utf-u' + 8 + ',' + encodeURIComponent(json));
+                elemento.setAttribute('download', `backup-cardapio-${new Date().toISOString().split('T')[0]}.json`);
+                elemento.click();
+
+                resultado.innerHTML = `
+                    ✅ Backup criado!<br>
+                    Data: ${dados.dataExportacao}<br>
+                    Itens: ${Object.keys(dados.precos).length}<br>
+                    Categorias: ${dados.ordem.length}
+                `;
+                resultado.classList.add('resultado-ok');
+            } catch (e) {
+                resultado.innerHTML = `❌ Erro: ${e.message}`;
+                resultado.classList.add('resultado-erro');
+            }
+        }
+
+        function limparDados() {
+            if (confirm('⚠️ Isto limpará todos os dados do cardápio! Tem certeza?')) {
+                localStorage.removeItem('cardapioTaperaPrecos');
+                localStorage.removeItem('cardapioTaperaCategorias');
+                document.getElementById('backup-info').innerHTML = '✅ Dados limpos!';
+                setTimeout(() => location.reload(), 1000);
+            }
+        }
+
+        function resetarPadrao() {
+            if (confirm('⚠️ Isto restaurará o cardápio ao padrão original! Tem certeza?')) {
+                CardapioSync.resetarCardapio();
+                document.getElementById('backup-info').innerHTML = '✅ Cardápio resetado ao padrão!';
+                setTimeout(() => location.reload(), 1000);
+            }
+        }
+
+        function abrirIndex() {
+            window.location.href = 'index.html';
+        }
+
+        function abrirPersonalizar() {
+            window.location.href = 'CardapioPersonalizar.html';
+        }
+
+        function limparConsole() {
+            console.clear();
+            alert('Console limpo!');
+        }
+
+        function recarregarPagina() {
+            location.reload();
+        }
+
+        // Ouve eventos customizados
+        document.addEventListener('cardapioAtualizado', (e) => {
+            console.log('📝 Evento: cardapioAtualizado', e.detail);
+        });
+
+        document.addEventListener('categoriaAdicionada', (e) => {
+            console.log('📁 Evento: categoriaAdicionada', e.detail);
+        });
+
+        document.addEventListener('categoriasReordenadas', (e) => {
+            console.log('🔄 Evento: categoriasReordenadas', e.detail);
+        });
+    </script>
+</body>
+</html>

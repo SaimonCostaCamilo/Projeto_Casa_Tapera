@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distribuição de Mesas - Casa Tapera</title>
+    <link rel="stylesheet" href="../estilos/PainelDeControle.css">
+    <link rel="stylesheet" href="../estilos/MesaComanda.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        .container-gerenciamento {
+            width: 95%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+    </style>
+</head>
+<body>
+    <header class="cabecalho-painel">
+        <a href="PainelDeControle.html"><img src="../imagens/Logo_Tapera.jpeg" alt="Logotipo Casa Tapera" class="imagem-logo"></a>
+        <h1>Distribuição de Mesas</h1>
+        <a href="PainelDeControle.html" class="icone-voltar" title="Voltar ao Painel">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+    </header>
+
+    <main class="painel-principal">
+        <div class="container-gerenciamento">
+            <div class="container-topo-mesas">
+                <h3 class="titulo-secao-mesas">Mesas Cadastradas</h3>
+                <div class="container-acoes-topo-wrapper">
+                    <button id="btn-abrir-gerenciar-mesas"></button>
+                </div>
+            </div>
+            <!-- Legenda -->
+            <div class="legenda-mesas">
+                <div class="legenda-item"><div class="cor-legenda status-livre"></div><span>Livre</span></div>
+                <div class="legenda-item"><div class="cor-legenda status-ocupada"></div><span>Ocupada</span></div>
+                <div class="legenda-item"><div class="cor-legenda status-reservada"></div><span>Reservada</span></div>
+            </div>
+            
+            <!-- Layout principal com grid e detalhes -->
+            <div class="layout-mesas">
+                <div id="painel-grid-mesas" class="painel-mesas ativo">
+                    <div class="grid-mesas-container">
+                        <!-- As mesas serão inseridas aqui pelo JS -->
+                    </div>
+                </div>
+                <div id="painel-detalhes-comanda" class="painel-detalhes">
+                    <!-- Placeholder para quando nenhuma mesa está selecionada -->
+                    Selecione uma mesa para ver os detalhes.
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modais -->
+
+    <!-- Modal Adicionar Item -->
+    <div id="modal-add-item" class="modal-overlay">
+        <div class="modal-container">
+            <button class="btn-fechar-modal" title="Fechar">&times;</button>
+            <h3><i class="fas fa-plus-circle"></i> Adicionar Item à Comanda</h3>
+            <div id="cardapio-para-adicionar" class="cardapio-modal-content">
+                <!-- Conteúdo do cardápio gerado pelo JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Pagamento -->
+    <div id="modal-pagamento" class="modal-overlay">
+        <div class="modal-container">
+            <button class="btn-fechar-modal" title="Fechar">&times;</button>
+            <h3><i class="fas fa-dollar-sign"></i> Finalizar Conta</h3>
+            <p id="modal-pagamento-descricao" style="text-align: center; font-size: 1.2em; margin: 20px 0;">Como a conta foi paga?</p>
+            <div class="opcoes-pagamento-modal">
+                <button class="btn-pagamento-modal btn-pagamento-dinheiro" data-metodo="Dinheiro"><i class="fas fa-money-bill-wave"></i>Dinheiro</button>
+                <button class="btn-pagamento-modal btn-pagamento-cartao" data-metodo="Cartão"><i class="fas fa-credit-card"></i>Cartão</button>
+                <button class="btn-pagamento-modal btn-pagamento-pix" data-metodo="Pix"><i class="fab fa-pix"></i>Pix</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Mesa -->
+    <div id="modal-editar-mesa" class="modal-overlay">
+        <div class="modal-container">
+            <button class="btn-fechar-modal" title="Fechar">&times;</button>
+            <h3><i class="fas fa-edit"></i> Editar Mesa <span id="modal-editar-mesa-numero"></span></h3>
+            <form id="form-editar-mesa" class="form-editar-mesa">
+                <div class="campo-form">
+                    <label for="mesa-status">Status da Mesa</label>
+                    <select id="mesa-status">
+                        <option value="livre">Livre</option>
+                        <option value="ocupada">Ocupada</option>
+                        <option value="reservada">Reservada</option>
+                    </select>
+                </div>
+                <div id="campo-nome-reserva" class="campo-form oculto">
+                    <label for="mesa-nome-reserva">Nome da Reserva</label>
+                    <input type="text" id="mesa-nome-reserva" placeholder="Ex: Aniversário do João">
+                </div>
+                <button type="submit">Salvar Alterações</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Gerenciar Mesas -->
+    <div id="modal-gerenciar-mesas" class="modal-overlay">
+        <div class="modal-container">
+            <button class="btn-fechar-modal" title="Fechar">&times;</button>
+            <h3><i class="fas fa-cog"></i> Gerenciador de Mesas</h3>
+            <div class="gerenciador-secao">
+                <h4>Criar Nova Mesa</h4>
+                <button id="btn-criar-mesa" class="btn-acao-gerenciador"><i class="fas fa-plus"></i> Criar Mesa</button>
+            </div>
+            <div class="gerenciador-secao">
+                <h4>Excluir Mesa</h4>
+                <div class="excluir-container">
+                    <select id="select-excluir-mesa"></select>
+                    <button id="btn-excluir-mesa" class="btn-acao-gerenciador btn-perigo"><i class="fas fa-trash-alt"></i> Excluir Selecionada</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="rodape-copyright">
+        <div class="rodape-info">
+        <p>&copy; 2026 CASA TAPERA. TODOS OS DIREITOS RESERVADOS | DESENVOLVIDO POR EQUIPE <a href="https://www.instagram.com/s.aib0t/" target="_blank" rel="noopener noreferrer" class="link-desenvolvedor"><span class="nome-desenvolvedor">S.AIB0T</span></a></p>
+        </div>
+    </footer>
+
+    <!-- CORREÇÃO: Adiciona a biblioteca de QR Code ANTES do seu script principal -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="../animações/MesaComanda.js"></script>
+    <!-- VLibras Widget -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+</body>
+</html>

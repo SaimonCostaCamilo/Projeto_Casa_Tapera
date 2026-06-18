@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Itens Mais Vendidos - Casa Tapera</title>
+    <link rel="stylesheet" href="../estilos/PainelDeControle.css">
+    <link rel="stylesheet" href="../estilos/ItensMaisVendidosRelatorio.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        .modal-container { position: relative; }
+        .btn-fechar-modal {
+            position: absolute; top: 15px; right: 15px; left: auto; transform: none;
+            background: none; border: none; color: white; font-size: 1.8em; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header class="cabecalho-painel">
+        <a href="PainelDeControle.html"><img src="../imagens/Logo_Tapera.jpeg" alt="Logotipo Casa Tapera" class="imagem-logo"></a>
+        <h1>Itens Mais Vendidos</h1>
+        <a href="PainelDeControle.html" class="icone-voltar" title="Voltar ao Painel">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+    </header>
+
+    <main class="painel-principal">
+        <div class="container-gerenciamento">
+            <h2>Relatório de Itens Mais Vendidos</h2>
+            <div class="filtros-container">
+                <button class="btn-filtro active" data-period="mensal">Mensal</button>
+                <button class="btn-filtro" data-period="semanal">Semanal</button>
+                <button class="btn-filtro" data-period="diario">Diário</button>
+            </div>
+            <div class="cards-resumo-container">
+                <div class="card-resumo">
+                    <h3 class="card-titulo">Receita Total do Período</h3>
+                    <p id="valor-total-receita" class="card-valor">R$ 0,00</p>
+                </div>
+            </div>
+            <div class="container-acoes-relatorio">
+                <button id="btn-gerenciar-ranking" class="btn-acao-relatorio"><i class="fas fa-edit"></i> Gerenciar Ranking</button>
+            </div>
+            <table class="tabela-relatorio">
+                <thead>
+                    <tr>
+                        <th>Posição</th>
+                        <th>Item</th>
+                        <th>Quantidade Vendida</th>
+                        <th>Receita Gerada</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Modal para Gerenciar Ranking -->
+    <div id="modal-gerenciar-ranking" class="modal-overlay">
+        <div class="modal-container">
+            <button class="btn-fechar-modal" title="Fechar">&times;</button>
+            <h3>Gerenciar Ranking</h3>
+            <div id="lista-gerenciamento-ranking">
+                <!-- Itens do ranking para edição serão inseridos aqui -->
+            </div>
+            <div class="form-add-ranking">
+                <h4>Adicionar Novo Item ao Ranking</h4>
+                <input type="text" id="novo-item-nome" placeholder="Nome do Item">
+                <div class="grupo-inputs-add">
+                    <input type="number" id="novo-item-pos" placeholder="Posição">
+                    <input type="number" id="novo-item-qtd" placeholder="Quantidade">
+                    <input type="number" step="0.01" id="novo-item-receita" placeholder="Receita (R$)">
+                </div>
+                <button id="btn-adicionar-item-ranking">Adicionar Item</button>
+            </div>
+            <div class="container-salvar-modal">
+                <button id="btn-salvar-geral-ranking"><i class="fas fa-save"></i> Salvar e Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="rodape-copyright">
+        <div class="rodape-info">
+           <p>&copy; 2026 CASA TAPERA. TODOS OS DIREITOS RESERVADOS | DESENVOLVIDO POR EQUIPE <a href="https://www.instagram.com/s.aib0t/" target="_blank" rel="noopener noreferrer" class="link-desenvolvedor"><span class="nome-desenvolvedor">S.AIB0T</span></a></p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Dados de exemplo (supositórios) restaurados
+            let dados = {
+                mensal: [
+                    { pos: 1, nome: 'Hambúrguer de Carne', qtd: 152, receita: 3040.00 },
+                    { pos: 2, nome: 'Pastel de Carne', qtd: 118, receita: 1416.00 },
+                    { pos: 3, nome: 'Hambúrguer de Frango', qtd: 95, receita: 2090.00 }
+                ],
+                semanal: [
+                    { pos: 1, nome: 'Pastel de Carne', qtd: 45, receita: 540.00 },
+                    { pos: 2, nome: 'Hambúrguer de Carne', qtd: 38, receita: 760.00 },
+                    { pos: 3, nome: 'Suco de Laranja', qtd: 30, receita: 180.00 }
+                ],
+                diario: [
+                    { pos: 1, nome: 'Hambúrguer de Carne', qtd: 12, receita: 240.00 },
+                    { pos: 2, nome: 'Batata M', qtd: 10, receita: 100.00 }
+                ]
+            };
+
+            const tabelaBody = document.querySelector('.tabela-relatorio tbody');
+            const filtrosContainer = document.querySelector('.filtros-container');
+            const valorTotalEl = document.getElementById('valor-total-receita');
+            const modal = document.getElementById('modal-gerenciar-ranking');
+            const btnAbrirModal = document.getElementById('btn-gerenciar-ranking');
+            const btnFecharModal = modal.querySelector('.btn-fechar-modal');
+            const containerGerenciamento = document.getElementById('lista-gerenciamento-ranking');
+            const btnAdicionarItem = document.getElementById('btn-adicionar-item-ranking');
+            const btnSalvarGeral = document.getElementById('btn-salvar-geral-ranking');
+
+            function atualizarCardTotal(periodo) {
+                const dadosPeriodo = dados[periodo];
+                const total = dadosPeriodo.reduce((sum, item) => sum + item.receita, 0);
+                valorTotalEl.textContent = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            }
+
+            function renderizarTabela(periodo) {
+                const dadosPeriodo = dados[periodo].sort((a, b) => a.pos - b.pos);
+                tabelaBody.innerHTML = '';
+
+                if (dadosPeriodo.length === 0) {
+                    tabelaBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #888;">Nenhum dado para este período.</td></tr>';
+                    atualizarCardTotal(periodo);
+                    return;
+                }
+
+                dadosPeriodo.forEach((item, index) => {
+                    const linha = document.createElement('tr');
+                    const posicao = index === 0
+                        ? `<td>${item.pos}º <i class="fas fa-trophy" style="margin-left: 5px;"></i></td>`
+                        : `<td>${item.pos}º</td>`;
+
+                    linha.innerHTML = `
+                        ${posicao}
+                        <td>${item.nome}</td>
+                        <td>${item.qtd}</td>
+                        <td>R$ ${item.receita.toFixed(2).replace('.', ',')}</td>
+                    `;
+                    tabelaBody.appendChild(linha);
+                });
+                atualizarCardTotal(periodo);
+            }
+
+            function popularModalGerenciamento() {
+                const periodo = filtrosContainer.querySelector('.btn-filtro.active').dataset.period;
+                const dadosPeriodo = dados[periodo];
+                containerGerenciamento.innerHTML = '';
+
+                dadosPeriodo.forEach(item => {
+                    const divItem = document.createElement('div');
+                    divItem.className = 'item-gerenciamento';
+                    divItem.innerHTML = `
+                        <input type="text" class="input-gerenciamento" value="${item.nome}">
+                        <input type="number" class="input-gerenciamento" value="${item.pos}" placeholder="Pos">
+                        <input type="number" class="input-gerenciamento" value="${item.qtd}" placeholder="Qtd">
+                        <input type="number" step="0.01" class="input-gerenciamento" value="${item.receita.toFixed(2)}" placeholder="Receita">
+                        <button class="btn-remover-item-ranking" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                    `;
+                    containerGerenciamento.appendChild(divItem);
+                });
+            }
+
+            // Abrir e fechar modal
+            btnAbrirModal.addEventListener('click', () => {
+                popularModalGerenciamento();
+                modal.classList.add('visivel');
+            });
+            btnFecharModal.addEventListener('click', () => modal.classList.remove('visivel'));
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.classList.remove('visivel');
+            });
+
+            // Adicionar novo item no modal
+            btnAdicionarItem.addEventListener('click', () => {
+                const nome = document.getElementById('novo-item-nome').value;
+                const pos = document.getElementById('novo-item-pos').value;
+                const qtd = document.getElementById('novo-item-qtd').value;
+                const receita = document.getElementById('novo-item-receita').value;
+
+                if (!nome || !pos || !qtd || !receita) {
+                    alert('Por favor, preencha todos os campos para adicionar um item.');
+                    return;
+                }
+
+                const divItem = document.createElement('div');
+                divItem.className = 'item-gerenciamento';
+                divItem.innerHTML = `
+                    <input type="text" class="input-gerenciamento" value="${nome}">
+                    <input type="number" class="input-gerenciamento" value="${pos}" placeholder="Pos">
+                    <input type="number" class="input-gerenciamento" value="${qtd}" placeholder="Qtd">
+                    <input type="number" step="0.01" class="input-gerenciamento" value="${parseFloat(receita).toFixed(2)}" placeholder="Receita">
+                    <button class="btn-remover-item-ranking" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                `;
+                containerGerenciamento.appendChild(divItem);
+
+                // Limpa os campos de adição
+                document.getElementById('novo-item-nome').value = '';
+                document.getElementById('novo-item-pos').value = '';
+                document.getElementById('novo-item-qtd').value = '';
+                document.getElementById('novo-item-receita').value = '';
+            });
+
+            // Remover item no modal
+            containerGerenciamento.addEventListener('click', (e) => {
+                if (e.target.closest('.btn-remover-item-ranking')) {
+                    e.target.closest('.item-gerenciamento').remove();
+                }
+            });
+
+            // Salvar todas as alterações do modal
+            btnSalvarGeral.addEventListener('click', () => {
+                const periodo = filtrosContainer.querySelector('.btn-filtro.active').dataset.period;
+                const novosDados = [];
+                containerGerenciamento.querySelectorAll('.item-gerenciamento').forEach(div => {
+                    const inputs = div.querySelectorAll('input');
+                    novosDados.push({
+                        nome: inputs[0].value,
+                        pos: parseInt(inputs[1].value),
+                        qtd: parseInt(inputs[2].value),
+                        receita: parseFloat(inputs[3].value)
+                    });
+                });
+
+                dados[periodo] = novosDados;
+                modal.classList.remove('visivel');
+                renderizarTabela(periodo);
+                alert('Ranking atualizado com sucesso!');
+            });
+
+            // Lógica para os botões de filtro
+            filtrosContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('btn-filtro')) {
+                    const periodo = e.target.dataset.period;
+                    filtrosContainer.querySelector('.btn-filtro.active').classList.remove('active');
+                    e.target.classList.add('active');
+                    renderizarTabela(periodo);
+                }
+            });
+
+            // Renderização inicial com o período padrão (mensal)
+            renderizarTabela('mensal');
+        });
+    </script>
+    <!-- VLibras Widget -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+</body>
+</html>

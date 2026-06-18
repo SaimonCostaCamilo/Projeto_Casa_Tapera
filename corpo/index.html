@@ -1,0 +1,2313 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casa Tapera</title>
+    <link rel="stylesheet" href="../estilos/Projeto_Tapera.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <!-- Leaflet (biblioteca do mapa) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <!-- Plugin de Roteamento -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <style>
+        /* Estilos da Sidebar do Cliente (reaproveitados do PainelDeControle.css) */
+        .barra-lateral-configuracoes {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            /* Aumentado para melhor visualização */
+            width: 300px;
+            height: 100%;
+            background: color #444;
+            /* var(--color-dark-gray) */
+            border-left: 2px solid #f06400;
+            /* var(--color-orange) */
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            transition: right 0.4s ease-in-out;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .barra-lateral-configuracoes.aberta {
+            right: 0;
+        }
+
+        .cabecalho-barra-lateral {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #444;
+        }
+
+        .cabecalho-barra-lateral h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            color: #ffc600;
+            /* var(--color-yellow) */
+            margin: 0;
+            font-size: 1.8em;
+            text-transform: uppercase;
+        }
+
+        /* Perfil do Usuário na Sidebar */
+        .perfil-barra-lateral {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-color: var(--color-dark-gray);
+            border-bottom: 1px solid #333;
+            gap: 10px;
+            text-align: center;
+        }
+        .perfil-barra-lateral.oculto { display: none; }
+
+        .imagem-perfil-barra-lateral {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #f06400;
+            color: #888;
+            font-size: 1.5em;
+        }
+
+        .perfil-barra-lateral span {
+            color: #ffc600;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.2em;
+        }
+
+        .btn-fechar {
+            background: none;
+            border: none;
+            color: #cecaca;
+            /* var(--color-white) */
+            font-size: 2.2em;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0 5px;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .btn-fechar:hover {
+            color: #f06400;
+            /* var(--color-orange) */
+        }
+
+        .conteudo-barra-lateral {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-bottom: 10px;
+        }
+
+        .dropdown-sidebar-container {
+            margin: 0 15px 10px;
+            background-color: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 12px;
+            color: #fff;
+            max-height: 45vh; /* Altura máxima para não ocupar a sidebar inteira */
+            overflow-y: auto;
+            display: none; /* .oculto */
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-sidebar-container.visivel {
+            display: block;
+        }
+
+        .dropdown-sidebar-container h4 {
+            font-family: 'Bebas Neue', sans-serif;
+            color: var(--color-yellow);
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dropdown-sidebar-footer {
+            padding-top: 10px;
+            margin-top: 10px;
+            border-top: 1px solid #444;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-add-todos-favoritos {
+            background-color: var(--color-orange);
+            color: var(--color-black);
+            border: none;
+            padding: 8px;
+            border-radius: 4px;
+            font-family: 'Roboto', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 0.9em;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-add-todos-favoritos:hover { background-color: #ff8533; }
+
+        #lista-favoritos-sidebar .item-favorito {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #333;
+            font-size: 0.9em;
+        }
+
+        #lista-favoritos-sidebar .item-favorito:last-child {
+            border-bottom: none;
+        }
+
+        #lista-favoritos-sidebar .nome-item-favorito {
+            font-family: 'Roboto', sans-serif;
+            font-weight: bold;
+        }
+
+        #lista-favoritos-sidebar .btn-add-favorito-carrinho {
+            background: none; border: 1px solid var(--color-orange); color: var(--color-orange);
+            border-radius: 50%; width: 24px; height: 24px; cursor: pointer;
+            font-size: 0.8em; transition: all 0.2s; display: flex;
+            align-items: center; justify-content: center;
+        }
+        #lista-favoritos-sidebar .btn-add-favorito-carrinho:hover { background-color: var(--color-orange); color: black; }
+
+        .btn-fechar-dropdown-sidebar {
+            background: none; border: none; color: #aaa; text-align: center;
+            width: 100%; padding: 5px 0 0 0; cursor: pointer;
+            font-family: 'Roboto', sans-serif; font-size: 0.9em;
+        }
+        .btn-fechar-dropdown-sidebar:hover { color: var(--color-orange); }
+
+        .meus-pedidos-container {
+            margin-top: 15px;
+            background-color: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 12px;
+            color: #fff;
+            max-height: 40vh;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .meus-pedidos-container.oculto {
+            display: none;
+        }
+
+        .meus-pedidos-container.visivel {
+            display: block;
+        }
+
+        .meus-pedidos-item {
+            border-bottom: 1px solid #333;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .meus-pedidos-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .rodape-barra-lateral {
+            border-top: 1px solid #444;
+            padding: 10px 20px;
+            margin-top: auto;
+            background-color: #141414;
+        }
+
+        .rodape-barra-lateral .link-barra-lateral {
+            display: block;
+            padding: 10px 0;
+            font-weight: bold;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        .rodape-barra-lateral .link-barra-lateral:hover {
+            background-color: #f06400;
+            color: #000;
+        }
+
+        .link-barra-lateral {
+            display: block;
+            padding: 15px 20px;
+            color: #cecaca;
+            /* var(--color-white) */
+            text-decoration: none;
+            font-size: 1.1em;
+            border-bottom: 1px solid #333;
+            transition: background-color 0.2s, color 0.2s;
+            text-transform: uppercase;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .link-barra-lateral:hover {
+            background-color: #f06400;
+            /* var(--color-orange) */
+            color: #000000;
+            /* var(--color-black) */
+        }
+
+        .link-barra-lateral i {
+            margin-right: 10px;
+            width: 20px;
+            /* Alinhamento dos ícones */
+            text-align: center;
+        }
+
+        /* Correção para remover scrollbar duplicada */
+        html {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            height: 100%;
+            overflow-y: auto;
+            margin: 0; /* Remove a margem padrão do navegador */
+            padding-top: 0;
+        }
+
+        /* Estilos FAQ */
+        .faq-container {
+            margin: 0 auto 30px;
+            text-align: left;
+            width: 100%;
+            max-width: 600px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 20px;
+        }
+
+        .faq-titulo {
+            color: #f06400;
+            margin-bottom: 20px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.6em;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid #333;
+            margin-bottom: 5px;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            background: none;
+            border: none;
+            color: #cecaca;
+            width: 100%;
+            text-align: left;
+            padding: 10px 0;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Roboto', sans-serif;
+            font-size: 0.95em;
+            font-weight: bold;
+            transition: color 0.2s;
+        }
+
+        .faq-question:hover {
+            color: #f06400;
+        }
+
+        .faq-question i {
+            transition: transform 0.3s;
+            font-size: 0.8em;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .faq-answer p {
+            padding: 5px 0 15px 0;
+            color: #999;
+            font-size: 0.9em;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 200px;
+        }
+
+        .faq-item.active .faq-question {
+            color: #f06400;
+        }
+
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+        }
+
+        /* Botão para abrir a sidebar de configurações */
+        .btn-abrir-sidebar {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--color-white, #fff);
+            font-size: 1.8em;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s;
+        }
+        .btn-abrir-sidebar:hover {
+            color: var(--color-orange, #f06400);
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        /* Estilos para Favoritar Itens */
+        .btn-favorito {
+            display: none;
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 1.4em;
+            cursor: pointer;
+            padding: 8px;
+            transition: color 0.2s, transform 0.2s;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        body.usuario-logado .btn-favorito {
+            display: flex; /* Visível apenas quando o usuário está logado */
+        }
+
+        .acoes-item-cardapio {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-left: 10px;
+            flex-shrink: 0;
+        }
+
+        .acoes-item-cardapio .preco {
+            white-space: nowrap;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.25em;
+            color: #f06400;
+        }
+
+        .grid-cardapio {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            padding: 20px 0;
+            align-items: stretch;
+        }
+
+        .btn-favorito:hover {
+            color: #f06400;
+            /* Laranja no hover */
+            transform: scale(1.2);
+        }
+
+        .btn-favorito.favoritado .fa-heart {
+            font-weight: 900;
+            /* solid - 'fas' */
+            color: #ff0019;
+            /* Vermelho quando favoritado */
+        }
+
+        /* Estilos do Carrossel */
+        .carousel-container {
+            width: 100%;
+            max-width: 900px;
+            max-height: 700px;
+            aspect-ratio: 369 / 669;
+            max-width: 1100px;
+            aspect-ratio: 16 / 9; /* Proporção widescreen, ideal para as imagens */
+            margin: 60px auto 30px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid var(--color-orange);
+            border-radius: 8px;
+            background-color: #111;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.4s ease-in-out;
+            width: 100%;
+            height: 100%; 
+        }
+
+        .carousel-item {
+            flex: 0 0 100%;
+            position: relative;
+            display: block;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .carousel-caption {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 12px;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            padding: 20px 30px;
+            text-align: center;
+            font-size: 0.9em;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+        }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.55);
+            border: none;
+            color: #fff;
+            font-size: 1.4em;
+            cursor: pointer;
+            z-index: 10;
+            padding: 6px 12px;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .carousel-btn:hover {
+            background: rgba(240, 100, 0, 0.9);
+        }
+
+        .carousel-btn-prev { left: 10px; }
+        .carousel-btn-next { right: 10px; }
+
+        .carousel-indicators {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 11;
+        }
+
+        .carousel-indicators button {
+            width: 10px;
+            height: 10px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .carousel-indicators button.active {
+            background: #f06400;
+        }
+
+        @media screen and (max-width: 1000px) {
+            .carousel-container {
+                max-width: 90%;
+                height: 260px;
+                max-width: 95%;
+                margin: 18px auto 28px;
+            }
+            .carousel-caption {
+                font-size: 0.85em;
+            }
+            .carousel-btn {
+                font-size: 1.2em;
+                padding: 5px 10px;
+            }
+            
+        }
+
+        @media screen and (max-width: 768px) {
+            .carousel-container {
+                max-width: 95%;
+                height: 220px;
+                margin: 16px auto 24px;
+                aspect-ratio: 2 / 1; /* Um pouco mais alto em telas médias */
+            }
+            .carousel-btn {
+                font-size: 1em;
+                padding: 4px 8px;
+            }
+            .carousel-caption {
+                font-size: 0.8em;
+                bottom: 8px;
+            }
+            .titulo-secao {
+                font-size: 3.0em;
+                margin: 0px;
+                padding-top: 90px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .carousel-container {
+                width: 100%;
+                height: 180px;
+                border-width: 1px;
+                margin: 20px auto 20px;
+                aspect-ratio: 1.8 / 1; /* Ainda mais alto em telas pequenas */
+            }
+            .titulo-secao {
+                font-size: 3.0em;
+                margin: 0px;
+                padding-top: 90px;
+            }
+            .carousel-btn {
+                font-size: 0.9em;
+                padding: 3px 6px;
+            }
+            .carousel-caption {
+                font-size: 0.75em;
+                bottom: 6px;
+            }
+            .grid-cardapio {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                padding: 10px;
+            }
+            .item-cardapio-interativo {
+                padding: 10px;
+                gap: 10px;
+            }
+            .nome-item {
+                font-size: 0.95em;
+            }
+            .nome-item--pequeno {
+                font-size: 0.85em;
+            }
+        }
+
+        /* Cor amarela para o status "Funcionando" */
+        .status-loja.status-aberto {
+            color: #ffc600;
+        }
+
+        /* Esconde o painel de instruções de rota do Leaflet */
+        .leaflet-routing-container {
+            display: none !important;
+        }
+
+        /* Estilo para o Mascote no Header */
+        .cabecalho {
+            position: relative;
+        }
+
+        .mascote-index {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 355px;
+            /* Ajuste o tamanho conforme necessário */
+            z-index: 10;
+        }
+
+        /* Alinhamento das linhas divisoras no fundo das colunas */
+        .coluna-cardapio {
+            display: flex;
+            flex-direction: column;
+            scroll-margin-top: 110px; /* Margem para compensar o cabeçalho ao scrolar */
+        }
+        .divisor-secao {
+            margin-top: auto;
+        }
+
+        .item-cardapio-interativo {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 12px;
+            min-height: 80px;
+            border-radius: 12px;
+            background-color: rgba(255, 255, 255, 0.03);
+            transition: all 0.2s ease;
+        }
+        .item-cardapio-interativo:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+        .item-cardapio-interativo .detalhes-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            min-width: 0; /* Permite que o flex-item encolha para evitar transbordamento */
+        }
+        .nome-item {
+            font-family: 'Roboto', sans-serif;
+            font-weight: bold;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            line-height: 1.2;
+            font-size: 1.1em;
+        }
+        .nome-item--pequeno {
+            font-size: 0.95em;
+        }
+        .img-item-cardapio {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid var(--color-orange);
+            flex-shrink: 0;
+            background-color: #222;
+            cursor: zoom-in;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .img-item-cardapio:hover {
+            transform: scale(1.08);
+            box-shadow: 0 0 10px rgba(240, 100, 0, 0.4);
+        }
+
+        /* Estilos para o Modal de Detalhes do Item */
+        .modal-container-detalhes {
+            background-color: var(--color-dark-gray);
+            padding: 0;
+            border-radius: 12px;
+            border: 1px solid var(--color-orange);
+            width: 95%;
+            max-width: 450px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+        }
+        .modal-container-detalhes .btn-fechar-modal {
+            z-index: 10;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.4);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-bottom: 4px;
+            transition: background 0.3s;
+        }
+        .modal-container-detalhes .btn-fechar-modal:hover { background: var(--color-orange); }
+        .conteudo-modal-detalhes { padding: 0 25px 25px; text-align: center; }
+        #modal-item-foto {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-bottom: 2px solid var(--color-orange);
+            margin-bottom: 20px;
+        }
+        #modal-item-nome {
+            font-family: 'Bebas Neue', sans-serif;
+            color: var(--color-yellow);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        #modal-item-descricao {
+            color: #ccc;
+            font-size: 1.05em;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            font-family: 'Roboto', sans-serif;
+        }
+        .rodape-modal-detalhes {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #333;
+            padding-top: 20px;
+            gap: 15px;
+        }
+        #modal-item-preco {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2em;
+            color: var(--color-white);
+            white-space: nowrap;
+        }
+        @media (max-width: 768px) {
+            .item-cardapio-interativo {
+                flex-wrap: wrap;
+                padding: 14px;
+                min-height: auto;
+            }
+        }
+
+        .modal-container { position: relative; }
+        .btn-fechar-modal {
+            position: absolute; top: 15px; right: 15px; left: auto; transform: none;
+            background: none; border: none; color: white; font-size: 2em; cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .mascote-index {
+                display: none;
+            }
+        }
+
+        /* Esconde o mascote em telas muito grandes, conforme solicitado */
+        @media screen and (max-width: 1291px) and (max-height: 670px) {
+            .mascote-index {
+                display: none;
+            }
+        }
+
+        /* Estilo para o campo de endereço com botão */
+        .input-com-botao {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .input-com-botao .input-cliente {
+            margin-bottom: 0 !important;
+            flex: 1;
+        }
+        #btn-calcular-taxa {
+            background-color: transparent;
+            border: 1px solid #ffc600; /* Cor amarela */
+            color: #ffc600;
+            padding: 0 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1em;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        #btn-calcular-taxa:hover {
+            background-color: #ffc600;
+            color: black;
+        }
+
+        /* Garante que o campo de observações tenha um tamanho adequado e não seja cortado */
+        #observacoes-pedido {
+            min-height: 50px;
+            resize: vertical; /* Permite que o usuário ajuste a altura se necessário */
+            }
+
+            .subtitulo-montagem-ia {
+                grid-column: 1 / -1;
+                font-family: 'Bebas Neue', sans-serif;
+                color: var(--color-yellow);
+                font-size: 1.2em;
+                margin-top: 15px;
+                margin-bottom: 5px;
+                border-bottom: 1px solid #444;
+                padding-bottom: 5px;
+                text-align: left;
+            }
+
+            /* Garante que os preços na montagem também fiquem laranjas */
+            .lista-ingredientes .preco {
+                color: #f06400;
+            }
+
+            /* Destaque para itens selecionados na montagem */
+            .lista-ingredientes label {
+                transition: all 0.3s ease;
+                border: 1px solid #444; /* Borda padrão */
+                position: relative; /* Necessário para posicionar o check */
+                padding-right: 35px !important; /* Espaço extra para o ícone no final */
+                cursor: pointer;
+            }
+
+            .lista-ingredientes label:has(input:checked) {
+                border-color: var(--color-orange) !important;
+                background-color: #2a2a2a;
+                color: var(--color-yellow);
+                box-shadow: 0 0 10px rgba(240, 100, 0, 0.3);
+        }
+
+            /* Adiciona o ícone de check (visto) laranja */
+            .lista-ingredientes label::after {
+                content: '\f00c'; /* Unicode para o ícone 'check' do Font Awesome */
+                font-family: 'Font Awesome 6 Free';
+                font-weight: 900;
+                color: var(--color-orange);
+                position: absolute;
+                right: 12px;
+                top: 50%;
+                transform: translateY(-50%) scale(0); /* Começa invisível e pequeno */
+                opacity: 0;
+                transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Efeito levemente elástico */
+            }
+
+            .lista-ingredientes label:has(input:checked)::after {
+                transform: translateY(-50%) scale(1.1); /* Aparece com um leve zoom */
+                opacity: 1;
+            }
+
+        /* Estilos para o Pagamento via Pix */
+        #container-detalhes-pix {
+            background-color: #1a1a1a;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        #container-detalhes-pix.oculto { display: none; }
+        .instrucao-pix { color: #ccc; font-size: 0.85em; margin: 10px 0; }
+        .aviso-pix-valor {
+            color: var(--color-yellow);
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 1.5px;
+            font-size: 1.15em;
+            margin: 15px 0;
+        }
+        .qr-code-pix { 
+            width: 160px; height: 160px; margin: 10px auto; 
+            display: flex; align-items: center; justify-content: center; 
+            border: 4px solid #fff; border-radius: 4px; 
+            background-color: #fff; /* Fundo branco para garantir a leitura */
+        }
+        .qr-code-pix img { width: 100%; height: auto; }
+        .pix-copia-cola { display: flex; gap: 8px; margin: 10px 0; }
+        .pix-copia-cola input { flex: 1; background: #000; border: 1px solid #444; color: #ffc600; padding: 8px; font-size: 0.75em; border-radius: 4px; outline: none; }
+        #btn-copiar-pix, #btn-copiar-chave-pix {
+            background: none; border: 1px solid #444; color: #aaa;
+            padding: 4px 12px; border-radius: 4px; cursor: pointer; transition: all 0.2s;
+        }
+        #btn-copiar-pix:hover, #btn-copiar-chave-pix:hover { color: var(--color-yellow); border-color: var(--color-yellow); }
+        .chave-pix-fallback {
+            color: #ccc;
+            font-size: 0.9em;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .chave-pix-fallback strong { color: var(--color-yellow, #ffc600); }
+
+         /* Estilos para o Navegador de Categorias (Atalhos) */
+        .group-content {
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px auto 10px;
+            padding: 0 15px;
+        }
+        .group-content-nav {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding: 10px 5px;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;  /* IE/Edge */
+            justify-content: flex-start;
+        }
+        .group-content-nav::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+        
+        .btn-atalho-categoria {
+            background-color: #1a1a1a;
+            color: var(--color-white);
+            border: 1px solid #333;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.25em;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 1px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        .btn-atalho-categoria:hover {
+            border-color: var(--color-orange);
+            background-color: rgba(240, 100, 0, 0.15);
+            color: var(--color-orange);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(240, 100, 0, 0.2);
+        }
+
+        .btn-atalho-categoria:active { transform: translateY(0); }        
+
+        /* Estilos para o Modo de Visualização do Administrador */
+        body.modo-admin-preview #btn-finalizar-pedido {
+            background-color: #333 !important;
+            color: #777 !important;
+            cursor: not-allowed !important;
+            pointer-events: none !important;
+            border: 1px solid #444 !important;
+            box-shadow: none !important;
+        }
+        body.modo-admin-preview #btn-finalizar-pedido::after {
+            content: ' (Desativado: Modo Admin)';
+            display: block;
+            font-size: 0.6em;
+        }
+
+        /* Ajuste para o conteúdo não ficar por baixo do banner fixo */
+        body.modo-admin-preview {
+            padding-top: 45px !important;
+        }
+
+        /* Estilos para ações na lista de favoritos da sidebar */
+        .acoes-favorito-sidebar {
+            display: flex;
+            gap: 8px;
+        }
+        .btn-remover-favorito-sidebar {
+            background: none;
+            border: 1px solid #ff4444;
+            color: #ff4444;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 0.8em;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .btn-remover-favorito-sidebar:hover { background-color: #ff4444; color: white; }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar do Cliente -->
+    <div id="sidebar-configuracoes" class="barra-lateral-configuracoes">
+        <div class="conteudo-barra-lateral">
+            <!-- Perfil do Usuário (Aparece quando logado) -->
+            <div id="perfil-usuario-sidebar" class="perfil-barra-lateral oculto">
+                <div class="imagem-perfil-barra-lateral">
+                    <i class="fas fa-user"></i>
+                </div>
+                <span id="nome-usuario-sidebar">Olá, Cliente</span>
+            </div>
+
+            <div class="cabecalho-barra-lateral">
+                <h3>Configurações</h3>
+                <button id="btn-fechar-sidebar" class="btn-fechar" title="Fechar">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
+
+            <a href="MeusPedidos.html" class="link-barra-lateral"><i class="fas fa-receipt"></i> Meus Pedidos</a>
+            <a href="#" id="btn-meus-favoritos" class="link-barra-lateral"><i class="fas fa-heart"></i> Meus Favoritos</a>
+            <div id="favoritos-container" class="dropdown-sidebar-container oculto">
+                <h4><i class="fas fa-heart"></i> Favoritos</h4>
+                <div id="lista-favoritos-sidebar"></div>
+                <div id="favoritos-footer" class="dropdown-sidebar-footer">
+                    <button id="btn-add-todos-favoritos" class="btn-add-todos-favoritos"><i class="fas fa-cart-plus"></i> Adicionar Todos</button>
+                    <button id="btn-fechar-favoritos" class="btn-fechar-dropdown-sidebar">Fechar</button>
+                </div>
+            </div>
+            <a href="MinhaConta.html" class="link-barra-lateral"><i class="fas fa-cog"></i> Minha Conta</a>
+            <a href="#" id="btn-link-faq" class="link-barra-lateral"><i class="fas fa-question-circle"></i> Ajuda & FAQ</a>
+        </div>
+        <div class="rodape-barra-lateral">
+            <a href="LoginCliente.html" class="link-barra-lateral link-login-footer"><i class="fas fa-sign-in-alt"></i> Login / Criar Conta</a>
+        </div>
+    </div>
+
+    <header class="cabecalho">
+        <img src="../imagens/Mascote-Tapera.2.jpeg" alt="Mascote Tapera" class="mascote-index">                                         
+        <div class="container-logo">
+            <img src="../imagens/Logo_Tapera.jpeg" alt="Logotipo Casa Tapera" class="imagem-logo">
+        </div>
+    </header>
+    <main class="conteudo-principal">
+        <section id="secao-cardapio" class="secao-cardapio">
+            <div class="cabecalho-secao-cardapio">
+                <div class="container-info-topo">
+                    <span id="status-loja-texto" class="status-loja status-aberto">
+                        <i class="fas fa-store"></i> Funcionando
+                    </span>
+                    <button id="btn-info-loja" class="btn-info-loja">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Info</span>
+                    </button>
+                </div>
+                <br>
+                <h2 class="titulo-secao">CARDÁPIO</h2>
+            </div>
+
+            <div class="carousel-container" id="carousel-cardapio">
+                <div class="carousel-track">
+                    <div class="carousel-item active">
+                        <img src="../imagens/Imagem_hamburguer.jpeg" alt="Hambúrguer 100% Artesanal">
+                        <div class="carousel-caption">Hambúrguer 100% Artesanal</div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="../imagens/Imagem_Pastéis.png.jpeg" alt="Pastel de 15cm feitos na hora">
+                        <div class="carousel-caption">Pastel de 15cm feitos na hora</div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="../imagens/Imagem_SucosNaturais.png.jpeg" alt="Sucos naturais frescos">
+                        <div class="carousel-caption">Sucos naturais frescos</div>
+                    </div>
+                </div>
+                <button class="carousel-btn carousel-btn-prev" aria-label="Anterior">&#10094;</button>
+                <button class="carousel-btn carousel-btn-next" aria-label="Próximo">&#10095;</button>
+                <div class="carousel-indicators" id="carousel-indicators"></div>
+            </div>
+
+            <div class="group-content" id="group-content-nav-container">
+                <div id="group-content-nav" class="group-content-nav"></div>
+            </div>
+
+            <div class="envolve-pedido">
+                <div class="grid-cardapio">
+                    <!-- Cada categoria agora é um container independente para alinhamento perfeito -->
+                    <div class="coluna-cardapio categoria-hamburguer">
+                        <h3 class="titulo-subsecao">HAMBÚRGUER 100% ARTESANAL</h3>
+                        <ul class="lista-cardapio">
+                            <li class="item-cardapio-interativo" data-name="Hambúrguer de Carne" data-price="20.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Hambúrguer de Carne" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item">
+                                    <span class="nome-item">Hambúrguer de Carne</span>
+                                </div>
+                                <div class="acoes-item-cardapio">
+                                    <span class="preco">R$20,00</span>
+                                    <button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button>
+                                </div>
+                            </li>
+                            <li class="item-cardapio-interativo" data-name="Hambúrguer de Frango" data-price="22.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Hambúrguer de Frango" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item">
+                                    <span class="nome-item">Hambúrguer de Frango </span>
+                                </div>
+                                <div class="acoes-item-cardapio">
+                                    <span class="preco">R$22.00</span>
+                                    <button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button>
+                                </div>
+                            </li>
+                            <li class="item-cardapio-interativo" data-name="Hambúrguer de Bacon" data-price="25.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Hambúrguer de Bacon" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item">
+                                    <span class="nome-item">Hambúrguer de Bacon</span>
+                                </div>
+                                <div class="acoes-item-cardapio">
+                                    <span class="preco">R$25,00</span>
+                                    <button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button>
+                                </div>
+                            </li>
+                            <li class="item-cardapio-interativo" data-name="Hambúrguer Vegano" data-price="25.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Hambúrguer Vegano" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item">
+                                    <span class="nome-item">Hambúrguer Vegano</span>
+                                </div>
+                                <div class="acoes-item-cardapio">
+                                    <span class="preco">R$25,00</span>
+                                    <button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button>
+                                </div>
+                            </li>
+                        </ul>
+                        <hr class="divisor-secao">
+                    </div>
+                    <div class="coluna-cardapio categoria-acompanhamentos">
+                        <h3 class="titulo-subsecao">ACOMPANHAMENTOS</h3>
+                        <div class="acomp-bebidas">
+                            <ul class="lista-cardapio">
+                                <li class="item-cardapio-interativo" data-name="Batata P" data-price="8.00">
+                                    <img src="../imagens/Logo_Tapera.jpeg" alt="Batata P" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                    <div class="detalhes-item"><span class="nome-item">BATATA P.</span></div>
+                                    <div class="acoes-item-cardapio">
+                                        <span class="preco">R$8.00</span>
+                                        <button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button>
+                                    </div>
+                                </li>
+                                <li class="item-cardapio-interativo" data-name="Batata M" data-price="10.00">
+                                    <img src="../imagens/Logo_Tapera.jpeg" alt="Batata M" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                    <div class="detalhes-item"><span class="nome-item">BATATA M.</span></div>
+                                    <div class="acoes-item-cardapio">
+                                        <span class="preco">R$10.00</span>
+                                        <button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button>
+                                    </div>
+                                </li>
+                                <li class="item-cardapio-interativo" data-name="Batata G" data-price="15.00">
+                                    <img src="../imagens/Logo_Tapera.jpeg" alt="Batata G" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                    <div class="detalhes-item"><span class="nome-item">BATATA G.</span></div>
+                                    <div class="acoes-item-cardapio">
+                                        <span class="preco">R$15.00</span>
+                                        <button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <hr class="divisor-secao">
+                    </div>
+                    <div class="coluna-cardapio categoria-paes-cucas">
+                        <h3 class="titulo-subsecao">PÃES E CUCAS</h3>
+                        <ul class="lista-cardapio">
+                            <li class="item-cardapio-interativo" data-name="Pão Artesanal 500g" data-price="20.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Pão" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item">PÃO ARTESANAL 500G</span></div>
+                                <div class="acoes-item-cardapio">
+                                    <span class="preco">R$20,00</span>
+                                    <button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button>
+                                </div>
+                            </li>
+                            <li class="item-cardapio-interativo" data-name="Cuca de Goiabada 500g" data-price="15.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Cuca" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item">CUCA DE GOIABADA 500G</span></div>
+                                <div class="acoes-item-cardapio">
+                                    <span class="preco">R$15.00</span>
+                                    <button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button>
+                                </div>
+                            </li>
+                            <li class="item-cardapio-interativo" data-name="Cuca de Doce de Leite 500g" data-price="17.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Cuca" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item">CUCA DE DOCE DE LEITE 500G</span></div>
+                                <div class="acoes-item-cardapio">
+                                    <span class="preco">R$17.00</span>
+                                    <button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button>
+                                </div>
+                            </li>
+                        </ul>
+                        <hr class="divisor-secao">
+                    </div>
+
+                    <div class="coluna-cardapio categoria-pasteis-salgados">
+                        <h3 class="titulo-subsecao">PASTÉIS SALGADOS</h3>
+                        <ul class="lista-cardapio">
+                            <li class="item-cardapio-interativo" data-name="Carne" data-price="12.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Pastel" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item">PASTEL DE CARNE</span></div>
+                                <div class="acoes-item-cardapio"><span class="preco">R$12.00</span><button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button></div>
+                            </li>
+                            <li class="item-cardapio-interativo" data-name="Frango c/ Catupiry" data-price="12.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Pastel" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item nome-item--pequeno">PASTEL DE FRANGO C/ CATUPIRY</span></div>
+                                <div class="acoes-item-cardapio"><span class="preco">R$12.00</span><button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button></div>
+                            </li>
+                            <li class="item-cardapio-interativo" data-name="Calabresa" data-price="12.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Pastel" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item">PASTEL DE CALABRESA</span></div>
+                                <div class="acoes-item-cardapio"><span class="preco">R$12.00</span><button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button></div>
+                            </li>
+                            <li class="item-cardapio-interativo" data-name="Queijo c/ Orégano" data-price="12.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Pastel" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item nome-item--pequeno">PASTEL DE QUEIJO C/ ORÉGANO</span></div>
+                                <div class="acoes-item-cardapio"><span class="preco">R$12.00</span><button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button></div>
+                            </li>
+                            <li class="item-cardapio-interativo" data-name="Queijo" data-price="12.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Pastel" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item">PASTEL DE QUEIJO</span></div>
+                                <div class="acoes-item-cardapio"><span class="preco">R$12.00</span><button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button></div>
+                            </li>
+                        </ul>
+                        <hr class="divisor-secao">
+                    </div>
+                    <div class="coluna-cardapio categoria-pasteis-doces">
+                        <h3 class="titulo-subsecao">PASTÉIS DOCES</h3>
+                        <ul class="lista-cardapio">
+                            <li class="item-cardapio-interativo" data-name="Chocolate ao Leite" data-price="15.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Pastel" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item">PASTEL CHOCOLATE AO LEITE</span></div>
+                                <div class="acoes-item-cardapio"><span class="preco">R$15.00</span><button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button></div>
+                            </li>
+                            <li class="item-cardapio-interativo" data-name="Romeu e Julieta" data-price="14.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Pastel" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item">PASTEL ROMEU E JULIETA</span></div>
+                                <div class="acoes-item-cardapio"><span class="preco">R$14.00</span><button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button></div>
+                            </li>
+                            <li class="item-cardapio-interativo" data-name="Creme Ninho" data-price="15.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Pastel" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item">PASTEL CREME NINHO</span></div>
+                                <div class="acoes-item-cardapio"><span class="preco">R$15.00</span><button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button></div>
+                            </li>
+                            <li class="item-cardapio-interativo" data-name="Stikadinho" data-price="17.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Pastel" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item">PASTEL STIKADINHO</span></div>
+                                <div class="acoes-item-cardapio"><span class="preco">R$17.00</span><button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button></div>
+                            </li>
+                            <li class="item-cardapio-interativo" data-name="Ouro Branco" data-price="15.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Pastel" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item">PASTEL DE OURO BRANCO</span></div>
+                                <div class="acoes-item-cardapio"><span class="preco">R$15.00</span><button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button></div>
+                            </li>
+                            <li class="item-cardapio-interativo" data-name="Oreo" data-price="15.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Pastel" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item">PASTEL DE OREO</span></div>
+                                <div class="acoes-item-cardapio"><span class="preco">R$15.00</span><button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button></div>
+                            </li>
+                            <li class="item-cardapio-interativo" data-name="Kit-Kat" data-price="17.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Pastel" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item">PASTEL DE KIT-KAT</span></div>
+                                <div class="acoes-item-cardapio"><span class="preco">R$17.00</span><button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button></div>
+                            </li>
+                            <li class="item-cardapio-interativo" data-name="Sonho de Valsa" data-price="15.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Pastel" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item">PASTEL DE SONHO DE VALSA</span></div>
+                                <div class="acoes-item-cardapio"><span class="preco">R$15.00</span><button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button></div>
+                            </li>
+                        </ul>
+                        <hr class="divisor-secao">
+                    </div>
+
+                    <div class="coluna-cardapio categoria-sucos">
+                        <h3 class="titulo-subsecao">SUCOS NATURAIS</h3>
+                        <ul class="lista-cardapio">
+                            <li class="item-cardapio-interativo" data-name="Suco de Laranja" data-price="6.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Suco" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item">SUCO DE LARANJA</span></div>
+                                <div class="acoes-item-cardapio"><span class="preco">R$6.00</span><button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button></div>
+                            </li>
+                            <li class="item-cardapio-interativo" data-name="Suco de Limão" data-price="6.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Suco" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item">SUCO DE LIMÃO</span></div>
+                                <div class="acoes-item-cardapio"><span class="preco">R$6.00</span><button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button></div>
+                            </li>
+                            <li class="item-cardapio-interativo" data-name="Suco de Manga" data-price="8.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Suco" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item">SUCO DE MANGA</span></div>
+                                <div class="acoes-item-cardapio"><span class="preco">R$8.00</span><button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button></div>
+                            </li>
+                            <li class="item-cardapio-interativo" data-name="Suco de Maracujá" data-price="8.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Suco" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item">SUCO DE MARACUJÁ</span></div>
+                                <div class="acoes-item-cardapio"><span class="preco">R$8.00</span><button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button></div>
+                            </li>
+                            <li class="item-cardapio-interativo" data-name="Suco de Abacaxi" data-price="8.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Suco" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item">SUCO DE ABACAXI</span></div>
+                                <div class="acoes-item-cardapio"><span class="preco">R$8.00</span><button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button></div>
+                            </li>
+                        </ul>
+                        <hr class="divisor-secao">
+                    </div>
+                    <div class="coluna-cardapio categoria-bebidas">
+                        <h3 class="titulo-subsecao">BEBIDAS</h3>
+                        <ul class="lista-cardapio">
+                            <li class="item-cardapio-interativo" data-name="Coca-Cola Lata 350ml" data-price="7.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Bebida" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item">COCA-COLA LATA 350ML</span></div>
+                                <div class="acoes-item-cardapio"><span class="preco">R$7.00</span><button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button></div>
+                            </li>
+                            <li class="item-cardapio-interativo" data-name="Refrigerantes Lata 350ml" data-price="6.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Bebida" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item">REFRIGERANTES LATA 350ML</span></div>
+                                <div class="acoes-item-cardapio"><span class="preco">R$6.00</span><button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button></div>
+                            </li>
+                            <li class="item-cardapio-interativo" data-name="Água c/ Gás" data-price="3.50">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Bebida" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item">ÁGUA C/ GÁS</span></div>
+                                <div class="acoes-item-cardapio"><span class="preco">R$3.50</span><button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button></div>
+                            </li>
+                            <li class="item-cardapio-interativo" data-name="Água s/ Gás" data-price="3.00">
+                                <img src="../imagens/Logo_Tapera.jpeg" alt="Bebida" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                                <div class="detalhes-item"><span class="nome-item">ÁGUA S/ GÁS</span></div>
+                                <div class="acoes-item-cardapio"><span class="preco">R$3.00</span><button class="btn-favorito" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button></div>
+                            </li>
+                        </ul>
+                        <hr class="divisor-secao">
+                    </div>
+                </div>
+            </div>
+
+            <div class="secao-largura-total">
+                <h3 class="titulo-secao titulo-montagem"><i class="fas fa-tools"></i> ESTAÇÃO DE MONTAGEM</h3>
+                <div class="grid-montagem">
+                    <div class="secao-montagem">
+                        <h4><i class="fas fa-hamburger"></i> PERSONALIZAR HAMBÚRGUER</h4>
+                        <p class="descricao-montagem">Começamos com nossa base artesanal (Pão, Bife 150g e Queijo). 
+                        Escolha abaixo os itens para deixar do seu jeito!</p>
+
+                        <h5 class="titulo-subsecao-montagem">PASSO 1: SELECIONE OS EXTRAS</h5>
+                        <br>
+                        <div id="ingredientes-hamburguer" class="lista-ingredientes">
+                            <label class="label-base" style="grid-column: 1 / -1;"><input type="checkbox" id="hamburguer-apenas-base"> <strong>Apenas a Base</strong></label>    
+                            <label><input type="checkbox" value="Extra: Bife de Carne" data-price="5">Bife de Carne (Extra)<span class="preco">+R$5</span></label>
+                            <label><input type="checkbox" value="Extra: Frango Empanado" data-price="5">Frango Empanado (Extra)<span class="preco">+R$5</span></label>
+                            
+                            <label><input type="checkbox" value="Extra: Queijo Mussarela" data-price="1">Queijo Mussarela (Extra)<span class="preco">+R$1</span></label>
+                            <label><input type="checkbox" value="Extra: Alface" data-price="1">Alface<span class="preco">+R$1</span></label>
+                            <label><input type="checkbox" value="Extra: Cebola" data-price="1">Cebola<span class="preco">+R$1</span></label>
+                            <label><input type="checkbox" value="Extra: Tomate" data-price="1">Tomate<span class="preco">+R$1</span></label>
+                            <label><input type="checkbox" value="Extra: Pepino" data-price="1">Pepino<span class="preco">+R$1</span></label>
+                            
+                            <label><input type="checkbox" value="Extra: Maionese" data-price="1">Maionese<span class="preco">+R$1</span></label>
+                            <label><input type="checkbox" value="Extra: Ketchup" data-price="1">Ketchup<span class="preco">+R$1</span></label>
+                            <label><input type="checkbox" value="Extra: Molho de Alho" data-price="1">Molho de Alho<span class="preco">+R$1</span></label>
+                            <label><input type="checkbox" value="Extra: Molho de Pimenta" data-price="1">Molho de Pimenta<span class="preco">+R$1</span></label>
+                            <label><input type="checkbox" value="Extra: Mostarda" data-price="1">Mostarda<span class="preco">+R$1</span></label>
+                        </div>
+                        <hr class="divisor-secao divisor-secao--montagem">
+                        <div class="acoes-item-montagem">
+                            <div class="resumo-item-montagem">
+                                <span>Total do Item: R$ 12,00</span>
+                            </div>
+                            <button id="adicionar-hamburguer-montado" class="btn-adicionar-montado">Adicionar ao
+                                Pedido</button>
+                        </div>
+                    </div>
+                    <div class="secao-montagem">
+                        <h4><i class="fas fa-utensils"></i> PERSONALIZAR PASTEL</h4>
+                        <p class="descricao-montagem">Escolha sua base favorita e adicione recheios extras para turbinar seu pastel de 15cm.</p>
+                        <h5 class="titulo-subsecao-montagem">PASSO 1: ESCOLHA A BASE</h5>
+                        <div id="ingredientes-base-pastel" class="lista-ingredientes lista-radio">
+                            <label><input type="radio" name="pastel-base" value="Base: Carne" data-price="12.00" checked> Carne
+                                (Base R$12.00)</label>
+                            <label><input type="radio" name="pastel-base" value="Base: Frango c/ Catupiry" data-price="12.00">
+                                Frango c/ Catupiry (Base R$12.00)</label>
+                            <label><input type="radio" name="pastel-base" value="Base: Queijo" data-price="12.00"> Queijo (Base
+                                R$12.00)</label>
+                        </div>
+                        <h5 class="titulo-subsecao-montagem">PASSO 2: ADICIONE MAIS SABOR</h5>
+                        <div id="ingredientes-extras-pastel" class="lista-ingredientes">
+                            
+                            <label><input type="checkbox" value="Extra: Calabresa" data-price="2">Calabresa<span class="preco">+R$2</span></label>
+                            <label><input type="checkbox" value="Extra: Mussarela" data-price="1">Mussarela Extra<span class="preco">+R$1</span></label>
+                            <label><input type="checkbox" value="Extra: Catupiry" data-price="1">Catupiry Extra<span class="preco">+R$1</span></label>
+                            
+                            
+                            <label><input type="checkbox" value="Extra: Orégano" data-price="1">Orégano<span class="preco">+R$1</span></label>
+                            <label><input type="checkbox" value="Extra: Maionese" data-price="1">Maionese<span class="preco">+R$1</span></label>
+                            <label><input type="checkbox" value="Extra: Ketchup" data-price="1">Ketchup<span class="preco">+R$1</span></label>
+                            <label><input type="checkbox" value="Extra: Molho de Alho" data-price="1">Molho de Alho<span class="preco">+R$1</span></label>
+                            <label><input type="checkbox" value="Extra: Molho de Pimenta" data-price="1">Molho de Pimenta<span class="preco">+R$1</span></label>
+                            <label><input type="checkbox" value="Extra: Mostarda" data-price="1">Mostarda<span class="preco">+R$1</span></label>
+                        </div>
+                        <br>
+                        <hr class="divisor-secao divisor-secao--montagem-pastel">
+                        <div class="acoes-item-montagem">
+                            <div class="resumo-item-montagem">
+                                <span>Total do Item: R$ 12,00</span>
+                            </div>
+                            <button id="adicionar-pastel-montado" class="btn-adicionar-montado">Adicionar ao
+                                Pedido</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carrinho-compras oculto" id="carrinho-compras">
+                <div class="cabecalho-carrinho">
+                    <h3>🛒 Meu Pedido</h3>
+                    <button id="btn-limpar-carrinho" class="btn-limpar-carrinho" title="Limpar carrinho">Limpar</button>
+                    <span id="total-carrinho">Total: R$ 0,00</span>
+                </div>
+                <ul id="itens-carrinho">
+                    <li id="mensagem-carrinho-vazio">Seu carrinho está vazio.</li>
+                </ul>
+
+                <div id="dividir-conta-container" class="dividir-conta-container">
+                    <label for="dividir-conta-input">
+                        <i class="fas fa-users"></i> Dividir entre
+                    </label>
+                    <input type="number" id="dividir-conta-input" min="1" value="1">
+                    <span>pessoa(s)</span>
+                    <strong id="valor-por-pessoa"></strong>
+                </div>
+
+                <div class="cupom-container">
+                    <input type="text" id="cupom-input" placeholder="CUPOM DE DESCONTO">
+                    <button id="btn-aplicar-cupom">Aplicar</button>
+                </div>
+                <div id="cupom-info" class="cupom-info oculto">
+                </div>
+
+                <div class="opcoes-entrega">
+                    <label><input type="radio" name="delivery-method" value="delivery" checked> Entrega</label>
+                    <label><input type="radio" name="delivery-method" value="pickup"> Retirada no local</label>
+                </div>
+                <div class="opcoes-pagamento">
+                    <h4>Forma de Pagamento</h4>
+                    <div class="escolhas-pagamento">
+                        <label><input type="radio" name="payment-method" value="Dinheiro" checked> Dinheiro</label>
+                        <label><input type="radio" name="payment-method" value="Cartão"> Cartão</label>
+                        <label><input type="radio" name="payment-method" value="Pix"> Pix</label>
+                    </div>
+                    <div id="container-campo-troco"><input type="number" id="troco-cliente" class="input-cliente"
+                            placeholder="Troco para? (Opcional)"></div>
+
+                    <div id="container-detalhes-cartao" class="oculto">
+                        <input type="text" id="nome-cartao" class="input-cliente" placeholder="Nome no cartão">
+                        <input type="text" id="numero-cartao" class="input-cliente" placeholder="Número do cartão">
+                        <div class="grupo-flex-cartao">
+                            <input type="text" id="validade-cartao" class="input-cliente"
+                                placeholder="Validade (MM/AA)">
+                            <input type="text" id="cvc-cartao" class="input-cliente" placeholder="CVC">
+                        </div>
+                        <p class="info-pagamento-seguro"><i class="fas fa-lock"></i> Pagamento processado de forma
+                            segura. Nenhum dado é armazenado.</p>
+                    </div>
+
+                    <div id="container-detalhes-pix" class="oculto">
+                        <p class="instrucao-pix">Escaneie o QR Code abaixo para pagar:</p>
+                        <div id="qrcode-pix-dinamico" class="qr-code-pix"></div>
+                        <p class="aviso-pix-valor">
+                            <i class="fas fa-info-circle"></i> Atenção: Ao ler o QR Code ou copiar a chave, você deverá informar o valor total do seu pedido manualmente no seu aplicativo do banco.
+                        </p>
+                        <div class="chave-pix-fallback">
+                            <span>Chave Pix (Telefone): <strong>+55 51 9627-0518</strong></span>
+                            <button type="button" id="btn-copiar-chave-pix" title="Copiar Chave Pix"><i class="fas fa-copy"></i></button>
+                        </div>
+                    </div>
+
+                </div>
+                <input type="text" id="nome-cliente" class="input-cliente" placeholder="Seu nome completo">
+                <div class="detalhes-cliente">
+                    <div id="container-campo-endereco">
+                        <div class="input-com-botao">
+                            <input type="text" id="endereco-cliente" class="input-cliente"
+                                placeholder="Endereço para entrega">
+                            <button type="button" id="btn-calcular-taxa">Consultar Taxa</button>
+                        </div>
+                        <p id="msg-taxa-entrega"
+                            style="color: #ffc600; font-size: 0.9em; margin-top: 5px; display: none;"></p>
+                    </div>
+                </div>
+                <textarea id="observacoes-pedido" class="input-cliente"
+                    placeholder="Observações (Ex: tirar cebola, etc.)" rows="4"></textarea>
+                <button id="btn-finalizar-pedido" disabled>Finalizar Pedido no WhatsApp</button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Mapa oculto para cálculo de rota -->
+    <div id="mapa-oculto" style="display: none;"></div>
+
+    <button id="btn-voltar-topo" class="oculto" title="Voltar ao Topo">&uarr;</button>
+    <footer class="rodape">
+        <div class="rodape-copyright">
+            <div class="faq-container">
+                <h4 class="faq-titulo">Perguntas Frequentes</h4>
+                <div class="faq-item">
+                    <button class="faq-question">Qual o horário de atendimento? <i
+                            class="fas fa-chevron-down"></i></button>
+                    <div class="faq-answer">
+                        <p>Funcionamos de Quarta Domingo, das 17h às 22h.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">Quais as formas de pagamento? <i
+                            class="fas fa-chevron-down"></i></button>
+                    <div class="faq-answer">
+                        <p>Aceitamos Dinheiro, PIX e Cartões de Crédito/Débito (Online e na Maquininha).</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">Fazem entregas em quais bairros? <i
+                            class="fas fa-chevron-down"></i></button>
+                    <div class="faq-answer">
+                        <p>Entregamos em toda a região da Zona Sul. Consulte a taxa de entrega no checkout.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="rodape-centro">
+            <div class="links-sociais">
+                <a href="https://www.instagram.com/casataperars/" target="_blank" title="Instagram"><i
+                        class="fab fa-instagram"></i></a>
+                <a href="https://api.whatsapp.com/send?phone=555180608775" target="_blank" title="WhatsApp"><i
+                        class="fab fa-whatsapp"></i></a>
+                <a href="https://youtube.com/@casatapera?si=9ZGUdVg3S7pA3IIA" target="_blank" title="YouTube"><i
+                        class="fab fa-youtube"></i></a>
+            </div>
+            <div class="rodape-info">
+                <p>DELIVERY: (51) 8060-8775</p>
+                <p>RUA JORGE PEREIRA NUNES, 2411 - ABERTA DOS MORROS</p>
+                <p>&copy; 2026 CASA TAPERA. TODOS OS DIREITOS RESERVADOS <br>| DESENVOLVIDO POR EQUIPE <br>
+                    <a href="https://www.instagram.com/s.aib0t/" target="_blank" rel="noopener noreferrer"
+                        class="link-desenvolvedor"><span class="nome-desenvolvedor">S.AIB0T</span></a></p>
+            </div>
+        </div>
+        <div class="rodape-mapa">
+            <iframe
+                src="https://maps.google.com/maps?q=Estr.+Jorge+Pereira+Nunes,+2411+-+Aberta+dos+Morros,+Porto+Alegre+-+RS&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+    </footer>
+    <script src="Projeto_Tapera.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="../animações/carrinho.js"></script>
+
+    <!-- Modal para Detalhes do Item -->
+    <div id="modal-detalhes-item" class="modal-overlay oculto">
+        <div class="modal-container-detalhes">
+            <button class="btn-fechar-modal" title="Fechar">&times;</button>
+            <div class="conteudo-modal-detalhes">
+                <img id="modal-item-foto" src="" alt="Foto do Item">
+                <h3 id="modal-item-nome"></h3>
+                <p id="modal-item-descricao"></p>
+                <div class="rodape-modal-detalhes">
+                    <span id="modal-item-preco"></span>
+                    <button id="btn-modal-add-carrinho" class="btn-adicionar-montado">Adicionar ao Pedido</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Avaliação -->
+    <div id="modal-avaliacao" class="modal-overlay oculto">
+        <div class="modal-container" style="max-width: 400px; text-align: center;">
+            <h3 style="font-family: 'Bebas Neue'; color: var(--color-yellow); margin-bottom: 15px;">AVALIE SUA EXPERIÊNCIA</h3>
+            <p style="color: #ccc; margin-bottom: 20px;">Sua opinião é muito importante para nós!</p>
+            
+            <div id="estrelas-container" style="font-size: 2em; color: #ffc600; margin-bottom: 25px; display: flex; justify-content: center; gap: 10px;">
+                <i class="far fa-star" data-valor="1" style="cursor: pointer;"></i>
+                <i class="far fa-star" data-valor="2" style="cursor: pointer;"></i>
+                <i class="far fa-star" data-valor="3" style="cursor: pointer;"></i>
+                <i class="far fa-star" data-valor="4" style="cursor: pointer;"></i>
+                <i class="far fa-star" data-valor="5" style="cursor: pointer;"></i>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button id="btn-pular-avaliacao" class="btn-limpar-carrinho" style="flex: 1; padding: 10px; cursor: pointer;">Agora não</button>
+                <button id="btn-enviar-avaliacao" class="btn-adicionar-montado" style="flex: 1; padding: 10px;">Avaliar no Google</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-info-loja" class="modal-overlay oculto">
+        <div class="modal-container">
+            <button class="btn-fechar-modal">&times;</button>
+            <div class="info-section">
+                <h3>Casa Tapera</h3>
+                <p>Estr. Jorge Pereira Nunes, 2411 - Hípica, Porto Alegre / RS</p>
+                <p>Tempo médio delivery: 40 - 60 minutos</p>
+                <p>Tempo médio balcão: 30 - 50 minutos</p>
+
+                <h4>Horários de Funcionamento</h4>
+                <ul id="lista-horarios-modal" class="lista-horarios"></ul>
+
+                <h4>Métodos de Pagamento</h4>
+                <ul class="lista-pagamento">
+                    <li><i class="fas fa-money-bill-wave"></i> Dinheiro</li>
+                    <li><i class="fab fa-pix"></i> PIX</li>
+                    <li><i class="fas fa-credit-card"></i> Cartão de Crédito Online</li>
+                    <li><i class="fas fa-credit-card"></i> Cartão de Débito - Maquininha</li>
+                    <li><i class="fas fa-credit-card"></i> Cartão de Crédito - Maquininha</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- LÓGICA DE MODO VISUALIZAÇÃO (ADMIN) ---
+            const urlParamsPreview = new URLSearchParams(window.location.search);
+            
+            // Se detectar o parâmetro na URL, salva o estado na sessão para persistência
+            if (urlParamsPreview.get('preview') === 'admin') {
+                sessionStorage.setItem('adminPreviewMode', 'true');
+            }
+
+            // Verifica se o modo preview está ativo (seja por URL agora ou por ter sido ativado antes nesta sessão)
+            if (sessionStorage.getItem('adminPreviewMode') === 'true') {
+                // Cria o banner informativo para o topo da página
+                const banner = document.createElement('div');
+                banner.style.cssText = `
+                    background-color: #141414;
+                    color: #ddd;
+                    text-align: center;
+                    padding: 10px 0;
+                    font-family: 'Roboto', sans-serif;
+                    font-size: 0.85em;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    z-index: 10001;
+                    border-bottom: 2px solid #f06400;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 15px;
+                    margin: 0;
+                `;
+                banner.innerHTML = `
+                    <span><i class="fas fa-user-shield" style="color: #f06400;"></i> MODO DE VISUALIZAÇÃO ADMINISTRATIVA - PEDIDOS DESATIVADOS</span>
+                    <a href="PainelDeControle.html" onclick="sessionStorage.removeItem('adminPreviewMode');" style="background: #2a2a2a; color: #fff; padding: 4px 12px; border-radius: 4px; text-decoration: none; font-family: 'Roboto', sans-serif; font-size: 0.85em; border: 1px solid #444;">Sair do Preview</a>
+                `;
+                document.body.prepend(banner);
+                document.body.classList.add('modo-admin-preview');
+            }
+
+            // --- LÓGICA DE STATUS DE LOGIN NA SIDEBAR ---
+            function atualizarStatusSidebar() {
+                const clienteLogged = JSON.parse(localStorage.getItem('clienteTapera'));
+                const perfilDiv = document.getElementById('perfil-usuario-sidebar');
+                const nomeUsuario = document.getElementById('nome-usuario-sidebar');
+                const linkLogin = document.querySelector('.link-login-footer');
+                const linkMeusPedidos = document.querySelector('a[href="MeusPedidos.html"]');
+                const linkMinhaConta = document.querySelector('a[href="MinhaConta.html"]');
+                const linkMeusFavoritos = document.getElementById('btn-meus-favoritos');
+
+                if (clienteLogged && clienteLogged.nome) {
+                    // Usuário Logado
+                    document.body.classList.add('usuario-logado');
+                    perfilDiv.classList.remove('oculto');
+                    const imgPerfil = perfilDiv.querySelector('.imagem-perfil-barra-lateral');
+                    nomeUsuario.textContent = `Olá, ${clienteLogged.nome.split(' ')[0]}`; // Exibe primeiro nome
+                    
+                    // Exibe a foto salva ou o ícone padrão
+                    if (clienteLogged.foto && imgPerfil) {
+                        imgPerfil.innerHTML = `<img src="${clienteLogged.foto}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                    } else if (imgPerfil) {
+                        imgPerfil.innerHTML = `<i class="fas fa-user"></i>`;
+                    }
+                    
+                    // Mostra as opções exclusivas para usuários logados
+                    if (linkMeusPedidos) linkMeusPedidos.style.display = 'block';
+                    if (linkMinhaConta) linkMinhaConta.style.display = 'block';
+                    if (linkMeusFavoritos) linkMeusFavoritos.style.display = 'block';
+                    
+                    linkLogin.innerHTML = '<i class="fas fa-sign-out-alt"></i> Sair da Conta';
+                    linkLogin.href = '#';
+                    linkLogin.onclick = (e) => {
+                        e.preventDefault();
+                        if(confirm('Deseja realmente sair da sua conta? Isso removerá seus dados salvos.')) {
+                            localStorage.removeItem('clienteTapera');
+                            window.location.reload();
+                        }
+                    };
+                } else {
+                    // Usuário Deslogado
+                    document.body.classList.remove('usuario-logado');
+                    perfilDiv.classList.add('oculto');
+                    
+                    // Esconde as opções exclusivas para usuários logados
+                    if (linkMeusPedidos) linkMeusPedidos.style.display = 'none';
+                    if (linkMinhaConta) linkMinhaConta.style.display = 'none';
+                    if (linkMeusFavoritos) linkMeusFavoritos.style.display = 'none';
+
+                    linkLogin.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login / Criar Conta';
+                    linkLogin.href = 'LoginCliente.html';
+                    linkLogin.onclick = null;
+                }
+            }
+
+            atualizarStatusSidebar();
+
+            // --- LÓGICA DE ABERTURA/FECHAMENTO DA SIDEBAR ---
+            const sidebar = document.getElementById('sidebar-configuracoes');
+            const btnAbrir = document.getElementById('btn-abrir-sidebar');
+            const btnFechar = document.getElementById('btn-fechar-sidebar');
+            
+            if (btnAbrir) {
+                btnAbrir.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    sidebar.classList.add('aberta');
+                });
+            }
+            if (btnFechar) {
+                btnFechar.addEventListener('click', () => sidebar.classList.remove('aberta'));
+            }
+
+            // Fecha a sidebar ao clicar fora dela
+            document.addEventListener('click', (e) => {
+                if (sidebar.classList.contains('aberta') && 
+                    !sidebar.contains(e.target) && 
+                    !btnAbrir.contains(e.target)) {
+                    sidebar.classList.remove('aberta');
+                }
+            });
+
+            const statusElement = document.getElementById('status-loja-texto');
+            const statusAtual = localStorage.getItem('casaTaperaStatus') || 'aberto';
+            statusElement.classList.remove('status-aberto', 'status-fechado', 'status-parcial');
+            let iconHtml = '';
+            let textoStatus = '';
+            let classeStatus = '';
+            switch (statusAtual) {
+                case 'fechado':
+                    textoStatus = ' Loja Fechada';
+                    classeStatus = 'status-fechado';
+                    iconHtml = `<span class="fa-stack"><i class="fas fa-store fa-stack-1x"></i><i class="fas fa-slash fa-stack-1x" style="color: #ff8a8a;"></i></span>`;
+                    break;
+                case 'parcial-delivery-fechado':
+                    textoStatus = ' Delivery Fechado (Mesa e Retirada OK)';
+                    classeStatus = 'status-parcial';
+                    iconHtml = `<span class="fa-stack"><i class="fas fa-motorcycle fa-stack-1x"></i><i class="fas fa-slash fa-stack-1x" style="color: #614d00;"></i></span>`;
+                    break;
+                case 'parcial-mesa-fechada':
+                    textoStatus = ' Mesas Fechadas (Delivery OK)';
+                    classeStatus = 'status-parcial';
+                    iconHtml = `<span class="fa-stack"><i class="fas fa-utensils fa-stack-1x"></i><i class="fas fa-slash fa-stack-1x" style="color: #614d00;"></i></span>`;
+                    break;
+                default:
+                    textoStatus = ' Funcionando';
+                    classeStatus = 'status-aberto';
+                    iconHtml = '<i class="fas fa-store"></i>';
+            }
+            statusElement.className = `status-loja ${classeStatus}`;
+            statusElement.innerHTML = `${iconHtml}${textoStatus}`;
+
+            const modalInfo = document.getElementById('modal-info-loja');
+            const btnAbrirInfo = document.getElementById('btn-info-loja');
+            const btnFecharInfo = modalInfo.querySelector('.btn-fechar-modal');
+            btnAbrirInfo.addEventListener('click', () => modalInfo.classList.remove('oculto'));
+            btnFecharInfo.addEventListener('click', () => modalInfo.classList.add('oculto'));
+            modalInfo.addEventListener('click', (e) => {
+                if (e.target === modalInfo) modalInfo.classList.add('oculto');
+            });
+
+            const containerHorarios = document.getElementById('lista-horarios-modal');
+            const diasDaSemana = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+            const diaAtualIndex = new Date().getDay();
+
+            const horariosPadrao = {
+                0: { abertura: '08:00', fechamento: '22:00' }, 1: { fechado: true }, 2: { fechado: true },
+                3: { abertura: '17:00', fechamento: '22:00' }, 4: { abertura: '17:00', fechamento: '22:00' },
+                5: { abertura: '17:00', fechamento: '22:00' }, 6: { abertura: '08:00', fechamento: '22:00' }
+            };
+
+            const horariosSalvos = JSON.parse(localStorage.getItem('casaTaperaHorarios')) || horariosPadrao;
+
+            containerHorarios.innerHTML = diasDaSemana.map((dia, index) => {
+                const horario = horariosSalvos[index] || {};
+                let textoHorario;
+
+                if (horario.fechado) {
+                    textoHorario = 'Fechado';
+                } else {
+                    textoHorario = `${horario.abertura || 'N/A'} - ${horario.fechamento || 'N/A'}`;
+                }
+
+                if (index === diaAtualIndex) {
+                    return `<li class="dia-atual"><strong>${dia}:</strong> <span>${textoHorario}</span></li>`;
+                }
+                return `<li><strong>${dia}:</strong> <span>${textoHorario}</span></li>`;
+
+            }).join('');
+
+            // --- LÓGICA DO CARROSSEL DE IMAGENS ---
+            const carousel = document.getElementById('carousel-cardapio');
+            if (carousel) {
+                const track = carousel.querySelector('.carousel-track');
+                const items = Array.from(carousel.querySelectorAll('.carousel-item'));
+                const prevBtn = carousel.querySelector('.carousel-btn-prev');
+                const nextBtn = carousel.querySelector('.carousel-btn-next');
+                const indicators = document.getElementById('carousel-indicators');
+                let currentIndex = 0;
+                let intervalId;
+
+                function setSlide(index) {
+                    track.style.transform = `translateX(-${index * 100}%)`;
+                    items.forEach((item, i) => item.classList.toggle('active', i === index));
+                    const currentIndicator = indicators.querySelector('.active');
+                    if (currentIndicator) currentIndicator.classList.remove('active');
+                    const newIndicator = indicators.querySelector(`button[data-index="${index}"]`);
+                    if (newIndicator) newIndicator.classList.add('active');
+                    currentIndex = index;
+                }
+
+                function goNext() {
+                    setSlide((currentIndex + 1) % items.length);
+                }
+
+                function goPrev() {
+                    setSlide((currentIndex - 1 + items.length) % items.length);
+                }
+
+                function startCarousel() {
+                    clearInterval(intervalId);
+                    intervalId = setInterval(goNext, 4500);
+                }
+
+                items.forEach((_, i) => {
+                    const bullet = document.createElement('button');
+                    bullet.dataset.index = i;
+                    if (i === 0) bullet.classList.add('active');
+                    bullet.addEventListener('click', () => {
+                        setSlide(i);
+                        startCarousel();
+                    });
+                    indicators.appendChild(bullet);
+                });
+
+                prevBtn.addEventListener('click', () => {
+                    goPrev();
+                    startCarousel();
+                });
+
+                nextBtn.addEventListener('click', () => {
+                    goNext();
+                    startCarousel();
+                });
+
+                setSlide(0);
+                startCarousel();
+            }
+
+            // --- LÓGICA DE SINCRONIZAÇÃO COMPLETA DO CARDÁPIO ---
+            function sincronizarCardapio() {
+                const precosSalvos = JSON.parse(localStorage.getItem('cardapioTaperaPrecos')) || {};
+                const ordemCategorias = JSON.parse(localStorage.getItem('cardapioTaperaOrdemCategorias')) || [];
+                const favoritos = JSON.parse(localStorage.getItem('casaTaperaFavoritos')) || [];
+                
+                // Função auxiliar para comparar nomes ignorando acentos e espaços extras
+                const normalizar = (texto) => texto.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                const todosItensSalvos = Object.values(precosSalvos);
+
+                if (todosItensSalvos.length === 0) return; // Se não tem dados, mantém o HTML padrão
+
+                // Agrupa itens por categoria
+                const itensPorCategoria = {};
+                todosItensSalvos.forEach(item => {
+                    if (item.desativado) return; // Ignora itens ocultos
+                    const cat = item.categoria.trim();
+                    if (!itensPorCategoria[cat]) {
+                        itensPorCategoria[cat] = [];
+                    }
+                    itensPorCategoria[cat].push(item);
+                });
+
+                // Ordena itens dentro de cada categoria
+                Object.keys(itensPorCategoria).forEach(cat => {
+                    itensPorCategoria[cat].sort((a, b) => (a.ordem ?? 999) - (b.ordem ?? 999));
+                });
+
+                // Define ordem das categorias (considera novas categorias no final)
+                let categoriasParaRender = [...ordemCategorias];
+                Object.keys(itensPorCategoria).forEach(cat => {
+                    if (!categoriasParaRender.includes(cat)) {
+                        categoriasParaRender.push(cat);
+                    }
+                });
+
+                // Limpa grid e reconstrói com categorias do localStorage
+                const grid = document.querySelector('.grid-cardapio');
+                
+                // Remove apenas as colunas, mantém elementos especiais
+                grid.querySelectorAll('.coluna-cardapio').forEach(col => {
+                    col.remove();
+                });
+
+                // Recria as colunas com base no localStorage
+                categoriasParaRender.forEach(nomeCat => {
+                    if (!itensPorCategoria[nomeCat] || itensPorCategoria[nomeCat].length === 0) {
+                        return; // Pula categorias sem itens
+                    }
+
+                    // Filtro: Remove categorias de montagem do Cardápio Geral para que fiquem apenas na aba de Montagem
+                    const montagemKeywords = ['monte seu', 'montagem', 'ingredientes', 'adicionais'];
+                    const nomeLower = nomeCat.toLowerCase();
+                    const ehMontagem = montagemKeywords.some(keyword => nomeLower.includes(keyword));
+                    if (ehMontagem) return;
+
+                    const itens = itensPorCategoria[nomeCat];
+                    
+                    // Cria coluna para essa categoria
+                    const div = document.createElement('div');
+                    div.className = 'coluna-cardapio';
+                    div.setAttribute('data-categoria', nomeCat.toLowerCase().replace(/\s+/g, '-'));
+                    
+                    let html = `<h3 class="titulo-subsecao">${nomeCat.toUpperCase()}</h3><div class="acomp-bebidas" style="width: 100%;"><ul class="lista-cardapio">`;
+                    
+                    itens.forEach(item => {
+                        const preco = item.preco.toFixed(2).replace('.', ',');
+                        const imgUrl = item.imagem || '../imagens/Logo_Tapera.jpeg';
+                        const isFavorito = favoritos.includes(item.nome);
+                        
+                        html += `<li class="item-cardapio-interativo" data-name="${item.nome}" data-price="${item.preco.toFixed(2)}">
+                            <img src="${imgUrl}" alt="${item.nome}" class="img-item-cardapio" loading="lazy" onerror="this.src='../imagens/Logo_Tapera.jpeg'">
+                            <div class="detalhes-item"><span class="nome-item">${item.nome.toUpperCase()}</span></div>
+                            <div class="acoes-item-cardapio">
+                                <span class="preco">R$${preco}</span>
+                                <button class="btn-favorito ${isFavorito ? 'favoritado' : ''}" title="Adicionar aos Favoritos"><i class="far fa-heart"></i></button>
+                            </div>
+                        </li>`;
+                    });
+                    
+                    html += '</ul></div><hr class="divisor-secao">';
+                    div.innerHTML = html;
+                    grid.appendChild(div);
+                });
+
+                // Sincroniza itens de montagem (Monte seu Hambúrguer, Monte seu Pastel)
+                sincronizarMontagem(itensPorCategoria, todosItensSalvos);
+
+                    // Reanexa eventos aos botões
+                    reanejarEventos();
+
+                    console.log('✅ Cardápio sincronizado com sucesso!');
+                    atualizarAtalhosCategorias();
+                }
+
+                // Função para gerar os atalhos das categorias acima do cardápio
+                function atualizarAtalhosCategorias() {
+                    const navContainer = document.getElementById('group-content-nav');
+                    const containerPai = document.getElementById('group-content-nav-container');
+                    if (!navContainer) return;
+
+                    navContainer.innerHTML = '';
+                    const colunas = document.querySelectorAll('.grid-cardapio .coluna-cardapio');
+
+                    if (colunas.length === 0) {
+                        containerPai?.classList.add('oculto');
+                        return;
+                    }
+
+                    containerPai?.classList.remove('oculto');
+
+                    colunas.forEach(coluna => {
+                        const tituloElement = coluna.querySelector('h3');
+                        const titulo = tituloElement?.innerText;
+                        if (!titulo) return;
+
+                        const btn = document.createElement('button');
+                        btn.className = 'btn-atalho-categoria';
+                        btn.textContent = titulo;
+                        btn.onclick = () => {
+                            coluna.scrollIntoView({ behavior: "smooth", block: "start" });
+                        };
+                        navContainer.appendChild(btn);
+                    });
+                }
+
+            // Sincroniza os ingredientes das seções de montagem
+            function sincronizarMontagem(itensPorCategoria, todosItensSalvos) {
+                const normalizar = (texto) => texto.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+                // Mapeia IDs das seções de montagem
+                const secoesMontagem = {
+                    'Monte seu Hambúrguer': 'ingredientes-hamburguer',
+                    'Monte seu Pastel': 'ingredientes-extras-pastel'
+                };
+
+                Object.entries(secoesMontagem).forEach(([categName, containerId]) => {
+                    const container = document.getElementById(containerId);
+                    if (!container) return;
+
+                    const itens = itensPorCategoria[categName] || [];
+
+                    // Remove labels antigos (exceto o "apenas-base")
+                    container.querySelectorAll('label:not(:has(#hamburguer-apenas-base))').forEach(label => {
+                        label.remove();
+                    });
+
+                    // Adiciona itens novos
+                    itens.forEach(item => {
+                        // Verifica se não já existe
+                        const existe = Array.from(container.querySelectorAll('input')).some(input => 
+                            normalizar(input.value) === normalizar(item.nome)
+                        );
+
+                        if (!existe) {
+                            const label = document.createElement('label');
+                            const precoTxt = `+R$ ${item.preco.toFixed(2).replace('.', ',')}`;
+                            label.innerHTML = `<input type="checkbox" value="${item.nome}" data-price="${item.preco}"><span class="nome-ingrediente">${item.nome}</span><span class="preco">${precoTxt}</span>`;
+                            container.appendChild(label);
+                        }
+                    });
+
+                    // Atualiza preços dos itens existentes
+                    container.querySelectorAll('input').forEach(input => {
+                        const item = todosItensSalvos.find(i => normalizar(i.nome) === normalizar(input.value));
+                        if (item) {
+                            input.dataset.price = item.preco;
+                            const label = input.closest('label');
+                            const spanPreco = label.querySelector('.preco');
+                            if (spanPreco) {
+                                const prefixo = input.type === 'radio' ? '(Base R$' : '+R$';
+                                spanPreco.textContent = `${prefixo}${item.preco.toFixed(2).replace('.', ',')}${input.type === 'radio' ? ')' : ''}`;
+                            }
+                        }
+                    });
+                });
+            }
+
+            // Reanexa eventos aos botões
+            function reanejarEventos() {
+                // Os eventos de favorito agora são tratados via delegação em carrinho.js
+                document.querySelectorAll('.btn-favorito').forEach(btn => {
+                    btn.hasListener = true;
+                });
+            }
+
+            // Executa sincronização ao carregar
+            sincronizarCardapio();
+            atualizarAtalhosCategorias();
+
+            // Monitora a troca de abas para esconder/mostrar os atalhos
+            document.body.addEventListener('click', (e) => {
+                const btnAba = e.target.closest('.btn-aba');
+                if (btnAba) {
+                    const containerAtalhos = document.getElementById('group-content-nav-container');
+                    if (btnAba.dataset.aba === 'montagem') {
+                        containerAtalhos?.classList.add('oculto');
+                    } else {
+                        containerAtalhos?.classList.remove('oculto');
+                        atualizarAtalhosCategorias();
+                    }
+                }
+            });
+
+            // --- LÓGICA DE PEDIDO NA MESA (QR CODE) ---
+            const urlParams = new URLSearchParams(window.location.search);
+            const mesaId = urlParams.get('mesa');
+            const btnFinalizar = document.getElementById('btn-finalizar-pedido');
+            const containerEndereco = document.getElementById('container-campo-endereco');
+            const opcoesEntrega = document.querySelector('.opcoes-entrega');
+            const nomeClienteInput = document.getElementById('nome-cliente');
+
+            if (mesaId) {
+                // 1. Ajustar Interface para Mesa
+                const statusLoja = document.getElementById('status-loja-texto');
+                statusLoja.innerHTML += ` | <span style="color: #ffff00; font-weight: bold;">MESA ${mesaId}</span>`;
+
+                // Esconder opções de entrega e endereço
+                if (containerEndereco) containerEndereco.style.display = 'none';
+                if (opcoesEntrega) opcoesEntrega.style.display = 'none';
+
+                // Alterar texto do botão
+                btnFinalizar.textContent = `Enviar Pedido para Cozinha (Mesa ${mesaId})`;
+
+                // 2. Interceptar o clique do botão finalizar
+                // Clonamos o botão para remover os event listeners originais (do WhatsApp)
+                const novoBtn = btnFinalizar.cloneNode(true);
+                btnFinalizar.parentNode.replaceChild(novoBtn, btnFinalizar);
+
+                novoBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+
+                    const nomeCliente = nomeClienteInput.value.trim();
+                    if (!nomeCliente) {
+                        alert('Por favor, digite seu nome para identificarmos o pedido na mesa.');
+                        nomeClienteInput.focus();
+                        return;
+                    }
+
+                    // Recuperar itens do carrinho (lógica simplificada baseada no HTML existente)
+                    // Como não tenho acesso direto à variável 'carrinho' do JS externo, 
+                    // vou ler do DOM ou localStorage se disponível. 
+                    // Assumindo que o carrinho.js salva ou expõe algo, mas vamos tentar ler do DOM para garantir.
+
+                    // Tentar recuperar do localStorage se o carrinho.js salvar lá (comum)
+                    // Se não, vamos reconstruir baseado na UI (fallback)
+                    let itensPedido = {};
+                    let totalValor = 0;
+
+                    // Nota: O ideal seria o carrinho.js expor os dados. 
+                    // Vou assumir que o carrinho.js popula a lista visualmente.
+                    const listaItens = document.querySelectorAll('#itens-carrinho li:not(#mensagem-carrinho-vazio)');
+                    if (listaItens.length === 0) {
+                        alert('Seu carrinho está vazio.');
+                        return;
+                    }
+
+                    listaItens.forEach(li => {
+                        // Exemplo de texto: "1x Hamburguer - R$ 20,00"
+                        // Essa parte depende muito de como o carrinho.js monta o HTML.
+                        // Vou usar uma abordagem genérica de extração.
+                        const texto = li.innerText;
+                        // Tentativa de parse simples
+                        const partes = texto.split(' - R$');
+                        if (partes.length > 0) {
+                            const nomeQtd = partes[0]; // "1x Hamburguer"
+                            const qtd = parseInt(nomeQtd.split('x')[0]) || 1;
+                            const nome = nomeQtd.split('x')[1]?.trim() || nomeQtd;
+                            // Preço aproximado (não crítico para o pedido na cozinha, mas bom ter)
+                            const preco = parseFloat(partes[1]?.replace(',', '.') || 0);
+
+                            itensPedido[nome] = {
+                                quantity: qtd,
+                                price: preco
+                            };
+                            totalValor += (preco * qtd);
+                        }
+                    });
+
+                    // Criar objeto do pedido
+                    const novoPedido = {
+                        id: `pedido-${Date.now()}`,
+                        nomeCliente: `${nomeCliente} (Mesa ${mesaId})`,
+                        mesa: mesaId,
+                        items: itensPedido,
+                        subTotal: totalValor,
+                        valorFinal: totalValor, // Sem taxa de entrega
+                        metodoPagamento: document.querySelector('input[name="payment-method"]:checked').value,
+                        metodoEntrega: 'mesa',
+                        status: 'novo', // Importante para aparecer na cozinha
+                        data: new Date().toISOString()
+                    };
+
+                    // Salvar no LocalStorage (Sistema)
+                    const pedidosExistentes = JSON.parse(localStorage.getItem('pedidosTapera')) || [];
+                    pedidosExistentes.push(novoPedido);
+                    localStorage.setItem('pedidosTapera', JSON.stringify(pedidosExistentes));
+
+                    // Atualizar status da mesa
+                    const mesasStatus = JSON.parse(localStorage.getItem('casaTaperaMesas')) || {};
+                    if (!mesasStatus[mesaId]) mesasStatus[mesaId] = {};
+                    mesasStatus[mesaId].status = 'ocupada';
+                    localStorage.setItem('casaTaperaMesas', JSON.stringify(mesasStatus));
+
+                    alert('Pedido enviado para a cozinha com sucesso! Aguarde na sua mesa.');
+
+                    // Limpar carrinho (Recarrega a página para limpar visualmente e resetar scripts)
+                    window.location.reload();
+                });
+
+                // Habilitar botão se houver itens (simulação, pois o carrinho.js controla o disabled)
+                setInterval(() => {
+                    const statusLoja = localStorage.getItem('casaTaperaStatus') || 'aberto';
+                    const lista = document.getElementById('itens-carrinho');
+                    if (lista && lista.children.length > 0 && !lista.querySelector('#mensagem-carrinho-vazio')) {
+                        if (statusLoja === 'fechado' || statusLoja === 'parcial-mesa-fechada') {
+                            novoBtn.disabled = true;
+                            novoBtn.textContent = 'Serviço de Mesa Indisponível';
+                            novoBtn.style.backgroundColor = '#444';
+                        } else {
+                            novoBtn.disabled = false;
+                            novoBtn.textContent = `Enviar Pedido para Cozinha (Mesa ${mesaId})`;
+                            novoBtn.style.backgroundColor = ''; // Restaura cor original
+                        }
+                    }
+                }, 1000);
+            }
+
+            // --- LÓGICA DE MEUS PEDIDOS NA SIDEBAR ---
+            const btnLinkMeusPedidos = document.getElementById('btn-link-meus-pedidos');
+            const containerMeusPedidos = document.getElementById('meus-pedidos-container');
+            const listaMeusPedidos = document.getElementById('lista-meus-pedidos');
+            const btnFecharMeusPedidos = document.getElementById('btn-fechar-meus-pedidos');
+
+            function atualizarMeusPedidos() {
+                const pedidos = JSON.parse(localStorage.getItem('pedidosTapera')) || [];
+                if (pedidos.length === 0) {
+                    listaMeusPedidos.innerHTML = '<p>Nenhum pedido encontrado.</p>';
+                    return;
+                }
+
+                listaMeusPedidos.innerHTML = pedidos.map(pedido => {
+                    const itens = Object.entries(pedido.items || {}).map(([nome, item]) =>
+                        `<li>${item.quantity}x ${nome} - R$ ${item.price.toFixed(2).replace('.', ',')}</li>`
+                    ).join('');
+
+                    return `
+                        <div class="meus-pedidos-item">
+                            <p><strong>ID:</strong> ${pedido.id}</p>
+                            <p><strong>Cliente:</strong> ${pedido.nomeCliente}</p>
+                            <p><strong>Status:</strong> ${pedido.status}</p>
+                            <p><strong>Entrega:</strong> ${pedido.metodoEntrega}</p>
+                            <p><strong>Total:</strong> R$ ${(pedido.valorFinal || pedido.subTotal || 0).toFixed(2).replace('.', ',')}</p>
+                            <ul style="margin: 0.2rem 0 0 0; padding-left: 1rem; list-style: disc;">${itens}</ul>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            if (btnLinkMeusPedidos) {
+                btnLinkMeusPedidos.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    atualizarMeusPedidos();
+                    containerMeusPedidos.classList.toggle('visivel');
+                    containerMeusPedidos.classList.toggle('oculto');
+                });
+            }
+
+            if (btnFecharMeusPedidos) {
+                btnFecharMeusPedidos.addEventListener('click', () => {
+                    containerMeusPedidos.classList.remove('visivel');
+                    containerMeusPedidos.classList.add('oculto');
+                });
+            }
+
+            // --- LÓGICA DO FAQ ---
+            document.querySelectorAll('.faq-question').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const item = btn.parentElement;
+                    item.classList.toggle('active');
+                });
+            });
+
+            // --- LÓGICA DE CONVITE PARA SORTEIO NA INDEX ---
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('participar') === 'true') {
+                const modalConvite = document.getElementById('modal-entrar-sorteio');
+                modalConvite.classList.remove('oculto');
+                
+                document.getElementById('btn-confirmar-entrada-sorteio').addEventListener('click', () => {
+                    const nome = document.getElementById('nome-participante-novo-sorteio').value.trim();
+                    if (!nome) return alert("Por favor, digite seu nome.");
+
+                    let convidados = JSON.parse(localStorage.getItem('clientesConviteTapera')) || [];
+                    convidados.push({ 
+                        nome: nome, 
+                        id: 'conv-' + Date.now(),
+                        telefone: 'Inscrito via link',
+                        email: 'N/A'
+                    });
+                    
+                    localStorage.setItem('clientesConviteTapera', JSON.stringify(convidados));
+                    alert("Inscrição confirmada! Fique de olho em nossas redes para o resultado.");
+                    
+                    // Limpa a URL e fecha modal
+                    window.location.href = window.location.pathname;
+                });
+            }
+        });
+    </script>
+
+    <!-- Script para Sincronização de Cardápio (atualiza quando CardapioPersonalizar muda) -->
+    <script>
+        // Monitora mudanças no localStorage de outras abas
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'cardapioTaperaPrecos' || e.key === 'cardapioTaperaCategorias') {
+                console.log('📡 Sincronização detectada (outra aba). Recarregando cardápio...');
+                location.reload();
+            }
+        });
+
+        // Monitora mudanças do localStorage na mesma aba via disparo manual
+        document.addEventListener('cardapioAtualizado', () => {
+            console.log('📡 Sincronização detectada (mesma aba). Recarregando...');
+            setTimeout(() => location.reload(), 500);
+        });
+    </script>
+
+    <!-- VLibras Widget -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+</body>
+
+</html>                      

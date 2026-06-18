@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorteio de Clientes - Casa Tapera</title>
+    <link rel="stylesheet" href="../estilos/Projeto_Tapera.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: var(--color-black); display: flex; flex-direction: column; min-height: 100vh; margin: 0; padding-top: 0; }
+        .cabecalho { border-bottom: 2px solid var(--color-orange); margin-bottom: 0; }
+        .link-logo { display: inline-block; text-decoration: none; }
+        .container-sorteio { max-width: 850px; margin: 40px auto; padding: 30px; background: #222; border: 2px solid var(--color-orange); border-radius: 12px; text-align: center; flex: 1; width: 95%; }
+        .titulo-sorteio { font-family: 'Bebas Neue', sans-serif; color: var(--color-yellow); font-size: 3em; margin-bottom: 10px; }
+        .subtitulo { color: #888; margin-bottom: 30px; font-family: 'Roboto', sans-serif; }
+        
+        /* Sistema de Abas de Lista */
+        .abas-listas { display: flex; justify-content: center; gap: 5px; margin-bottom: 20px; }
+        .btn-aba-lista { background: #333; color: #888; border: none; padding: 10px 20px; font-family: 'Bebas Neue', sans-serif; font-size: 1.2em; cursor: pointer; border-radius: 5px 5px 0 0; transition: all 0.3s; flex: 1; }
+        .btn-aba-lista.ativa { background: var(--color-orange); color: #000; }
+
+        /* Seção de Convite */
+        .sessao-convite { background: #111; padding: 15px; border-radius: 8px; margin-bottom: 25px; border: 1px dashed #444; }
+        .link-display { display: flex; gap: 10px; margin-top: 10px; }
+        .link-display input { flex: 1; background: #000; border: 1px solid #333; color: var(--color-green); padding: 8px; border-radius: 4px; font-size: 0.85em; }
+        .btn-copiar { background: var(--color-yellow); border: none; padding: 5px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .input-nome-convite { 
+            width: 100%; 
+            padding: 12px 15px; 
+            background: #333; 
+            border: 1px solid #555; 
+            color: #fff; 
+            border-radius: 5px; 
+            margin-bottom: 20px; 
+            font-size: 1.1em; 
+            font-family: 'Roboto', sans-serif;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            outline: none;
+        }
+        /* Área da Máquina de Sorteio */
+        .painel-sorteio { background: #111; border: 4px solid #333; height: 120px; border-radius: 8px; margin-bottom: 30px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+        .nome-sorteado { font-family: 'Bebas Neue', sans-serif; font-size: 2.5em; color: #fff; text-transform: uppercase; transition: transform 0.1s; letter-spacing: 2px; padding: 0 15px; text-align: center; }
+        .nome-sorteado.vencedor { color: var(--color-yellow); transform: scale(1.2); text-shadow: 0 0 15px rgba(255, 198, 0, 0.6); }
+        
+        .btn-sortear { background-color: var(--color-orange); color: #000; border: none; padding: 15px 40px; font-family: 'Bebas Neue', sans-serif; font-size: 1.8em; border-radius: 5px; cursor: pointer; transition: all 0.3s; width: 100%; max-width: 300px; }
+        .btn-sortear:hover:not(:disabled) { transform: scale(1.05); background-color: #ff8533; box-shadow: 0 0 20px rgba(240, 100, 0, 0.4); }
+        .btn-sortear:disabled { background-color: #444; color: #777; cursor: not-allowed; }
+        .btn-sortear i { margin-right: 10px; }
+
+        .info-participantes { margin-top: 40px; text-align: left; border-top: 1px solid #333; padding-top: 20px; }
+        .info-participantes h4 { color: var(--color-orange); font-family: 'Bebas Neue', sans-serif; font-size: 1.5em; margin-bottom: 15px; }
+        .lista-participantes { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; list-style: none; padding: 0; max-height: 250px; overflow-y: auto; }
+        .lista-participantes li { background: #2a2a2a; padding: 8px 12px; border-radius: 4px; font-size: 0.9em; color: #ccc; border-left: 3px solid #444; }
+        
+        .modal-vencedor-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; }
+        .modal-vencedor { background: #222; border: 3px solid var(--color-yellow); padding: 40px; border-radius: 15px; text-align: center; max-width: 500px; width: 90%; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        .icone-voltar { position: absolute; top: 25px; right: 25px; color: #fff; font-size: 2.2em; text-decoration: none; transition: all 0.3s; z-index: 10; }
+        .icone-voltar:hover { color: var(--color-orange); transform: scale(1.2); }
+
+        /* Estilo para o Mascote no Header (Igual ao index) */
+        .mascote-index {
+            position: absolute;
+            left: 15px;
+            top: 5%;
+            width: 236px;
+            z-index: 10;
+            height: auto;
+        }
+
+        /* Estilo do Rodapé */
+        .rodape-copyright { position: static; width: 100%; text-align: left; margin-top: 40px; padding: 20px; border-top: 2px solid var(--color-orange); color: var(--color-white); }
+        .rodape-copyright p { margin: 2px 0; font-size: 0.85em; text-transform: uppercase; letter-spacing: 1px; color: #7c7676; }
+        .link-desenvolvedor { text-decoration: none; color: inherit; }
+        .nome-desenvolvedor { display: inline-block; transition: all 0.3s; }
+        .nome-desenvolvedor:hover { color: var(--color-orange); transform: scale(1.1); }
+
+        @media (max-width: 600px) {
+            .titulo-sorteio { font-size: 2.2em; }
+            .nome-sorteado { font-size: 1.8em; }
+            .container-sorteio { padding: 20px 15px; margin: 20px auto; }
+            .mascote-index {
+                display: none;
+            }
+            .icone-voltar {
+                top: 15px;
+                right: 15px;
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="cabecalho">
+        <img src="../imagens/Mascote-Tapera.2.jpeg" alt="Mascote Tapera" class="mascote-index">
+        <a href="PainelDeControle.html" class="link-logo">
+            <div class="container-logo">
+                <img src="../imagens/Logo_Tapera.jpeg" alt="Logotipo Casa Tapera" class="imagem-logo" style="width: 400px;">
+            </div>
+        </a>
+        <a href="PainelDeControle.html" class="icone-voltar" title="Voltar ao Painel"><i class="fas fa-arrow-left"></i></a>
+    </header>
+    
+    <main class="container-sorteio">
+        <h2 class="titulo-sorteio"><i class="fas fa-trophy"></i> Sorteio de Clientes</h2>
+        <p class="subtitulo">Premie seus clientes cadastrados de forma aleatória e divertida.</p>
+
+        <div class="sessao-convite">
+            <p style="font-size: 0.9em; color: #ccc;"><i class="fas fa-share-alt"></i> Compartilhe este link para as pessoas entrarem na lista agora:</p>
+            <div class="link-display">
+                <input type="text" id="input-link-convite" readonly>
+                <button class="btn-copiar" id="btn-copiar-link">Copiar</button>
+            </div>
+        </div>
+
+        <div class="abas-listas">
+            <button class="btn-aba-lista ativa" data-fonte="sistema">
+                <i class="fas fa-database"></i> Clientes do Sistema
+            </button>
+            <button class="btn-aba-lista" data-fonte="convite">
+                <i class="fas fa-link"></i> Inscritos via Link
+            </button>
+        </div>
+
+        <div class="painel-sorteio">
+            <div id="display-nome" class="nome-sorteado">Aguardando...</div>
+        </div>
+
+        <button id="btn-iniciar-sorteio" class="btn-sortear"><i class="fas fa-dice"></i> Realizar Sorteio</button>
+
+        <div class="info-participantes">
+            <h4><i class="fas fa-users"></i> Participantes na lista ativa (<span id="total-clientes">0</span>)</h4>
+            <ul id="lista-clientes-sorteio" class="lista-participantes">
+                <!-- Preenchido via JS -->
+            </ul>
+        </div>
+    </main>
+
+    <!-- Modal para quem clica no link de convite -->
+    <div id="modal-entrar-sorteio" class="modal-vencedor-overlay" style="display: none;">
+        <div class="modal-vencedor">
+            <h2 style="font-family: 'Bebas Neue'; color: var(--color-yellow); margin-bottom: 10px;">PARTICIPAR DO SORTEIO</h2>
+            <p style="color: #888; margin-bottom: 25px; font-size: 0.9em; font-family: 'Roboto';">Inscreva-se agora para concorrer a prêmios exclusivos!</p>
+            <div style="text-align: left; margin-bottom: 20px;">
+                <label for="nome-participante-novo" style="color: var(--color-orange); font-weight: bold; font-size: 0.85em; display: block; margin-bottom: 8px; font-family: 'Roboto';">Nome Completo:</label>
+                <input type="text" id="nome-participante-novo" class="input-nome-convite" placeholder="Ex: João da Silva">
+            </div>
+            <button id="btn-confirmar-entrada" class="btn-sortear" style="font-size: 1.2em; width: 100%;">Entrar na Lista</button>
+        </div>
+    </div>
+
+    <div id="modal-vencedor-final" class="modal-vencedor-overlay">
+        <div class="modal-vencedor">
+            <i class="fas fa-crown" style="font-size: 4em; color: var(--color-yellow); margin-bottom: 20px;"></i>
+            <h2 style="font-family: 'Bebas Neue', sans-serif; color: #fff; font-size: 2.5em; margin-bottom: 10px;">TEMOS UM VENCEDOR!</h2>
+            <div id="nome-vencedor-modal" style="font-size: 2em; color: var(--color-yellow); font-family: 'Bebas Neue', sans-serif; margin-bottom: 20px; text-transform: uppercase;">-</div>
+            <p id="detalhes-vencedor-modal" style="color: #aaa; margin-bottom: 30px;"></p>
+            <button onclick="document.getElementById('modal-vencedor-final').style.display='none'" class="btn-sortear" style="font-size: 1.2em; padding: 10px 30px;">Fechar</button>
+        </div>
+    </div>
+
+    <footer class="rodape-copyright">
+        <p>&copy; 2026 CASA TAPERA. TODOS OS DIREITOS RESERVADOS | DESENVOLVIDO POR EQUIPE <a href="https://www.instagram.com/s.aib0t/" target="_blank" rel="noopener noreferrer" class="link-desenvolvedor"><span class="nome-desenvolvedor">S.AIB0T</span></a></p>
+    </footer>
+
+    <script src="../animações/SorteioMarketing.js"></script>
+    
+    <!-- VLibras Widget -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>new window.VLibras.Widget('https://vlibras.gov.br/app');</script>
+</body>
+</html>
